@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.ing.developer</groupId>
+        <artifactId>open-banking-drivers</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>open-banking-payment-initiation-driver</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>Open Banking Payment Initiation Driver</name>
+    <description>Open Banking Payment Initiation Driver for developers</description>
+
+    <properties>
+        <payment-initiation-api.version>1.5.0</payment-initiation-api.version>
+        <base-package>com.ing.developer.payment.initiation.client</base-package>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <configuration>
+                    <inputSpec>${project.basedir}/../../../api/payment/initiation/Payment-Initiation-API-${payment-initiation-api.version}.json</inputSpec>
+                    <configOptions>
+                        <invokerPackage>${base-package}</invokerPackage>
+                        <apiPackage>${base-package}.api</apiPackage>
+                        <modelPackage>${base-package}.model</modelPackage>
+                    </configOptions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

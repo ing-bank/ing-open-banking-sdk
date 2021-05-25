@@ -1,0 +1,377 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "The OAuth 2.0 API exposes the resources for third parties to connect to ING APIs using the [OAuth 2.0](https://tools.ietf.org/html/rfc6749) protocol for authentication and authorization. This API supports the \"client credentials\", \"authorization code\" and \"refresh token\" grant types. Subscription to this API is only required when the Authorization Grant code flow is required for your application. The other supported OAuth 2.0 flows can be used without subscription.",
+    "version" : "2.1.0",
+    "title" : "OAuth 2.0 API",
+    "contact" : {
+      "name" : "ING Developer Portal",
+      "url" : "https://developer.ing.com",
+      "email" : "developerportal@ing.com"
+    }
+  },
+  "host" : "api.sandbox.ing.com",
+  "basePath" : "/",
+  "schemes" : [ "https" ],
+  "consumes" : [ "application/json" ],
+  "produces" : [ "application/json" ],
+  "paths" : {
+    "/oauth2/token" : {
+      "post" : {
+        "summary" : "Retrieve an application or customer access token, or refresh an access token",
+        "description" : "\nThis endpoint allows requesting an access token for one of the flows below:\n\n## Client Credentials (registered in the ING Developer portal)\nFor authenticating your application and retrieving an application access token.\nRequired request parameters:\n- grant_type=client_credentials\n- scope (optional): If not provided, all the subscribed scopes will be returned\n\n## Client Credentials (without pre-registration using eIDAS certificates supporting PSD2)\nFor authenticating your application and retrieving an application access token without pre-registration in the ING Developer portal using eIDAS certificates supporting PSD2. This flow will automatically subscribe your application to the allowed ING APIs based on the PSD2 roles in the certificate. The scopes in the application access token are based on the PSD2 roles.\nRequired request parameters:\n- grant_type=client_credentials\n- TPP-Signature-Certificate: PSD2 compliant Qualified Electronic Seal Certificate (QSealC)\n\n## Authorization Code\nFor exchanging the authorization code for a customer access token. \nRequired request parameters:\n- grant_type=authorization_code\n- code (required)\n- redirect_uri (optional)\n\n## Refresh Token\nFor exchanging a refresh token for a new customer access token.\nRequired request parameters:\n- grant_type=refresh_token\n- refresh_token (required)\n",
+        "consumes" : [ "application/x-www-form-urlencoded" ],
+        "parameters" : [ {
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "For the 'client_credentials' grant type we require the Authorization header with the signature authentication scheme as defined in https://tools.ietf.org/html/draft-cavage-http-signatures-10. ING requires the headers '(request-target) date digest', the client ID is used as keyID, and the algorithm is 'rsa-sha256'\nFor the 'authorization_code' and 'refresh_token' grant type the bearer authentication scheme with the application access token is required.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "Signature header as defined in https://tools.ietf.org/html/draft-cavage-http-signatures-10. ING requires at least the headers '(request-target) date digest'\nRequired when the Authorization header is used with the bearer auth-scheme and the application access token.",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "Date",
+          "in" : "header",
+          "description" : "The current date in the HTTP standard Date header format (see RFC7231: https://tools.ietf.org/html/rfc7231#section-7.1.1.2)",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The SHA-256 hash value of the requests body encoded in Base64. If the body is empty, it should be the SHA-256 value of the empty string. This header is used in the Authorization Signature header.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "TPP-Signature-Certificate",
+          "in" : "header",
+          "description" : "If your application is not registered in the ING Developer portal, you can add the PSD2 compliant Qualified Electronic Seal Certificate (QSealC) which you used for the signature in the client credentials grant type. The certificate (PEM format) needs to be the Base64 encoded",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "grant_type",
+          "in" : "formData",
+          "description" : "OAuth 2.0 grant type",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "client_credentials", "authorization_code", "refresh_token" ]
+        }, {
+          "name" : "scope",
+          "in" : "formData",
+          "description" : "Requested scopes in the 'client_credentials' grant type. Optional field, if not provided the registered scopes will be used. Scopes are delimited by a space and the complete field should be application/x-www-form-urlencoded",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "code",
+          "in" : "formData",
+          "description" : "Required in the 'authorization_code' grant type, value is the recieved authorization code from the authorization request",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "redirect_uri",
+          "in" : "formData",
+          "description" : "Required in the 'authorization_code' grant type, the 'redirect_uri' parameter as included in the authorization request.",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "refresh_token",
+          "in" : "formData",
+          "description" : "Required in the 'refresh_token' grant type, the refresh token issued.",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK Returns an access token, and optionally a refresh token and JSON Web Key set.",
+            "schema" : {
+              "$ref" : "#/definitions/TokenResponse"
+            }
+          },
+          "400" : {
+            "description" : "Bad Request - The request was invalid",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error - The server encountered an unexpected internal error."
+          }
+        }
+      },
+      "parameters" : [ ]
+    },
+    "/oauth2/authorization-server-url" : {
+      "get" : {
+        "summary" : "Retrieve the ING Authorization server URL with a specific request identifier",
+        "description" : "This endpoint stores the received data and returns a object/body with a location property containing the authorize URI with a specific reference ID for request identification.  In case of error the API returns the error description.",
+        "operationId" : "authorizationServerUrlUsingGET",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Application access token (bearer) received in the Client Credentials grant flow",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "Signature header as defined in https://tools.ietf.org/html/draft-cavage-http-signatures-10. ING requires the headers '(request-target) date digest', and the algorithm is 'rsa-sha256'",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Date",
+          "in" : "header",
+          "description" : "The current date in the HTTPs standard Date header format (see RFC7231: https://tools.ietf.org/html/rfc7231#section-7.1.1.2)",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The SHA-256 hash value of the requests body encoded in Base64. If the body is empty, it should be the SHA-256 value of the empty string.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "redirect_uri",
+          "in" : "query",
+          "description" : "URI where user is redirected to after authorization. Only required when your application is not registered in the ING Developer portal, and your are using PSD2 compliant eIDAS certificates",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "scope",
+          "in" : "query",
+          "description" : "List of scopes for which an authorization request is asked, separated by space. Must not be empty and it is validated based on the subscriptions of your API.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "country_code",
+          "in" : "query",
+          "description" : "Country Code 2 letter value(ISO 3166-1). The country code is optional, and allows you to redirect you user to a specific ING country login page.",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK Response body containing the authorisation url where you can redirect your user to, to obtain the authorization for the requested scopes.",
+            "schema" : {
+              "$ref" : "#/definitions/AuthorizationURLResponse"
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error - The server encountered an unexpected internal error."
+          }
+        },
+        "security" : [ {
+          "ING-Application-Security" : [ "granting" ]
+        } ]
+      },
+      "parameters" : [ ]
+    },
+    "/oauth2/token/revoke" : {
+      "post" : {
+        "summary" : "Revoke a customer refresh token.",
+        "description" : "This endpoint is used to revoke an existing token from a client.",
+        "operationId" : "revokeRefreshTokenUsingPOST",
+        "consumes" : [ "application/x-www-form-urlencoded" ],
+        "parameters" : [ {
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Application access token as bearer token",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "Signature header as defined in https://tools.ietf.org/html/draft-cavage-http-signatures-10. ING requires the headers '(request-target) date digest', and the algorithm is 'rsa-sha256'",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Date",
+          "in" : "header",
+          "description" : "The current date in the HTTPs standard Date header format (see RFC7231: https://tools.ietf.org/html/rfc7231#section-7.1.1.2)",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The SHA-256 hash value of the requests body encoded in Base64. If the body is empty, it should be the SHA-256 value of the empty string.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "token",
+          "in" : "formData",
+          "description" : "The customer refresh token that needs to be revoked.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "token_type_hint",
+          "in" : "formData",
+          "description" : "Token type",
+          "required" : false,
+          "type" : "string",
+          "enum" : [ "refresh_token" ]
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error - The server encountered an unexpected internal error."
+          }
+        }
+      },
+      "parameters" : [ ]
+    }
+  },
+  "securityDefinitions" : {
+    "ING-Application-Security" : {
+      "type" : "oauth2",
+      "tokenUrl" : "https://api.ing.com/oauth2/token",
+      "flow" : "application",
+      "scopes" : {
+        "granting" : "Required to start the \"granting\" flow for an ING customer."
+      }
+    }
+  },
+  "definitions" : {
+    "AuthorizationURLResponse" : {
+      "type" : "object",
+      "properties" : {
+        "location" : {
+          "type" : "string",
+          "example" : "https://myaccount.ing.com/granting/dc53ca2d9681cbd355ae697694dae3f9736b45854edbf96d0a23a186b3f8011b/NL",
+          "x-ing-type" : "string"
+        }
+      }
+    },
+    "TokenResponse" : {
+      "type" : "object",
+      "required" : [ "access_token", "expires_in", "scope", "token_type" ],
+      "properties" : {
+        "access_token" : {
+          "type" : "string",
+          "example" : "eyJhbGciOiJkaXIiLCJlbmMiOi....",
+          "x-ing-type" : "string"
+        },
+        "expires_in" : {
+          "type" : "integer",
+          "example" : 900,
+          "x-ing-type" : "integer"
+        },
+        "scope" : {
+          "type" : "string",
+          "example" : "scope1 scope2",
+          "x-ing-type" : "string"
+        },
+        "token_type" : {
+          "type" : "string",
+          "example" : "Bearer",
+          "x-ing-type" : "string"
+        },
+        "refresh_token" : {
+          "type" : "string",
+          "example" : "eyJhbGciOiJkaXIiLCJlbmMiOi....",
+          "x-ing-type" : "string"
+        },
+        "refresh_token_expires_in" : {
+          "type" : "integer",
+          "example" : 3600,
+          "x-ing-type" : "integer"
+        },
+        "client_id" : {
+          "type" : "string",
+          "example" : "dc46e4b8-70aa-4da4-b74a-a2576680f004",
+          "x-ing-type" : "string"
+        },
+        "keys" : {
+          "type" : "array",
+          "description" : "ING public key in JSON Web Key Set standard format (https://tools.ietf.org/html/rfc7517).",
+          "items" : {
+            "$ref" : "#/definitions/jsonWebKeySet"
+          },
+          "minItems" : 1,
+          "x-ing-type" : "array"
+        }
+      }
+    },
+    "Error" : {
+      "type" : "object",
+      "required" : [ "message" ],
+      "properties" : {
+        "message" : {
+          "type" : "string",
+          "x-ing-type" : "string"
+        }
+      }
+    },
+    "jsonWebKeySet" : {
+      "type" : "object",
+      "properties" : {
+        "kty" : {
+          "type" : "string",
+          "example" : "RSA",
+          "description" : "The key type",
+          "x-ing-type" : "string"
+        },
+        "alg" : {
+          "type" : "string",
+          "example" : "RS256",
+          "description" : "The algorithm for the key",
+          "x-ing-type" : "string"
+        },
+        "use" : {
+          "type" : "string",
+          "example" : "sig",
+          "description" : "How the key was meant to be used",
+          "x-ing-type" : "string"
+        },
+        "kid" : {
+          "type" : "string",
+          "description" : "The unique identifier for the key",
+          "x-ing-type" : "string"
+        },
+        "n" : {
+          "type" : "string",
+          "description" : "The modulus for a standard pem",
+          "x-ing-type" : "string"
+        },
+        "e" : {
+          "type" : "string",
+          "description" : "The exponent for a standard pem",
+          "x-ing-type" : "string"
+        },
+        "x5t" : {
+          "type" : "string",
+          "description" : "The thumbprint of the x.509 cert (SHA-1 thumbprint)",
+          "x-ing-type" : "string"
+        },
+        "x5c" : {
+          "type" : "array",
+          "description" : "The x509 certificate chain",
+          "items" : {
+            "type" : "string",
+            "x-ing-type" : "string"
+          },
+          "x-ing-type" : "array"
+        }
+      },
+      "description" : "ING's current public key certificate encoded as a JSON Web Key SET (JWKS)"
+    }
+  },
+  "x-ing-guidelines-version" : 1
+}

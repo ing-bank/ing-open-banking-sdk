@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.3.3.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <groupId>com.ing.developer</groupId>
+    <artifactId>open-banking-demo-app</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>Open Banking Demo App</name>
+    <description>Open Banking demo app for testing purposes</description>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <open-banking-sdk.version>0.0.1-SNAPSHOT</open-banking-sdk.version>
+        <jackson.version>2.11.2</jackson.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ing.developer</groupId>
+            <artifactId>open-banking-common</artifactId>
+            <version>${open-banking-sdk.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ing.developer</groupId>
+            <artifactId>open-banking-account-information-driver</artifactId>
+            <version>${open-banking-sdk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ing.developer</groupId>
+            <artifactId>open-banking-payment-initiation-driver</artifactId>
+            <version>${open-banking-sdk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ing.developer</groupId>
+            <artifactId>open-banking-payment-request-driver</artifactId>
+            <version>${open-banking-sdk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ing.developer</groupId>
+            <artifactId>open-banking-showcase-driver</artifactId>
+            <version>${open-banking-sdk.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <scope>runtime</scope>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <scope>runtime</scope>
+            <version>${httpclient.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

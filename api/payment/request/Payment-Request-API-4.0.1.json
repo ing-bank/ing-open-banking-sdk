@@ -1,0 +1,894 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "The Payment Request API allows you to generate payment request links that can be shared with your customers. The Payment Request API is based on ING’s successful consumer–to-consumer (C2C) payment request feature, which means your customers will already be familiar with this payment method. Consumers of this API will need to have an existing iDEAL contract with ING.",
+    "version" : "4.0.1",
+    "title" : "Payment Request API",
+    "contact" : {
+      "name" : "ING Developer Portal",
+      "url" : "https://developer.ing.com",
+      "email" : "developerportal@ing.com"
+    }
+  },
+  "host" : "api.sandbox.ing.com",
+  "tags" : [ {
+    "name" : "Payment Request",
+    "description" : "Actions relating to specific payment requests"
+  }, {
+    "name" : "Registration",
+    "description" : "Actions relating to the merchant registration"
+  }, {
+    "name" : "Payments",
+    "description" : "Actions relating to payments received on a payment request"
+  } ],
+  "schemes" : [ "https" ],
+  "consumes" : [ "application/json" ],
+  "produces" : [ "application/json" ],
+  "paths" : {
+    "/payment-requests/{id}" : {
+      "get" : {
+        "tags" : [ "Payment Request" ],
+        "summary" : "Get payment request by identifier",
+        "description" : "Get payment request by identifier. The identifier of the payment request is returned in the response of the POST request that creates the payment request.",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "Unique identifier of the requested payment request.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "$ref" : "#/parameters/AuthorizationBearerInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/XINGReqID"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/GetPaymentRequestResponse"
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          }
+        },
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-requests:view" ]
+        } ]
+      },
+      "parameters" : [ ]
+    },
+    "/payment-requests" : {
+      "post" : {
+        "tags" : [ "Payment Request" ],
+        "summary" : "Create a new payment request",
+        "description" : "Create a new payment request, and return the identifier and payment initiation URL of the newly created payment request.",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "paymentRequest",
+          "description" : "The payment request to be created.",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/CreatePaymentRequest"
+          }
+        }, {
+          "$ref" : "#/parameters/AuthorizationBearerInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/XINGReqID"
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "headers" : {
+              "Location" : {
+                "type" : "string",
+                "format" : "uri",
+                "description" : "URL of the newly created payment request.",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/CreatePaymentRequestResponse"
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          }
+        },
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-requests:create" ]
+        } ]
+      },
+      "parameters" : [ ]
+    },
+    "/payment-requests/{id}/close" : {
+      "post" : {
+        "tags" : [ "Payment Request" ],
+        "summary" : "Close a payment request",
+        "description" : "Close a payment request, so that no new payments can be performed for this payment request. Any iDEAL transactions that were already completed successfully will still be processed. A payment request can only be closed if its current status is *open*.",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "The unique identifier of the payment request that should be closed.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "$ref" : "#/parameters/AuthorizationBearerInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/XINGReqID"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          },
+          "409" : {
+            "description" : "Conflict",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          }
+        },
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-requests:close" ]
+        } ]
+      },
+      "parameters" : [ ]
+    },
+    "/payment-requests/registrations" : {
+      "get" : {
+        "tags" : [ "Registration" ],
+        "summary" : "Get registration details",
+        "description" : "Get details of an existing merchant registration",
+        "parameters" : [ {
+          "$ref" : "#/parameters/AuthorizationBearerInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/XINGReqID"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/GetRegistrationResponse"
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          }
+        },
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-requests:register" ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "Registration" ],
+        "summary" : "Register a new merchant",
+        "description" : "Register a new merchant, so that this merchant is able to use the PaymentRequest API after verification of that merchant.",
+        "produces" : [ "text/plain", "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "registrationRequest",
+          "description" : "The registration request",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/RegistrationRequest"
+          }
+        }, {
+          "$ref" : "#/parameters/AuthorizationBearerInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/XINGReqID"
+        } ],
+        "responses" : {
+          "202" : {
+            "description" : "Accepted",
+            "schema" : {
+              "$ref" : "#/definitions/RegistrationResponse"
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          }
+        },
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-requests:register" ]
+        } ]
+      },
+      "parameters" : [ ]
+    },
+    "/payment-requests/{id}/payments" : {
+      "get" : {
+        "tags" : [ "Payments" ],
+        "summary" : "Get payments for a payment request",
+        "description" : "Get received payments for a payment request by identifier. The identifier of the payment request is returned in the response of the POST request that creates the payment request.",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "Unique identifier of the requested payment request.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "$ref" : "#/parameters/AuthorizationBearerInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/XINGReqID"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/GetPaymentsResponse"
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "schema" : {
+              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+            }
+          }
+        },
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-requests:view" ]
+        } ]
+      },
+      "parameters" : [ ]
+    }
+  },
+  "securityDefinitions" : {
+    "ING-Application-Security" : {
+      "type" : "oauth2",
+      "tokenUrl" : "https://api.ing.com/oauth2/token",
+      "flow" : "application",
+      "scopes" : {
+        "payment-requests:view" : "View payment request information.",
+        "payment-requests:create" : "Create new payment requests.",
+        "payment-requests:close" : "Close existing payment requests.",
+        "payment-requests:register" : "Register new merchant and view registration."
+      }
+    }
+  },
+  "definitions" : {
+    "CreatePaymentRequest" : {
+      "type" : "object",
+      "required" : [ "description", "purchaseId", "validUntil" ],
+      "properties" : {
+        "fixedAmount" : {
+          "$ref" : "#/definitions/fixedAmount"
+        },
+        "variableAmount" : {
+          "$ref" : "#/definitions/variableAmount"
+        },
+        "validUntil" : {
+          "type" : "string",
+          "format" : "date-time",
+          "example" : "2020-12-31T00:00:00.000+01:00",
+          "description" : "Expiration date-time of this payment request, with support for time zones. This must be a date-time in the future, with a maximum of one year.",
+          "x-ing-type" : "string"
+        },
+        "maximumAllowedPayments" : {
+          "type" : "integer",
+          "example" : 10,
+          "description" : "Maximum number of successful payments allowed for this payment request. If this number is reached, the status of the payment request will be *fulfilled*.",
+          "minimum" : 1,
+          "x-ing-type" : "integer"
+        },
+        "maximumReceivableAmount" : {
+          "$ref" : "#/definitions/maximumReceivableAmount"
+        },
+        "purchaseId" : {
+          "type" : "string",
+          "example" : "abcdefg1234567890",
+          "description" : "Consumer generated identifier of the transaction as shown in the iDEAL issuer screens and payers' transaction overview.",
+          "maxLength" : 35,
+          "pattern" : "^[a-zA-Z0-9]*$",
+          "x-ing-type" : "string"
+        },
+        "description" : {
+          "type" : "string",
+          "example" : "Your purchase reference abcdefg1234567890",
+          "description" : "The description as shown on the payment request screen. Maximum length of 1024 characters.",
+          "maxLength" : 1024,
+          "x-ing-type" : "string"
+        },
+        "returnUrl" : {
+          "type" : "string",
+          "format" : "uri",
+          "example" : "https://www.webshop.com/return?purchaseId=abcdefg1234567890",
+          "description" : "URL to which payers will be redirected after completing or cancelling the iDEAL payment. Payment request identifier (prid) and iDEAL transaction identifiers (trxid and ec) will be added as query parameters, as such: *https://www.webshop.com/return?purchaseId=abcdefg1234567890&prid=xrgq1coyp1pnnfigiaaa6pqn1o9lc0gh&trxid=0050000123456789&ec=abcdef01234567890*. Default if left blank is *https://www.ing.nl/particulier/betaalverzoek/return.html*.",
+          "pattern" : "^(https)://[-a-zA-Z0-9+&@#\\/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]",
+          "x-ing-type" : "string"
+        }
+      }
+    },
+    "CreatePaymentRequestResponse" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "example" : "xrgq1coyp1pnnfigiaaa6pqn1o9lc0gh",
+          "description" : "Unique identifier of the created payment request.",
+          "x-ing-type" : "string"
+        },
+        "paymentInitiationUrl" : {
+          "type" : "string",
+          "format" : "uri",
+          "example" : "https://www.ing.nl/zakelijk/betaalverzoek/index.html?trxid=xrgq1coyp1pnnfigiaaa6pqn1o9lc0gh",
+          "description" : "URL to which payers should be directed to initiate a payment.",
+          "x-ing-type" : "string"
+        }
+      }
+    },
+    "GetPaymentRequestResponse" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "example" : "xrgq1coyp1pnnfigiaaa6pqn1o9lc0gh",
+          "description" : "Unique identifier of this payment request.",
+          "x-ing-type" : "string"
+        },
+        "status" : {
+          "type" : "string",
+          "example" : "open",
+          "description" : "Status of this payment request. Possible values are open, expired, closed or fulfilled. It is not possible to perform payments for closed, expired, or fulfilled payment requests.",
+          "enum" : [ "open", "closed", "expired", "fulfilled" ],
+          "x-ing-type" : "string"
+        },
+        "fixedAmount" : {
+          "$ref" : "#/definitions/fixedAmount"
+        },
+        "variableAmount" : {
+          "$ref" : "#/definitions/variableAmount"
+        },
+        "validUntil" : {
+          "type" : "string",
+          "format" : "date-time",
+          "example" : "2020-12-31T00:00:00.000+01:00",
+          "description" : "Expiration date-time of this payment request.",
+          "x-ing-type" : "string"
+        },
+        "maximumAllowedPayments" : {
+          "type" : "integer",
+          "example" : 1,
+          "description" : "Maximum number of successful payments allowed for this payment request. If this number is reached, the status of the payment request will be *fulfilled*.",
+          "x-ing-type" : "integer"
+        },
+        "maximumReceivableAmount" : {
+          "$ref" : "#/definitions/maximumReceivableAmount"
+        },
+        "purchaseId" : {
+          "type" : "string",
+          "example" : "abcdefg1234567890",
+          "description" : "Consumer generated identifier of the transaction as shown in the iDEAL issuer screens and payers' transaction overview.",
+          "x-ing-type" : "string"
+        },
+        "description" : {
+          "type" : "string",
+          "example" : "Your purchase reference abcdefg1234567890",
+          "description" : "The description as shown on the payment request screen. Maximum length of 1024 characters.",
+          "x-ing-type" : "string"
+        },
+        "paymentInitiationUrl" : {
+          "type" : "string",
+          "format" : "uri",
+          "example" : "https://www.ing.nl/zakelijk/betaalverzoek/index.html?trxid=xrgq1coyp1pnnfigiaaa6pqn1o9lc0gh",
+          "description" : "URL to which payers should be directed to initiate payment.",
+          "pattern" : "^(https)://[-a-zA-Z0-9+&@#\\/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]",
+          "x-ing-type" : "string"
+        },
+        "returnUrl" : {
+          "type" : "string",
+          "format" : "uri",
+          "example" : "https://www.webshop.com/return?purchaseId=abcdefg1234567890",
+          "description" : "URL to which payers will be redirected after completing or cancelling the iDEAL payment. Payment request identifier (prid) and iDEAL transaction identifiers (trxid and ec) will be added as query parameters, as such: https://www.webshop.com/return?purchaseId=abcdefg1234567890&prid=xrgq1coyp1pnnfigiaaa6pqn1o9lc0gh&trxid=0050000123456789&ec=abcdef01234567890.",
+          "pattern" : "^(https)://[-a-zA-Z0-9+&@#\\/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]",
+          "x-ing-type" : "string"
+        },
+        "transactions" : {
+          "type" : "array",
+          "description" : "DEPRECATED: List of payments for this payment request.",
+          "items" : {
+            "$ref" : "#/definitions/Payment"
+          },
+          "minItems" : 0,
+          "x-ing-type" : "array"
+        }
+      }
+    },
+    "RegistrationRequest" : {
+      "type" : "object",
+      "required" : [ "dailyReceivableLimit", "merchantIBAN", "merchantId", "merchantName" ],
+      "properties" : {
+        "merchantId" : {
+          "type" : "string",
+          "example" : "001234567",
+          "description" : "Identification code of the merchant iDEAL contract.",
+          "pattern" : "^[0-9]{9}$",
+          "x-ing-type" : "string"
+        },
+        "merchantSubId" : {
+          "type" : "string",
+          "example" : "123456",
+          "description" : "Sub identification code of the merchant iDEAL contract.",
+          "maxLength" : 6,
+          "pattern" : "^[0-9]*$",
+          "x-ing-type" : "string"
+        },
+        "merchantName" : {
+          "type" : "string",
+          "example" : "Company BV",
+          "description" : "",
+          "minLength" : 1,
+          "maxLength" : 70,
+          "pattern" : "^[-A-Za-z0-9= %*+,./&@\\\"\\':;?()$]*$",
+          "x-ing-type" : "string"
+        },
+        "merchantIBAN" : {
+          "type" : "string",
+          "example" : "NL26INGB0003275339",
+          "description" : "IBAN with which the merchant has registered the iDEAL contract.",
+          "pattern" : "^[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{10}$",
+          "x-ing-type" : "string"
+        },
+        "merchantLogo" : {
+          "type" : "string",
+          "example" : "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAW0lEQVR42mJgYGDYC8L///9ngLKPAXEgiI+MQQBE/ody/iPhM0jsCnwKYXg7IRNhWB2bwu1AfA+IL+E1Ec3xukiKSxmhDJAkIwMewMRAJCBaIQsQ7yBGIUCAAQDZgFqi05MKyQAAAABJRU5ErkJggg==",
+          "description" : "Base64 encoded company logo. The encoded string length excluding \"data:image/png;base64,\" prefix should not exceed 43KB which is equivalent to a 32KB file size.",
+          "maxLength" : 44032,
+          "pattern" : "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+          "x-ing-type" : "string"
+        },
+        "dailyReceivableLimit" : {
+          "$ref" : "#/definitions/dailyReceivableLimit"
+        }
+      }
+    },
+    "RegistrationResponse" : {
+      "type" : "string",
+      "description" : "Certificate the merchant should attach to their iDEAL contract, so that the PaymentRequest API can verify that the merchant has an iDEAL contract.",
+      "example" : "-----BEGIN CERTIFICATE-----\nMIIDUjCCAjqgAwIBAgIEZyvdCTANBgkqhkiG9w0BAQsFADBrMRQwEgYDVQQDDAth\ncGkuaW5nLmNvbTEaMBgGA1UECwwRUGF5bWVudFJlcXVlc3RBUEkxFjAUBgNVBAoM\nDUlORyBCQU5LIE4uVi4xEjAQBgNVBAcMCUFtc3RlcmRhbTELMAkGA1UEBhMCTkww\nHhcNMTkwODE4MDgwODAyWhcNMjkwOTE0MDgwODAyWjBrMRQwEgYDVQQDDAthcGku\naW5nLmNvbTEaMBgGA1UECwwRUGF5bWVudFJlcXVlc3RBUEkxFjAUBgNVBAoMDUlO\nRyBCQU5LIE4uVi4xEjAQBgNVBAcMCUFtc3RlcmRhbTELMAkGA1UEBhMCTkwwggEi\nMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCavZYCg5w+tYhm++JWAwP7PPW1\nNmuf4k3wCxvbYXmJkR2c8IxCZ2mzrxky2WHjucIACvjgoFKEIeU6HOwUilF5I3N+\nlJk4gmI0PmFRk6SLWR1AEVX+jad1xQj8oFNhUj8ecIB4GOsZPHdAgZzLZBDS8lLI\nvrWnoAZQMtO0TEmQBqo5wCeI1Mp6KCh1pAdbx1J82Xhd3h0weQ3hyeicKUFMcANl\nhxKBYtMDZG/Y3vOBZahW746E6JQo567iOELCIfoCvfio3c3WHms3TJfO6XcJDWNN\nGhd0q9HdqQR8+W5ed90n4G9h6obnTHi8U2LxDQr2iLwIPYgk37SmdgNGGA4HAgMB\nAAEwDQYJKoZIhvcNAQELBQADggEBAGi7+k7rNumkLGc8Q4vUMQ5UOgCQhLifFQSn\nM2CSy4ERRz4rqRPAYbHGVhPOReYzRWkNqXEX+oPu5U2N9/6jJDtOmWILlu4Sr/nr\nlztvDKGLpMkQyK7M65dIr1fuK/JfcmgMW6rLZ2uuZNxukm7wkrLu6S+MPyt6ag9o\nuhR7ZEvObb4Q5JEJSF2waNN+2rE1bPX7dOTUQW+ILMALpqc8ufHM10FL2O322O5s\nr/NMvzOgp+hw73FqAQ9rKS8sjgcOtzWw+JxvwFMv3TKylTGKFhIzfJ5MmmJCbRV5\nM6eEYMUuOo8idZ6ctKlOqXDySWNwvhdj8nW5Ck/I13Ae9FSrz3Y=\n-----END CERTIFICATE-----\n"
+    },
+    "GetRegistrationResponse" : {
+      "type" : "object",
+      "properties" : {
+        "merchantId" : {
+          "type" : "string",
+          "example" : "001234567",
+          "description" : "Identification code of the merchant iDEAL contract.",
+          "pattern" : "^[0-9]{9}$",
+          "x-ing-type" : "string"
+        },
+        "merchantSubId" : {
+          "type" : "string",
+          "example" : "123456",
+          "description" : "Sub identification code of the merchant iDEAL contract.",
+          "maxLength" : 6,
+          "pattern" : "^[0-9]*$",
+          "x-ing-type" : "string"
+        },
+        "merchantName" : {
+          "type" : "string",
+          "example" : "Company BV",
+          "description" : "",
+          "minLength" : 1,
+          "maxLength" : 70,
+          "pattern" : "^[-A-Za-z0-9= %*+,./&@\\\"\\':;?()$]*$",
+          "x-ing-type" : "string"
+        },
+        "merchantIBAN" : {
+          "type" : "string",
+          "example" : "NL26INGB0003275339",
+          "description" : "IBAN with which the merchant has registered the iDEAL contract.",
+          "pattern" : "^[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{10}$",
+          "x-ing-type" : "string"
+        },
+        "merchantLogo" : {
+          "type" : "string",
+          "example" : "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAW0lEQVR42mJgYGDYC8L///9ngLKPAXEgiI+MQQBE/ody/iPhM0jsCnwKYXg7IRNhWB2bwu1AfA+IL+E1Ec3xukiKSxmhDJAkIwMewMRAJCBaIQsQ7yBGIUCAAQDZgFqi05MKyQAAAABJRU5ErkJggg==",
+          "description" : "Base64 encoded company logo.",
+          "pattern" : "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+          "x-ing-type" : "string"
+        },
+        "dailyReceivableLimit" : {
+          "$ref" : "#/definitions/dailyReceivableLimit"
+        },
+        "created" : {
+          "type" : "string",
+          "format" : "date-time",
+          "example" : "2020-12-31T00:00:00.000+01:00",
+          "description" : "Created date-time of this merchant registration, with support for time zones.",
+          "x-ing-type" : "string"
+        },
+        "lastUpdated" : {
+          "type" : "string",
+          "format" : "date-time",
+          "example" : "2020-12-31T00:00:00.000+01:00",
+          "description" : "Last updated date-time of this merchant registration, with support for time zones.",
+          "x-ing-type" : "string"
+        },
+        "status" : {
+          "type" : "string",
+          "example" : "Open",
+          "description" : "Status of this merchant registration. This is set to Active once the iDEAL contract certificate has been uploaded to the customer's iDEAL dashboard",
+          "enum" : [ "Open", "Expired", "Cancelled", "Active", "Error", "Disabled" ],
+          "x-ing-type" : "string"
+        },
+        "idealContractCertificate" : {
+          "type" : "string",
+          "example" : "-----BEGIN CERTIFICATE-----\nMIIDUjCCAjqgAwIBAgIEZyvdCTANBgkqhkiG9w0BAQsFADBrMRQwEgYDVQQDDAth\ncGkuaW5nLmNvbTEaMBgGA1UECwwRUGF5bWVudFJlcXVlc3RBUEkxFjAUBgNVBAoM\nDUlORyBCQU5LIE4uVi4xEjAQBgNVBAcMCUFtc3RlcmRhbTELMAkGA1UEBhMCTkww\nHhcNMTkwODE4MDgwODAyWhcNMjkwOTE0MDgwODAyWjBrMRQwEgYDVQQDDAthcGku\naW5nLmNvbTEaMBgGA1UECwwRUGF5bWVudFJlcXVlc3RBUEkxFjAUBgNVBAoMDUlO\nRyBCQU5LIE4uVi4xEjAQBgNVBAcMCUFtc3RlcmRhbTELMAkGA1UEBhMCTkwwggEi\nMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCavZYCg5w+tYhm++JWAwP7PPW1\nNmuf4k3wCxvbYXmJkR2c8IxCZ2mzrxky2WHjucIACvjgoFKEIeU6HOwUilF5I3N+\nlJk4gmI0PmFRk6SLWR1AEVX+jad1xQj8oFNhUj8ecIB4GOsZPHdAgZzLZBDS8lLI\nvrWnoAZQMtO0TEmQBqo5wCeI1Mp6KCh1pAdbx1J82Xhd3h0weQ3hyeicKUFMcANl\nhxKBYtMDZG/Y3vOBZahW746E6JQo567iOELCIfoCvfio3c3WHms3TJfO6XcJDWNN\nGhd0q9HdqQR8+W5ed90n4G9h6obnTHi8U2LxDQr2iLwIPYgk37SmdgNGGA4HAgMB\nAAEwDQYJKoZIhvcNAQELBQADggEBAGi7+k7rNumkLGc8Q4vUMQ5UOgCQhLifFQSn\nM2CSy4ERRz4rqRPAYbHGVhPOReYzRWkNqXEX+oPu5U2N9/6jJDtOmWILlu4Sr/nr\nlztvDKGLpMkQyK7M65dIr1fuK/JfcmgMW6rLZ2uuZNxukm7wkrLu6S+MPyt6ag9o\nuhR7ZEvObb4Q5JEJSF2waNN+2rE1bPX7dOTUQW+ILMALpqc8ufHM10FL2O322O5s\nr/NMvzOgp+hw73FqAQ9rKS8sjgcOtzWw+JxvwFMv3TKylTGKFhIzfJ5MmmJCbRV5\nM6eEYMUuOo8idZ6ctKlOqXDySWNwvhdj8nW5Ck/I13Ae9FSrz3Y=\n-----END CERTIFICATE-----\n",
+          "description" : "Certificate the merchant should attach to their iDEAL contract, so the PaymentRequest API can verify that the merchant has an iDEAL contract.",
+          "x-ing-type" : "string"
+        }
+      }
+    },
+    "Payment" : {
+      "type" : "object",
+      "properties" : {
+        "transactionId" : {
+          "type" : "string",
+          "example" : "0050000123456789",
+          "description" : "Unique identifier of the payment.",
+          "x-ing-type" : "string"
+        },
+        "executed" : {
+          "type" : "string",
+          "format" : "date-time",
+          "example" : "2020-12-30T14:17:20.124+01:00",
+          "description" : "Timestamp of the execution of this payment.",
+          "x-ing-type" : "string"
+        },
+        "amount" : {
+          "type" : "object",
+          "description" : "Amount that was paid with this payment.",
+          "properties" : {
+            "value" : {
+              "type" : "number",
+              "example" : 100.0,
+              "x-ing-type" : "number"
+            },
+            "currency" : {
+              "type" : "string",
+              "example" : "EUR",
+              "x-ing-type" : "string"
+            }
+          },
+          "x-ing-type" : "object"
+        },
+        "debtor" : {
+          "type" : "object",
+          "description" : "Information regarding the payer of the payment.",
+          "properties" : {
+            "name" : {
+              "type" : "string",
+              "example" : "A. Lovelace",
+              "description" : "Account name of the debtor of this payment.",
+              "x-ing-type" : "string"
+            },
+            "iban" : {
+              "type" : "string",
+              "example" : "NL99INGB0000000000",
+              "description" : "IBAN of the debtor account of this payment.",
+              "x-ing-type" : "string"
+            }
+          },
+          "x-ing-type" : "object"
+        }
+      }
+    },
+    "GetPaymentsResponse" : {
+      "type" : "object",
+      "properties" : {
+        "payments" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Payment"
+          },
+          "minItems" : 0,
+          "x-ing-type" : "array"
+        }
+      },
+      "description" : "List of payments for this payment request."
+    },
+    "fixedAmount" : {
+      "type" : "object",
+      "required" : [ "currency", "value" ],
+      "properties" : {
+        "value" : {
+          "type" : "number",
+          "example" : 99.95,
+          "description" : "Value of the fixed amount.",
+          "minimum" : 0.01,
+          "maximum" : 9.99999999999E9,
+          "x-ing-type" : "number"
+        },
+        "currency" : {
+          "type" : "string",
+          "example" : "EUR",
+          "description" : "Currency of the fixed amount. Currently the only supported value is EUR (Euros).",
+          "pattern" : "EUR",
+          "x-ing-type" : "string"
+        }
+      },
+      "description" : "Fixed amount to be paid per transaction for this payment request. Value should be formatted with either zero or two decimal places."
+    },
+    "maximumReceivableAmount" : {
+      "type" : "object",
+      "required" : [ "currency", "value" ],
+      "properties" : {
+        "value" : {
+          "type" : "number",
+          "example" : 100.0,
+          "description" : "Value of the maximum receivable amount.",
+          "minimum" : 0.01,
+          "maximum" : 9.99999999999E9,
+          "x-ing-type" : "number"
+        },
+        "currency" : {
+          "type" : "string",
+          "example" : "EUR",
+          "description" : "Currency of the maximum receivable amount. Currently the only supported value is *EUR* (Euros).",
+          "pattern" : "EUR",
+          "x-ing-type" : "string"
+        }
+      },
+      "description" : "Maximum total amount that can be received by this payment request. If this amount is reached, the status of the payment request will be *fulfilled*. Value should be formatted with either zero or two decimal places."
+    },
+    "dailyReceivableLimit" : {
+      "type" : "object",
+      "required" : [ "currency", "value" ],
+      "properties" : {
+        "value" : {
+          "type" : "number",
+          "example" : 25000.0,
+          "description" : "Value of the daily receivable limit.",
+          "minimum" : 0.01,
+          "maximum" : 50000.0,
+          "x-ing-type" : "number"
+        },
+        "currency" : {
+          "type" : "string",
+          "example" : "EUR",
+          "description" : "Currency of the daily receivable limit. Currently the only supported value is *EUR* (Euros).",
+          "pattern" : "EUR",
+          "x-ing-type" : "string"
+        }
+      },
+      "description" : "Maximum amount that can be received by this merchant per day. Value should be formatted with either zero or two decimal places and must be between 0.01 and 50.000 euros. "
+    },
+    "variableAmount" : {
+      "type" : "object",
+      "required" : [ "currency", "suggestedValue" ],
+      "properties" : {
+        "minimumValue" : {
+          "type" : "number",
+          "example" : 90.0,
+          "description" : "Minimum value that can be paid per transaction for this payment request.",
+          "minimum" : 0.01,
+          "maximum" : 9.99999999999E9,
+          "x-ing-type" : "number"
+        },
+        "maximumValue" : {
+          "type" : "number",
+          "example" : 100.0,
+          "description" : "Maximum value that can be paid per transaction for this payment request.",
+          "minimum" : 0.01,
+          "maximum" : 9.99999999999E9,
+          "x-ing-type" : "number"
+        },
+        "suggestedValue" : {
+          "type" : "number",
+          "example" : 99.95,
+          "description" : "The suggested value of the variable amount.",
+          "minimum" : 0,
+          "maximum" : 9.99999999999E9,
+          "x-ing-type" : "number"
+        },
+        "currency" : {
+          "type" : "string",
+          "example" : "EUR",
+          "description" : "Currency of the variable amount. Currently the only supported value is *EUR* (Euros).",
+          "pattern" : "EUR",
+          "x-ing-type" : "string"
+        }
+      },
+      "description" : "Variable amount to be paid for this payment request. The payer can choose to pay an amount between the minimum and maximum, with the default set at the suggested amount. Values should be formatted with either zero or two decimal places."
+    }
+  },
+  "parameters" : {
+    "AuthorizationBearerInHeader" : {
+      "name" : "Authorization",
+      "in" : "header",
+      "description" : "Contains Application Access Token with auth-scheme Bearer.",
+      "required" : true,
+      "type" : "string"
+    },
+    "SignatureInHeader" : {
+      "name" : "Signature",
+      "in" : "header",
+      "description" : "A signature of the request by the third party on application level. See \"Get Started\" for more information on how to generate.",
+      "required" : true,
+      "type" : "string"
+    },
+    "DigestInHeader" : {
+      "name" : "Digest",
+      "in" : "header",
+      "description" : "SHA256 of the body.",
+      "required" : true,
+      "type" : "string"
+    },
+    "DateInHeader" : {
+      "name" : "Date",
+      "in" : "header",
+      "description" : "Standard http header element for date and time",
+      "required" : true,
+      "type" : "string",
+      "format" : "date-time"
+    },
+    "XINGReqID" : {
+      "name" : "X-ING-ReqID",
+      "in" : "header",
+      "description" : "Request ID, can be a UUID",
+      "required" : true,
+      "type" : "string"
+    }
+  }
+}

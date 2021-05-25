@@ -1,0 +1,2305 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "Create payment initiation applications that offer great added value to your customers and users. INGs Payment Initiation Service will enable secure access to all European ING online accessible payments accounts.",
+    "version" : "1.5.0",
+    "title" : "Payment Initiation API",
+    "contact" : {
+      "name" : "ING Developer Portal",
+      "url" : "https://developer.ing.com",
+      "email" : "developerportal@ing.com"
+    },
+    "license" : {
+      "name" : "Copyright (c) ING Bank N.V. All Rights Reserved.",
+      "url" : "http://developer.ing.com"
+    }
+  },
+  "host" : "api.sandbox.ing.com",
+  "basePath" : "/",
+  "tags" : [ {
+    "name" : "PSD2",
+    "description" : "Revised Payment Services Directive (PSD2)",
+    "externalDocs" : {
+      "description" : "Directive (EU) 2015/2366",
+      "url" : "https://ec.europa.eu/info/law/payment-services-psd-2-directive-eu-2015-2366_en"
+    }
+  }, {
+    "name" : "Single payment initiation",
+    "description" : "Initiate a single payment for all active European ING online payment accounts (SEPA Credit Transfer, Domestic Credit Transfer  or True International Payment)"
+  }, {
+    "name" : "Periodic payment initiation",
+    "description" : "Initiate a periodic payment for all active European ING online payment accounts (SEPA Credit Transfer, Domestic Credit Transfer  or True International Payment)"
+  }, {
+    "name" : "Bulk payment initiation",
+    "description" : "Initiate a bulk payment for all active European ING online payment accounts (SEPA Credit Transfer)"
+  } ],
+  "schemes" : [ "https" ],
+  "paths" : {
+    "/v1/payments/{payment-product}" : {
+      "post" : {
+        "tags" : [ "Single payment initiation" ],
+        "summary" : "Payment initiation request - JSON.",
+        "description" : "This operation will create a payment initiation request at ING as a resource addressable under {payment-product} with all data relevant for the corresponding payment product.",
+        "operationId" : "initiatePayment",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/payment-product"
+        }, {
+          "$ref" : "#/parameters/X-Request-ID"
+        }, {
+          "$ref" : "#/parameters/AuthorizationInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/TPP-Redirect-URI"
+        }, {
+          "$ref" : "#/parameters/PSU-IP-Address_mandatory"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "description" : "Payment initiation instruction. The payment data to be transported in the request body are dependent of the chosen API endpoint.",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/PaymentInstruction"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Created.",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "X-ING-Response-ID" : {
+                "type" : "string",
+                "description" : "ID for tracing the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "Location" : {
+                "type" : "string",
+                "description" : "Location of the created resource (if created) i.e. GET /v1/payments/{payment-product}/{paymentId} example GET /v1/payments/sepa-credit-transfers/0e62dac7-6c2a-4483-ae01-b8f6221673d2",
+                "x-ing-type" : "string"
+              },
+              "ASPSP-SCA-Approach" : {
+                "type" : "string",
+                "description" : "Defines the chosen SCA by ING i.e. REDIRECT. ING will start the authorization process implicitly as no additional data is needed from the TPP. Subsequently, the redirection of the PSU browser session should happen directly after the Payment Initiation Response.",
+                "enum" : [ "REDIRECT" ],
+                "default" : "REDIRECT",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/PaymentInitiationResponse"
+            }
+          },
+          "400" : {
+            "$ref" : "#/responses/400BadRequest"
+          },
+          "401" : {
+            "$ref" : "#/responses/401Unauthorised"
+          },
+          "403" : {
+            "$ref" : "#/responses/403Forbidden"
+          },
+          "404" : {
+            "$ref" : "#/responses/404NotFound"
+          },
+          "422" : {
+            "$ref" : "#/responses/422UnProcessableEntity"
+          },
+          "500" : {
+            "$ref" : "#/responses/500TechnicalError"
+          },
+          "503" : {
+            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+          }
+        },
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-accounts:orders:create" ]
+        } ]
+      },
+      "parameters" : [ ]
+    },
+    "/v1/payments/{payment-product}/{paymentId}" : {
+      "get" : {
+        "tags" : [ "Single payment initiation" ],
+        "summary" : "Payment details - JSON",
+        "description" : "This operation will return the payment initiation details based on the unique identifier of the payment (paymentId), as provided by ING as part of the response of the payment initiation request.",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/payment-product"
+        }, {
+          "$ref" : "#/parameters/paymentId"
+        }, {
+          "$ref" : "#/parameters/X-Request-ID"
+        }, {
+          "$ref" : "#/parameters/AuthorizationInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/PSU-IP-Address_optional"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "X-ING-Response-ID" : {
+                "type" : "string",
+                "description" : "ID for tracing the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/PaymentInstruction"
+            }
+          },
+          "400" : {
+            "$ref" : "#/responses/400BadRequest"
+          },
+          "401" : {
+            "$ref" : "#/responses/401Unauthorised"
+          },
+          "403" : {
+            "$ref" : "#/responses/403Forbidden"
+          },
+          "404" : {
+            "$ref" : "#/responses/404NotFound"
+          },
+          "422" : {
+            "$ref" : "#/responses/422UnProcessableEntity"
+          },
+          "500" : {
+            "$ref" : "#/responses/500TechnicalError"
+          },
+          "503" : {
+            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "Single payment initiation" ],
+        "summary" : "Payment cancellation - JSON",
+        "description" : "This operation will cancel the initiated payment based on the unique identifier of the payment (paymentId), as provided by ING as part of the response of the payment initiation request. The response to this request will inform the requester whether the request was * successful (204) or, * rejected (4xx).",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/payment-product"
+        }, {
+          "$ref" : "#/parameters/paymentId"
+        }, {
+          "$ref" : "#/parameters/X-Request-ID"
+        }, {
+          "$ref" : "#/parameters/AuthorizationInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/PSU-IP-Address_optional"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "X-ING-Response-ID" : {
+                "type" : "string",
+                "description" : "ID for tracing the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            }
+          },
+          "400" : {
+            "$ref" : "#/responses/400BadRequest"
+          },
+          "401" : {
+            "$ref" : "#/responses/401Unauthorised"
+          },
+          "403" : {
+            "$ref" : "#/responses/403Forbidden"
+          },
+          "404" : {
+            "$ref" : "#/responses/404NotFound"
+          },
+          "422" : {
+            "$ref" : "#/responses/422UnProcessableEntity"
+          },
+          "500" : {
+            "$ref" : "#/responses/500TechnicalError"
+          },
+          "503" : {
+            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+          }
+        }
+      },
+      "parameters" : [ ]
+    },
+    "/v1/payments/{payment-product}/{paymentId}/status" : {
+      "get" : {
+        "tags" : [ "Single payment initiation" ],
+        "summary" : "Payment status - JSON",
+        "description" : "This operation will return the status of the payment based on the unique identifier of the payment (paymentId), as provided by ING as part of the response of the payment initiation request.",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/payment-product"
+        }, {
+          "$ref" : "#/parameters/paymentId"
+        }, {
+          "$ref" : "#/parameters/X-Request-ID"
+        }, {
+          "$ref" : "#/parameters/AuthorizationInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/PSU-IP-Address_optional"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "X-ING-Response-ID" : {
+                "type" : "string",
+                "description" : "ID for tracing the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/PaymentStatusResponse"
+            }
+          },
+          "400" : {
+            "$ref" : "#/responses/400BadRequest"
+          },
+          "401" : {
+            "$ref" : "#/responses/401Unauthorised"
+          },
+          "403" : {
+            "$ref" : "#/responses/403Forbidden"
+          },
+          "404" : {
+            "$ref" : "#/responses/404NotFound"
+          },
+          "422" : {
+            "$ref" : "#/responses/422UnProcessableEntity"
+          },
+          "500" : {
+            "$ref" : "#/responses/500TechnicalError"
+          },
+          "503" : {
+            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+          }
+        }
+      },
+      "parameters" : [ ]
+    },
+    "/v1/payments/pain.001-{payment-product}" : {
+      "post" : {
+        "tags" : [ "Single payment initiation" ],
+        "summary" : "Payment initiation request - XML",
+        "description" : "This operation will create a payment initiation request at ING as a resource addressable under {payment-product} with all data relevant for the corresponding payment product. Remark - The underlying ISO 20022 pain.001.001.03 XML structure which is transported in the content body of this request can only contain one payment initiation request.",
+        "consumes" : [ "application/xml" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/payment-product"
+        }, {
+          "$ref" : "#/parameters/X-Request-ID"
+        }, {
+          "$ref" : "#/parameters/AuthorizationInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/TPP-Redirect-URI"
+        }, {
+          "$ref" : "#/parameters/PSU-IP-Address_mandatory"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "description" : "Payment initiation instruction. The payment data to be transported in the request body in XML schema based on ISO 20022 pain.001.001.03 or lower standards",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/SinglePaymentRequestXML"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Created.",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "X-ING-Response-ID" : {
+                "type" : "string",
+                "description" : "ID for tracing the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "Location" : {
+                "type" : "string",
+                "description" : "Location of the created resource (if created) i.e. GET /v1/payments/pain.001-{payment-product}/{paymentId} example GET /v1/payments/pain.001-sepa-credit-transfers/0e62dac7-6c2a-4483-ae01-b8f6221673d2",
+                "x-ing-type" : "string"
+              },
+              "ASPSP-SCA-Approach" : {
+                "type" : "string",
+                "description" : "Defines the chosen SCA by ING i.e. REDIRECT. ING will start the authorization process implicitly as no additional data is needed from the TPP. Subsequently, the redirection of the PSU browser session should happen directly after the Payment Initiation Response.",
+                "enum" : [ "REDIRECT" ],
+                "default" : "REDIRECT",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/PaymentInitiationResponse"
+            }
+          },
+          "400" : {
+            "$ref" : "#/responses/400BadRequest"
+          },
+          "401" : {
+            "$ref" : "#/responses/401Unauthorised"
+          },
+          "403" : {
+            "$ref" : "#/responses/403Forbidden"
+          },
+          "404" : {
+            "$ref" : "#/responses/404NotFound"
+          },
+          "422" : {
+            "$ref" : "#/responses/422UnProcessableEntity"
+          },
+          "500" : {
+            "$ref" : "#/responses/500TechnicalError"
+          },
+          "503" : {
+            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+          }
+        },
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-accounts:orders:create" ]
+        } ]
+      },
+      "parameters" : [ ]
+    },
+    "/v1/payments/pain.001-{payment-product}/{paymentId}" : {
+      "get" : {
+        "tags" : [ "Single payment initiation" ],
+        "summary" : "Payment details - XML",
+        "description" : "This operation will return the payment initiation details based on the unique identifier of the payment (paymentId), as provided by ING as part of the response of payment initiation request in pain.001 XML encoding.",
+        "produces" : [ "application/xml" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/payment-product"
+        }, {
+          "$ref" : "#/parameters/paymentId"
+        }, {
+          "$ref" : "#/parameters/X-Request-ID"
+        }, {
+          "$ref" : "#/parameters/AuthorizationInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/PSU-IP-Address_optional"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "X-ING-Response-ID" : {
+                "type" : "string",
+                "description" : "ID for tracing the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/SinglePaymentRequestXML"
+            }
+          },
+          "400" : {
+            "$ref" : "#/responses/400BadRequest"
+          },
+          "401" : {
+            "$ref" : "#/responses/401Unauthorised"
+          },
+          "403" : {
+            "$ref" : "#/responses/403Forbidden"
+          },
+          "404" : {
+            "$ref" : "#/responses/404NotFound"
+          },
+          "422" : {
+            "$ref" : "#/responses/422UnProcessableEntity"
+          },
+          "500" : {
+            "$ref" : "#/responses/500TechnicalError"
+          },
+          "503" : {
+            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+          }
+        }
+      },
+      "parameters" : [ ]
+    },
+    "/v1/payments/pain.001-{payment-product}/{paymentId}/status" : {
+      "get" : {
+        "tags" : [ "Single payment initiation" ],
+        "summary" : "Payment status - XML",
+        "description" : "This operation will return the status of the payment based on the unique identifier of the payment (paymentId), as provided by ING as part of the response of the payment initiation request in pain.001 XML encoding. The response is in ISO 20022 pain.002.001.03 xml formatting.",
+        "produces" : [ "application/xml" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/payment-product"
+        }, {
+          "$ref" : "#/parameters/paymentId"
+        }, {
+          "$ref" : "#/parameters/X-Request-ID"
+        }, {
+          "$ref" : "#/parameters/AuthorizationInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/PSU-IP-Address_optional"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "X-ING-Response-ID" : {
+                "type" : "string",
+                "description" : "ID for tracing the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/SinglePaymentStatusXML"
+            }
+          },
+          "400" : {
+            "$ref" : "#/responses/400BadRequest"
+          },
+          "401" : {
+            "$ref" : "#/responses/401Unauthorised"
+          },
+          "403" : {
+            "$ref" : "#/responses/403Forbidden"
+          },
+          "404" : {
+            "$ref" : "#/responses/404NotFound"
+          },
+          "422" : {
+            "$ref" : "#/responses/422UnProcessableEntity"
+          },
+          "500" : {
+            "$ref" : "#/responses/500TechnicalError"
+          },
+          "503" : {
+            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+          }
+        }
+      },
+      "parameters" : [ ]
+    },
+    "/v2/payments/pain.001-{payment-product}/{paymentId}/status" : {
+      "get" : {
+        "tags" : [ "Single payment initiation" ],
+        "summary" : "Payment status - XML",
+        "description" : "This operation will return the status of the payment based on the unique identifier of the payment (paymentId), as provided by ING as part of the response of the payment initiation request in pain.001 XML encoding. The response is in ISO 20022 pain.002.001.11 xml formatting. This format is required in order to receive advanced transactionStatus like CANC and PATC, in addition to the transactionStatus’ supported in ISO versions preceding pain.002.001.08.",
+        "produces" : [ "application/xml" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/payment-product"
+        }, {
+          "$ref" : "#/parameters/paymentId"
+        }, {
+          "$ref" : "#/parameters/X-Request-ID"
+        }, {
+          "$ref" : "#/parameters/AuthorizationInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/PSU-IP-Address_optional"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "X-ING-Response-ID" : {
+                "type" : "string",
+                "description" : "ID for tracing the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/SinglePaymentStatusXML_V2"
+            }
+          },
+          "400" : {
+            "$ref" : "#/responses/400BadRequest"
+          },
+          "401" : {
+            "$ref" : "#/responses/401Unauthorised"
+          },
+          "403" : {
+            "$ref" : "#/responses/403Forbidden"
+          },
+          "404" : {
+            "$ref" : "#/responses/404NotFound"
+          },
+          "422" : {
+            "$ref" : "#/responses/422UnProcessableEntity"
+          },
+          "500" : {
+            "$ref" : "#/responses/500TechnicalError"
+          },
+          "503" : {
+            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+          }
+        }
+      },
+      "parameters" : [ ]
+    },
+    "/v1/periodic-payments/{payment-product}" : {
+      "post" : {
+        "tags" : [ "Periodic payment initiation" ],
+        "summary" : "Periodic payment initiation - JSON",
+        "description" : "This operation will create a periodic payment (also known as a standing order) initiation request at ING as a resource addressable under {payment-product} with all data relevant for the corresponding payment product.",
+        "operationId" : "initiatePeriodicPayment",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/payment-product"
+        }, {
+          "$ref" : "#/parameters/X-Request-ID"
+        }, {
+          "$ref" : "#/parameters/AuthorizationInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/TPP-Redirect-URI"
+        }, {
+          "$ref" : "#/parameters/PSU-IP-Address_mandatory"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "description" : "Payment initiation instruction. The payment data to be transported in the request body are dependent of the chosen API endpoint.",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/PeriodicPaymentInitiation_json"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Created.",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "X-ING-Response-ID" : {
+                "type" : "string",
+                "description" : "ID for tracing the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "Location" : {
+                "type" : "string",
+                "description" : "Location of the created resource (if created) i.e. GET /v1/payments/{payment-product}/{paymentId} example GET /v1/payments/sepa-credit-transfers/0e62dac7-6c2a-4483-ae01-b8f6221673d2",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/PeriodicPaymentInitiationResponse"
+            }
+          },
+          "400" : {
+            "$ref" : "#/responses/400BadRequest"
+          },
+          "401" : {
+            "$ref" : "#/responses/401Unauthorised"
+          },
+          "403" : {
+            "$ref" : "#/responses/403Forbidden"
+          },
+          "404" : {
+            "$ref" : "#/responses/404NotFound"
+          },
+          "422" : {
+            "$ref" : "#/responses/422UnProcessableEntity"
+          },
+          "500" : {
+            "$ref" : "#/responses/500TechnicalError"
+          },
+          "503" : {
+            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+          }
+        },
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-accounts:orders:create" ]
+        } ]
+      },
+      "parameters" : [ ]
+    },
+    "/v1/periodic-payments/{payment-product}/{paymentId}" : {
+      "get" : {
+        "tags" : [ "Periodic payment initiation" ],
+        "summary" : "Periodic payment details - JSON",
+        "description" : "This operation will return the periodic payment initiation details based on the unique identifier of the periodic payment (paymentId), as provided by ING as part of the response of the periodic payment initiation request.",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/payment-product"
+        }, {
+          "$ref" : "#/parameters/paymentId"
+        }, {
+          "$ref" : "#/parameters/X-Request-ID"
+        }, {
+          "$ref" : "#/parameters/AuthorizationInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/PSU-IP-Address_optional"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "X-ING-Response-ID" : {
+                "type" : "string",
+                "description" : "ID for tracing the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/PeriodicPaymentInitiation_json"
+            }
+          },
+          "400" : {
+            "$ref" : "#/responses/400BadRequest"
+          },
+          "401" : {
+            "$ref" : "#/responses/401Unauthorised"
+          },
+          "403" : {
+            "$ref" : "#/responses/403Forbidden"
+          },
+          "404" : {
+            "$ref" : "#/responses/404NotFound"
+          },
+          "422" : {
+            "$ref" : "#/responses/422UnProcessableEntity"
+          },
+          "500" : {
+            "$ref" : "#/responses/500TechnicalError"
+          },
+          "503" : {
+            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "Periodic payment initiation" ],
+        "summary" : "Periodic payment cancellation - JSON",
+        "description" : "This operation will cancel the initiated periodic payment based on the unique identifier of the payment (paymentId), as provided by ING as part of the response of the periodic payment initiation request. The response to this request will inform the requester whether the request was * successful (204) or, * rejected (4xx).",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/payment-product"
+        }, {
+          "$ref" : "#/parameters/paymentId"
+        }, {
+          "$ref" : "#/parameters/X-Request-ID"
+        }, {
+          "$ref" : "#/parameters/AuthorizationInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/PSU-IP-Address_optional"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "X-ING-Response-ID" : {
+                "type" : "string",
+                "description" : "ID for tracing the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            }
+          },
+          "400" : {
+            "$ref" : "#/responses/400BadRequest"
+          },
+          "401" : {
+            "$ref" : "#/responses/401Unauthorised"
+          },
+          "403" : {
+            "$ref" : "#/responses/403Forbidden"
+          },
+          "404" : {
+            "$ref" : "#/responses/404NotFound"
+          },
+          "500" : {
+            "$ref" : "#/responses/500TechnicalError"
+          }
+        }
+      },
+      "parameters" : [ ]
+    },
+    "/v1/periodic-payments/{payment-product}/{paymentId}/status" : {
+      "get" : {
+        "tags" : [ "Periodic payment initiation" ],
+        "summary" : "Periodic payment status - JSON",
+        "description" : "This operation will return the status of the periodic payment based on the unique identifier of the payment (paymentId), as provided by ING as part of the response of the payment initiation request.",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/payment-product"
+        }, {
+          "$ref" : "#/parameters/paymentId"
+        }, {
+          "$ref" : "#/parameters/X-Request-ID"
+        }, {
+          "$ref" : "#/parameters/AuthorizationInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/PSU-IP-Address_optional"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "X-ING-Response-ID" : {
+                "type" : "string",
+                "description" : "ID for tracing the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/PaymentAgreementStatusResponse"
+            }
+          },
+          "400" : {
+            "$ref" : "#/responses/400BadRequest"
+          },
+          "401" : {
+            "$ref" : "#/responses/401Unauthorised"
+          },
+          "403" : {
+            "$ref" : "#/responses/403Forbidden"
+          },
+          "404" : {
+            "$ref" : "#/responses/404NotFound"
+          },
+          "500" : {
+            "$ref" : "#/responses/500TechnicalError"
+          }
+        }
+      },
+      "parameters" : [ ]
+    },
+    "/v1/periodic-payments/pain.001-{payment-product}" : {
+      "post" : {
+        "tags" : [ "Periodic payment initiation" ],
+        "summary" : "Periodic payment initiation - Multi-part",
+        "description" : "This operation will create a periodic payment (also known as a standing order) initiation request at ING as a resource addressable under {payment-product} with all data relevant for the corresponding payment product. Where the periodic payment initiation request is contained in an pain.001 message (Part 1) and the additional informations related to the periodic payment initiation request is an additional JSON message (Part 2).",
+        "operationId" : "initiatePeriodicPaymentXML",
+        "consumes" : [ "multipart/form-data" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/payment-product"
+        }, {
+          "$ref" : "#/parameters/X-Request-ID"
+        }, {
+          "$ref" : "#/parameters/AuthorizationInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/TPP-Redirect-URI"
+        }, {
+          "$ref" : "#/parameters/PSU-IP-Address_mandatory"
+        }, {
+          "name" : "xml_sct",
+          "in" : "formData",
+          "description" : "A pain.001 structure corresponding to the Single Payment schema urn:iso:std:iso:20022:tech:xsd:pain.001.001.03",
+          "required" : true,
+          "type" : "file"
+        }, {
+          "name" : "startDate",
+          "in" : "formData",
+          "description" : "The first applicable day of execution starting from this date is the first payment. Expressed in YYYY-MM-DD format",
+          "required" : true,
+          "type" : "string",
+          "format" : "date"
+        }, {
+          "name" : "endDate",
+          "in" : "formData",
+          "description" : "The last applicable day of execution If not given, it is an infinite standing order. Expressed in YYYY-MM-DD format",
+          "required" : false,
+          "type" : "string",
+          "format" : "date"
+        }, {
+          "name" : "frequency",
+          "in" : "formData",
+          "description" : "The following codes from the \"EventFrequency7Code\" of ISO 20022 are supported.\n- DAIL: Daily\n- WEEK: Weekly\n- TOWK: EveryTwoWeeks\n- MNTH: Monthly\n- TOMN: EveryTwoMonths\n- FOMN: EveryFourMonths\n- QUTR: Quarterly\n- SEMI: SemiAnnual\n- YEAR: Annual\n",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "DAIL", "WEEK", "TOWK", "MNTH", "TOMN", "FOMN", "QUTR", "SEMI", "YEAR" ]
+        }, {
+          "name" : "dayOfExecution",
+          "in" : "formData",
+          "description" : "Day of execution as string in the format DD. This string value cannot exceed the two characters limit. 31 is ultimo of the month. This value is accepted, but is ignored in processing for the moment.\n",
+          "required" : false,
+          "type" : "string",
+          "enum" : [ "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31" ]
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Created.",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "X-ING-Response-ID" : {
+                "type" : "string",
+                "description" : "ID for tracing the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "Location" : {
+                "type" : "string",
+                "description" : "Location of the created resource (if created) i.e. GET /v1/payments/{payment-product}/{paymentId} example GET /v1/payments/sepa-credit-transfers/0e62dac7-6c2a-4483-ae01-b8f6221673d2",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/PeriodicPaymentInitiationResponse"
+            }
+          },
+          "400" : {
+            "$ref" : "#/responses/400BadRequest"
+          },
+          "401" : {
+            "$ref" : "#/responses/401Unauthorised"
+          },
+          "403" : {
+            "$ref" : "#/responses/403Forbidden"
+          },
+          "404" : {
+            "$ref" : "#/responses/404NotFound"
+          },
+          "422" : {
+            "$ref" : "#/responses/422UnProcessableEntity"
+          },
+          "500" : {
+            "$ref" : "#/responses/500TechnicalError"
+          },
+          "503" : {
+            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+          }
+        },
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-accounts:orders:create" ]
+        } ]
+      },
+      "parameters" : [ ]
+    },
+    "/v1/periodic-payments/pain.001-{payment-product}/{paymentId}" : {
+      "get" : {
+        "tags" : [ "Periodic payment initiation" ],
+        "summary" : "Periodic payment details - XML",
+        "description" : "This operation will return the periodic payment initiation details based on the unique identifier of the periodic payment (paymentId), as provided by ING as part of the response of the periodic payment initiation request.",
+        "produces" : [ "multipart/form-data" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/payment-product"
+        }, {
+          "$ref" : "#/parameters/paymentId"
+        }, {
+          "$ref" : "#/parameters/X-Request-ID"
+        }, {
+          "$ref" : "#/parameters/AuthorizationInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/PSU-IP-Address_optional"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "X-ING-Response-ID" : {
+                "type" : "string",
+                "description" : "ID for tracing the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "type" : "string",
+              "example" : "------------------------------------------------------------------------------------------ multipart response ------------------------------------------------------------------------------------------ --Boundary_1_1021321412_1568029963659 Content-Type: application/xml Content-Disposition: form-data; name=\"xml_sct\"\nDocument xmlns=\"urn:iso:std:iso:20022:tech:xsd:pain.001.001.03\"\n    CstmrCdtTrfInitn\n        GrpHdr\n            MsgIdsome-msg-id/MsgId\n            CreDtTm2009-09-28T14:07:00/CreDtTm\n            NbOfTxs1/NbOfTxs\n            CtrlSum0.1/CtrlSum\n            InitgPty\n                NmABC Corporation/Nm\n                PstlAdr\n                    StrtNmTimes Square/StrtNm\n                    BldgNb7/BldgNb\n                    PstCdNY 10036/PstCd\n                    TwnNmNew York/TwnNm\n                    CtryUS/Ctry\n                /PstlAdr\n            /InitgPty\n        /GrpHdr\n        PmtInf\n            PmtInfIdABC/086/PmtInfId\n            PmtMtdTRF/PmtMtd\n            BtchBookgfalse/BtchBookg\n            ReqdExctnDt2019-09-09/ReqdExctnDt\n            Dbtr\n                NmABC Corporation/Nm\n                PstlAdr\n                    StrtNmTimes Square/StrtNm\n                    BldgNb7/BldgNb\n                    PstCdNY 10036/PstCd\n                    TwnNmNew York/TwnNm\n                    CtryUS/Ctry\n                /PstlAdr\n            /Dbtr\n            DbtrAcct\n                Id\n                    IBANNL29INGB0123456789/IBAN\n                /Id\n            /DbtrAcct\n            DbtrAgt\n                FinInstnId\n                    BICBBBBUS33/BIC\n                /FinInstnId\n            /DbtrAgt\n            CdtTrfTxInf\n                PmtId\n                    InstrIdABC/090928/CCT001/01/InstrId\n                    EndToEndIdABC/4562/2009-09-08/EndToEndId\n                /PmtId\n                Amt\n                    InstdAmt Ccy=\"EUR\"0.1/InstdAmt\n                /Amt\n                CdtrAgt\n                    FinInstnId\n                        BICAAAAGB2L/BIC\n                    /FinInstnId\n                /CdtrAgt\n                Cdtr\n                    NmAmsterdams Universiteitsfonds (Amsterdam University Fund)/Nm\n                    PstlAdr\n                        AdrLineSpui/AdrLine\n                        AdrLine21/AdrLine\n                        AdrLineAmsterdam/AdrLine\n                        AdrLine1012 WX/AdrLine\n                    /PstlAdr\n                /Cdtr\n                CdtrAcct\n                    Id\n                        IBANNL29INGB0123456789/IBAN\n                    /Id\n                /CdtrAcct\n                Purp\n                    CdCINV/Cd\n                /Purp\n                RmtInf\n                    Strd\n                        RfrdDocInf\n                            Nb4562/Nb\n                            RltdDt2009-09-08/RltdDt\n                        /RfrdDocInf\n                    /Strd\n                /RmtInf\n            /CdtTrfTxInf\n        /PmtInf\n    /CstmrCdtTrfInitn\n/Document\n--Boundary_1_1021321412_1568029963659 Content-Type: text/plain Content-Disposition: form-data; name=\"startDate\"\n2019-09-09 --Boundary_1_1021321412_1568029963659 Content-Type: text/plain Content-Disposition: form-data; name=\"frequency\"\nMNTH --Boundary_1_1021321412_1568029963659 Content-Type: text/plain Content-Disposition: form-data; name=\"dayOfExecution\"\n01 --Boundary_1_1021321412_1568029963659 Content-Type: text/plain Content-Disposition: form-data; name=\"endDate\"\n2023-02-09 --Boundary_1_1021321412_1568029963659--"
+            }
+          },
+          "400" : {
+            "$ref" : "#/responses/400BadRequest"
+          },
+          "401" : {
+            "$ref" : "#/responses/401Unauthorised"
+          },
+          "403" : {
+            "$ref" : "#/responses/403Forbidden"
+          },
+          "404" : {
+            "$ref" : "#/responses/404NotFound"
+          },
+          "422" : {
+            "$ref" : "#/responses/422UnProcessableEntity"
+          },
+          "500" : {
+            "$ref" : "#/responses/500TechnicalError"
+          },
+          "503" : {
+            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+          }
+        }
+      },
+      "parameters" : [ ]
+    },
+    "/v1/bulk-payments/{payment-product}" : {
+      "post" : {
+        "tags" : [ "Bulk payment initiation" ],
+        "summary" : "Bulk payment initiation request - JSON.",
+        "description" : "This operation will create a payment initiation request at ING as a resource addressable under {payment-product} with all data relevant for the corresponding payment product. One Payment request can support upto 5000 underlying transactions.",
+        "operationId" : "initiateBulkPayment",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/payment-product"
+        }, {
+          "$ref" : "#/parameters/X-Request-ID"
+        }, {
+          "$ref" : "#/parameters/AuthorizationInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/TPP-Redirect-URI"
+        }, {
+          "$ref" : "#/parameters/PSU-IP-Address_mandatory"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "description" : "Payment initiation instruction. The payment data to be transported in the request body are dependent of the chosen API endpoint.",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/BulkPaymentInitiationSct_json"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Created.",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "X-ING-Response-ID" : {
+                "type" : "string",
+                "description" : "ID for tracing the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "Location" : {
+                "type" : "string",
+                "description" : "Location of the created resource (if created) i.e. GET /v1/bulk-payments/{payment-product}/{paymentId} example GET /v1/bulk-payments/sepa-credit-transfers/0e62dac7-6c2a-4483-ae01-b8f6221673d2",
+                "x-ing-type" : "string"
+              },
+              "ASPSP-SCA-Approach" : {
+                "type" : "string",
+                "description" : "Defines the chosen SCA by ING i.e. REDIRECT. ING will start the authorization process implicitly as no additional data is needed from the TPP. Subsequently, the redirection of the PSU browser session should happen directly after the Payment Initiation Response.",
+                "enum" : [ "REDIRECT" ],
+                "default" : "REDIRECT",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/PaymentInitiationResponse"
+            }
+          },
+          "400" : {
+            "$ref" : "#/responses/400BadRequest"
+          },
+          "401" : {
+            "$ref" : "#/responses/401Unauthorised"
+          },
+          "403" : {
+            "$ref" : "#/responses/403Forbidden"
+          },
+          "404" : {
+            "$ref" : "#/responses/404NotFound"
+          },
+          "422" : {
+            "$ref" : "#/responses/422UnProcessableEntity"
+          },
+          "500" : {
+            "$ref" : "#/responses/500TechnicalError"
+          },
+          "503" : {
+            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+          }
+        },
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-accounts:orders:create" ]
+        } ]
+      },
+      "parameters" : [ ]
+    },
+    "/v1/bulk-payments/{payment-product}/{paymentId}" : {
+      "get" : {
+        "tags" : [ "Bulk payment initiation" ],
+        "summary" : "Bulk payment details - JSON",
+        "description" : "This operation will return the bulk payment initiation details based on the unique identifier of the payment (paymentId), as provided by ING as part of the response of the bulk payment initiation request.",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/payment-product"
+        }, {
+          "$ref" : "#/parameters/paymentId"
+        }, {
+          "$ref" : "#/parameters/X-Request-ID"
+        }, {
+          "$ref" : "#/parameters/AuthorizationInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/PSU-IP-Address_optional"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "X-ING-Response-ID" : {
+                "type" : "string",
+                "description" : "ID for tracing the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/BulkPaymentInitiationSct_json"
+            }
+          },
+          "400" : {
+            "$ref" : "#/responses/400BadRequest"
+          },
+          "401" : {
+            "$ref" : "#/responses/401Unauthorised"
+          },
+          "403" : {
+            "$ref" : "#/responses/403Forbidden"
+          },
+          "404" : {
+            "$ref" : "#/responses/404NotFound"
+          },
+          "422" : {
+            "$ref" : "#/responses/422UnProcessableEntity"
+          },
+          "500" : {
+            "$ref" : "#/responses/500TechnicalError"
+          },
+          "503" : {
+            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "Bulk payment initiation" ],
+        "summary" : "Bulk payment cancellation - JSON",
+        "description" : "This operation will cancel the initiated bulk payment based on the unique identifier of the payment (paymentId), as provided by ING as part of the response of the bulk payment initiation request. The response to this request will inform the requester whether the cancellation of the bulk payment was * successful (204) or, * not successful (4xx).",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/payment-product"
+        }, {
+          "$ref" : "#/parameters/paymentId"
+        }, {
+          "$ref" : "#/parameters/X-Request-ID"
+        }, {
+          "$ref" : "#/parameters/AuthorizationInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/PSU-IP-Address_optional"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "X-ING-Response-ID" : {
+                "type" : "string",
+                "description" : "ID for tracing the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            }
+          },
+          "400" : {
+            "$ref" : "#/responses/400BadRequest"
+          },
+          "401" : {
+            "$ref" : "#/responses/401Unauthorised"
+          },
+          "403" : {
+            "$ref" : "#/responses/403Forbidden"
+          },
+          "404" : {
+            "$ref" : "#/responses/404NotFound"
+          },
+          "422" : {
+            "$ref" : "#/responses/422UnProcessableEntity"
+          },
+          "500" : {
+            "$ref" : "#/responses/500TechnicalError"
+          },
+          "503" : {
+            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+          }
+        }
+      },
+      "parameters" : [ ]
+    },
+    "/v1/bulk-payments/{payment-product}/{paymentId}/status" : {
+      "get" : {
+        "tags" : [ "Bulk payment initiation" ],
+        "summary" : "Bulk payment status - JSON",
+        "description" : "This operation will return the status of the bulk payment based on the unique identifier of the bulk payment (paymentId), as provided by ING as part of the response of the bulk payment initiation request.",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "$ref" : "#/parameters/payment-product"
+        }, {
+          "$ref" : "#/parameters/paymentId"
+        }, {
+          "$ref" : "#/parameters/X-Request-ID"
+        }, {
+          "$ref" : "#/parameters/AuthorizationInHeader"
+        }, {
+          "$ref" : "#/parameters/SignatureInHeader"
+        }, {
+          "$ref" : "#/parameters/DigestInHeader"
+        }, {
+          "$ref" : "#/parameters/DateInHeader"
+        }, {
+          "$ref" : "#/parameters/PSU-IP-Address_optional"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "X-ING-Response-ID" : {
+                "type" : "string",
+                "description" : "ID for tracing the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/PaymentStatusResponse"
+            }
+          },
+          "400" : {
+            "$ref" : "#/responses/400BadRequest"
+          },
+          "401" : {
+            "$ref" : "#/responses/401Unauthorised"
+          },
+          "403" : {
+            "$ref" : "#/responses/403Forbidden"
+          },
+          "404" : {
+            "$ref" : "#/responses/404NotFound"
+          },
+          "422" : {
+            "$ref" : "#/responses/422UnProcessableEntity"
+          },
+          "500" : {
+            "$ref" : "#/responses/500TechnicalError"
+          },
+          "503" : {
+            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+          }
+        }
+      },
+      "parameters" : [ ]
+    }
+  },
+  "securityDefinitions" : {
+    "ING-Application-Security" : {
+      "type" : "oauth2",
+      "tokenUrl" : "https://api.ing.com/oauth2/token",
+      "flow" : "application",
+      "scopes" : {
+        "payment-accounts:orders:create" : "Create a payment order."
+      }
+    }
+  },
+  "definitions" : {
+    "TPPMessages" : {
+      "type" : "object",
+      "required" : [ "tppMessages" ],
+      "properties" : {
+        "tppMessages" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/TPPMessage"
+          },
+          "x-ing-type" : "array"
+        }
+      }
+    },
+    "TPPMessage" : {
+      "type" : "object",
+      "required" : [ "category", "code" ],
+      "properties" : {
+        "category" : {
+          "type" : "string",
+          "description" : "The value for the category property indicates the importance of the error that is returned and MUST be one of the values: ERROR   - Indicates that operation has been completed with errors. WARNING - Indicates that operation has been successfully completed but there is/are warnings about the operation",
+          "enum" : [ "ERROR", "WARNING" ],
+          "x-ing-type" : "string"
+        },
+        "code" : {
+          "type" : "string",
+          "example" : "PAYMENT_FAILED",
+          "enum" : [ "SERVICE_INVALID", "TRANSACTION_ID_INVALID", "PRODUCT_INVALID", "PRODUCT_UNKNOWN", "PAYMENT_FAILED", "INVALID_HEADER", "FORMAT_ERROR", "RESOURCE_UNKNOWN", "SERVICE_BLOCKED", "ING_ERROR" ],
+          "x-ing-type" : "string"
+        },
+        "text" : {
+          "type" : "string",
+          "description" : "Additional explaining text.",
+          "maxLength" : 512,
+          "x-ing-type" : "string"
+        },
+        "path" : {
+          "type" : "string",
+          "description" : "The path of the element of the request message which provoked this error message",
+          "x-ing-type" : "string"
+        }
+      },
+      "description" : "TPP Messages - In case of any error or warning."
+    },
+    "SinglePaymentRequestXML" : {
+      "type" : "string"
+    },
+    "SinglePaymentStatusXML" : {
+      "type" : "string"
+    },
+    "SinglePaymentStatusXML_V2" : {
+      "type" : "string"
+    },
+    "PaymentInstruction" : {
+      "type" : "object",
+      "required" : [ "creditorAccount", "creditorName", "instructedAmount" ],
+      "properties" : {
+        "endToEndIdentification" : {
+          "$ref" : "#/definitions/endToEndIdentification"
+        },
+        "debtorAccount" : {
+          "$ref" : "#/definitions/debtorAccount"
+        },
+        "instructedAmount" : {
+          "$ref" : "#/definitions/Amount"
+        },
+        "creditorAccount" : {
+          "$ref" : "#/definitions/creditorAccount"
+        },
+        "creditorAgent" : {
+          "$ref" : "#/definitions/creditorAgent"
+        },
+        "creditorName" : {
+          "$ref" : "#/definitions/creditorName"
+        },
+        "creditorAddress" : {
+          "$ref" : "#/definitions/Address"
+        },
+        "chargeBearer" : {
+          "$ref" : "#/definitions/chargeBearer"
+        },
+        "remittanceInformationUnstructured" : {
+          "$ref" : "#/definitions/remittanceInformationUnstructured"
+        },
+        "clearingSystemMemberIdentification" : {
+          "$ref" : "#/definitions/clearingSystemMemberIdentification"
+        },
+        "debtorName" : {
+          "$ref" : "#/definitions/debtorName"
+        },
+        "debtorAgent" : {
+          "$ref" : "#/definitions/debtorAgent"
+        },
+        "instructionPriority" : {
+          "$ref" : "#/definitions/instructionPriority"
+        },
+        "serviceLevelCode" : {
+          "$ref" : "#/definitions/serviceLevelCode"
+        },
+        "localInstrumentCode" : {
+          "$ref" : "#/definitions/localInstrumentCode"
+        },
+        "categoryPurposeCode" : {
+          "$ref" : "#/definitions/categoryPurposeCode"
+        },
+        "requestedExecutionDate" : {
+          "type" : "string",
+          "format" : "date",
+          "example" : "2019-01-30",
+          "description" : "Date at which the initiating party requests the clearing agent to process the payment. This is the date on which the debtor's account is to be debited. This Field mentions a particular point in the progression of time in a calendar year expressed in the YYYY-MM-DD format. Example Use Case: Future Dated Payment",
+          "x-ing-type" : "string"
+        }
+      }
+    },
+    "PeriodicPaymentInitiation_json" : {
+      "type" : "object",
+      "required" : [ "creditorAccount", "creditorName", "frequency", "instructedAmount", "startDate" ],
+      "properties" : {
+        "endToEndIdentification" : {
+          "$ref" : "#/definitions/endToEndIdentification"
+        },
+        "debtorAccount" : {
+          "$ref" : "#/definitions/debtorAccount"
+        },
+        "instructedAmount" : {
+          "$ref" : "#/definitions/Amount"
+        },
+        "creditorAccount" : {
+          "$ref" : "#/definitions/creditorAccount"
+        },
+        "creditorAgent" : {
+          "$ref" : "#/definitions/creditorAgent"
+        },
+        "creditorName" : {
+          "$ref" : "#/definitions/creditorName"
+        },
+        "creditorAddress" : {
+          "$ref" : "#/definitions/Address"
+        },
+        "chargeBearer" : {
+          "$ref" : "#/definitions/chargeBearer"
+        },
+        "remittanceInformationUnstructured" : {
+          "$ref" : "#/definitions/remittanceInformationUnstructured"
+        },
+        "clearingSystemMemberIdentification" : {
+          "$ref" : "#/definitions/clearingSystemMemberIdentification"
+        },
+        "debtorName" : {
+          "$ref" : "#/definitions/debtorName"
+        },
+        "debtorAgent" : {
+          "$ref" : "#/definitions/debtorAgent"
+        },
+        "instructionPriority" : {
+          "$ref" : "#/definitions/instructionPriority"
+        },
+        "serviceLevelCode" : {
+          "$ref" : "#/definitions/serviceLevelCode"
+        },
+        "localInstrumentCode" : {
+          "$ref" : "#/definitions/localInstrumentCode"
+        },
+        "categoryPurposeCode" : {
+          "$ref" : "#/definitions/categoryPurposeCode"
+        },
+        "requestedExecutionDate" : {
+          "type" : "string",
+          "format" : "date",
+          "example" : "2019-01-30",
+          "description" : "Date at which the initiating party requests the clearing agent to process the payment. This is the date on which the debtor's account is to be debited. This Field mentions a particular point in the progression of time in a calendar year expressed in the YYYY-MM-DD format. Example Use Case: Future Dated Payment",
+          "x-ing-type" : "string"
+        },
+        "startDate" : {
+          "type" : "string",
+          "format" : "date",
+          "example" : "2019-01-30",
+          "description" : "The first applicable day of execution starting from this date is the first payment. Expressed in YYYY-MM-DD format",
+          "x-ing-type" : "string"
+        },
+        "endDate" : {
+          "type" : "string",
+          "format" : "date",
+          "example" : "2019-01-30",
+          "description" : "The last applicable day of execution If not given, it is an infinite standing order. Expressed in YYYY-MM-DD format",
+          "x-ing-type" : "string"
+        },
+        "frequency" : {
+          "$ref" : "#/definitions/frequencyCode"
+        },
+        "dayOfExecution" : {
+          "$ref" : "#/definitions/dayOfExecution"
+        }
+      }
+    },
+    "BulkPaymentInitiationSct_json" : {
+      "type" : "object",
+      "required" : [ "payments" ],
+      "properties" : {
+        "requestedExecutionDate" : {
+          "type" : "string",
+          "format" : "date",
+          "example" : "2019-01-30",
+          "description" : "Date at which the initiating party requests the clearing agent to process the payment. This is the date on which the debtor's account is to be debited. This Field mentions a particular point in the progression of time in a calendar year expressed in the YYYY-MM-DD format. Example Use Case: Future Dated Payment",
+          "x-ing-type" : "string"
+        },
+        "debtorAccount" : {
+          "$ref" : "#/definitions/debtorAccount"
+        },
+        "debtorName" : {
+          "$ref" : "#/definitions/debtorName"
+        },
+        "debtorAgent" : {
+          "$ref" : "#/definitions/debtorAgent"
+        },
+        "batchBookingPreferred" : {
+          "$ref" : "#/definitions/batchBookingPreferred"
+        },
+        "chargeBearer" : {
+          "$ref" : "#/definitions/chargeBearer"
+        },
+        "instructionPriority" : {
+          "$ref" : "#/definitions/instructionPriority"
+        },
+        "serviceLevelCode" : {
+          "$ref" : "#/definitions/serviceLevelCode"
+        },
+        "localInstrumentCode" : {
+          "$ref" : "#/definitions/localInstrumentCode"
+        },
+        "categoryPurposeCode" : {
+          "$ref" : "#/definitions/categoryPurposeCode"
+        },
+        "payments" : {
+          "type" : "array",
+          "description" : "A list of JSON bodies for single transactions.",
+          "items" : {
+            "type" : "object",
+            "properties" : {
+              "endToEndIdentification" : {
+                "$ref" : "#/definitions/endToEndIdentification"
+              },
+              "instructedAmount" : {
+                "$ref" : "#/definitions/Amount"
+              },
+              "creditorAccount" : {
+                "$ref" : "#/definitions/creditorAccount"
+              },
+              "creditorAgent" : {
+                "$ref" : "#/definitions/creditorAgent"
+              },
+              "creditorName" : {
+                "$ref" : "#/definitions/creditorName"
+              },
+              "creditorAddress" : {
+                "$ref" : "#/definitions/Address"
+              },
+              "remittanceInformationUnstructured" : {
+                "$ref" : "#/definitions/remittanceInformationUnstructured"
+              },
+              "chargeBearer" : {
+                "$ref" : "#/definitions/chargeBearer"
+              },
+              "instructionPriority" : {
+                "$ref" : "#/definitions/instructionPriority"
+              },
+              "serviceLevelCode" : {
+                "$ref" : "#/definitions/serviceLevelCode"
+              },
+              "localInstrumentCode" : {
+                "$ref" : "#/definitions/localInstrumentCode"
+              },
+              "categoryPurposeCode" : {
+                "$ref" : "#/definitions/categoryPurposeCode"
+              }
+            },
+            "required" : [ "creditorAccount", "creditorName", "instructedAmount" ],
+            "x-ing-type" : "object"
+          },
+          "maxItems" : 5000,
+          "minItems" : 1,
+          "x-ing-type" : "array"
+        }
+      },
+      "description" : "JSON Body for a bulk payment initiation.\n"
+    },
+    "endToEndIdentification" : {
+      "type" : "string",
+      "maxLength" : 35,
+      "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
+      "description" : "'Unique identification assigned by the initiating party to unambiguously identify the transaction. This identification is passed on, unchanged, throughout the entire end-to-end chain'",
+      "example" : "123456789012345"
+    },
+    "debtorAccount" : {
+      "type" : "object",
+      "required" : [ "iban" ],
+      "properties" : {
+        "iban" : {
+          "type" : "string",
+          "example" : "NL91INGB0123456789",
+          "description" : "This data element is Payment Account Number in IBAN format.",
+          "pattern" : "[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}",
+          "x-ing-type" : "string"
+        },
+        "currency" : {
+          "type" : "string",
+          "example" : "EUR",
+          "description" : "3 Letter ISO Currency Code: ISO 4217 code",
+          "pattern" : "[A-Z]{3,3}",
+          "x-ing-type" : "string"
+        }
+      }
+    },
+    "creditorAccount" : {
+      "type" : "object",
+      "properties" : {
+        "iban" : {
+          "type" : "string",
+          "example" : "NL91INGB0123456789",
+          "description" : "This data element is Payment Account Number in IBAN format.",
+          "pattern" : "[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}",
+          "x-ing-type" : "string"
+        },
+        "bban" : {
+          "type" : "string",
+          "example" : "1.23456789E8",
+          "description" : "This data elements is used for payment accounts which have no IBAN.",
+          "minLength" : 1,
+          "maxLength" : 34,
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789]+$",
+          "x-ing-type" : "string"
+        },
+        "currency" : {
+          "type" : "string",
+          "example" : "EUR",
+          "description" : "3 Letter ISO Currency Code: ISO 4217 code",
+          "pattern" : "[A-Z]{3,3}",
+          "x-ing-type" : "string"
+        }
+      }
+    },
+    "creditorAgent" : {
+      "type" : "string",
+      "pattern" : "[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}",
+      "description" : "Financial institution servicing an account for the creditor (The BIC associated to the account). Unique and unambiguous identification of a financial institution, as assigned under an internationally recognised or proprietary identification scheme. Code allocated to a financial institution by the ISO 9362 Registration Authority as described in ISO 9362 \"Banking - Banking telecommunication messages - Business identifier code (BIC) Note - This field is Conditional, meaning if Creditor account is not provided in an IBAN format, then this field or clearingSystemIdentification should be provided along with bban",
+      "example" : "CCCCUS27"
+    },
+    "creditorName" : {
+      "type" : "string",
+      "maxLength" : 70,
+      "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
+      "description" : "'Party to which an amount of money is due. Name by which a party is known  and which is usually used to identify that party'",
+      "example" : "Some Name"
+    },
+    "chargeBearer" : {
+      "type" : "string",
+      "description" : "Specifies which party/parties will bear the charges associated with the processing of the payment transaction.\n  DEBT BorneByDebtor All transaction charges are to be borne by the debtor.\n  CRED BorneByCreditor All transaction charges are to be borne by the creditor.\n  SHAR Shared In a credit transfer context, means that transaction charges on the sender side are to be borne by the debtor, transaction charges on the receiver side\n  are to be borne by the creditor. In a direct debit context, means that transaction charges on the sender side are to be borne by the creditor, transaction charges on the receiver side are to be borne by the debtor.\n  SLEV FollowingServiceLevel Charges are to be applied following the rules agreed in the service level and/or scheme.",
+      "enum" : [ "DEBT", "CRED", "SHAR", "SLEV" ]
+    },
+    "remittanceInformationUnstructured" : {
+      "type" : "string",
+      "maxLength" : 140,
+      "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
+      "description" : "'Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system. Information supplied to enable the matching/reconciliation of an entry with the items that the payment is intended to settle, such as commercial invoices in an accounts' receivable system, in an unstructured form.'"
+    },
+    "clearingSystemMemberIdentification" : {
+      "type" : "object",
+      "required" : [ "clearingSystemIdentificationCode", "memberIdentification" ],
+      "properties" : {
+        "clearingSystemIdentificationCode" : {
+          "type" : "string",
+          "example" : "ITNCC",
+          "description" : "Unique identification, as assigned by a clearing system, to unambiguously identify a member of the clearing system. The Code supplied here is Specification of a pre-agreed offering between clearing agents or the channel through which the payment instruction is processed. Identification of a clearing system, in a coded form as published in an external list. External code sets can be downloaded from www.iso20022.org",
+          "minLength" : 1,
+          "maxLength" : 5,
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789]+$",
+          "x-ing-type" : "string"
+        },
+        "memberIdentification" : {
+          "type" : "string",
+          "description" : "Identification of a member of a clearing system.",
+          "minLength" : 1,
+          "maxLength" : 35,
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789]+$",
+          "x-ing-type" : "string"
+        }
+      },
+      "description" : "Information used to identify a member within a clearing system. Note - This field is Conditional, meaning if Creditor account is not provided in an IBAN format, then this field or creditorAgent should be provided along with bban"
+    },
+    "debtorName" : {
+      "type" : "string",
+      "maxLength" : 70,
+      "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
+      "description" : "'Party to which an amount of money is due. Name by which a party is known  and which is usually used to identify that party'",
+      "example" : "Some Name"
+    },
+    "debtorAgent" : {
+      "type" : "string",
+      "pattern" : "[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}",
+      "description" : "Financial institution servicing an account for the creditor. Unique and unambiguous identification of a financial institution, as assigned under an internationally recognized or proprietary identification scheme. Code allocated to a financial institution by the ISO 9362 Registration Authority as described in ISO 9362 \"Banking - Banking telecommunication messages - Business identifier code (BIC) Note - This field is Conditional, meaning if Debtor account is not provided in an IBAN format, then this field is not used",
+      "example" : "CCCCUS27"
+    },
+    "instructionPriority" : {
+      "type" : "string",
+      "description" : "Indicator of the urgency or order of importance that the instructing party would like the instructed party to apply to the processing of the instruction. Priority level can be high or normal. The parameter instructionPriority is not supported for bulk-payment initiation.",
+      "enum" : [ "HIGH", "NORM" ]
+    },
+    "serviceLevelCode" : {
+      "type" : "string",
+      "minLength" : 1,
+      "maxLength" : 4,
+      "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789]+$",
+      "description" : "Agreement under which or rules under which the transaction should be processed. Specifies a pre-agreed service or level of service between the parties, as published in an external service level code list. Specifies the external service level code in the format of character string with a maximum length of 4 characters. The list of valid codes is an external code list published separately. External code sets can be downloaded from www.iso20022.org. The parameter serviceLevelCode is not supported for bulk-payment initiation.",
+      "example" : "SEPA"
+    },
+    "localInstrumentCode" : {
+      "type" : "string",
+      "minLength" : 1,
+      "maxLength" : 35,
+      "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789]+$",
+      "description" : "This element is used to specify a local instrument, local clearing option and/or further qualify the service or service level. Specifies the external local instrument code in the format of character string with a maximum length of 35 characters. The list of valid codes is an external code list published separately. External code sets can be downloaded from www.iso20022.org The parameter localInstrumentCode is not supported for bulk-payment initiation.\nFor single payment initiation (SEPA Credit Transfer or Domestic Credit Transfer), when the “localInstrumentCode” value “INST” is provided for a payment initiation request, ING will process the payment immediately after authorization by the PSU. In other words, within the timelines that are applicable for the instant payment scheme that is available. If no instant payments scheme is available for the payment initiation request, the request will be rejected. It is advised to provide the “debtorAccount” in the payment initiation request, in order to receive the feasibility of the instant payment before the PSU is redirected via the “scaRedirect”."
+    },
+    "categoryPurposeCode" : {
+      "type" : "string",
+      "minLength" : 1,
+      "maxLength" : 4,
+      "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789]+$",
+      "description" : "Specifies the high level purpose of the instruction based on a set of pre-defined categories. This is used by the initiating party to provide information concerning the processing of the payment. It is likely to trigger special processing by any of the agents involved in the payment chain. Category purpose, as published in an external category purpose code list. External code sets can be downloaded from www.iso20022.org For bulk-payment initiation the categoryPurposeCode values 'SALA' and 'INTC' will trigger the relevant processing, other categoryPurposeCode values are not supported.",
+      "example" : "SALA"
+    },
+    "frequencyCode" : {
+      "type" : "string",
+      "description" : "The following codes from the \"EventFrequency7Code\" of ISO 20022 are supported.\n- DAIL: Daily\n- WEEK: Weekly\n- TOWK: EveryTwoWeeks\n- MNTH: Monthly\n- TOMN: EveryTwoMonths\n- FOMN: EveryFourMonths\n- QUTR: Quarterly\n- SEMI: SemiAnnual\n- YEAR: Annual\n",
+      "enum" : [ "DAIL", "WEEK", "TOWK", "MNTH", "TOMN", "FOMN", "QUTR", "SEMI", "YEAR" ]
+    },
+    "dayOfExecution" : {
+      "type" : "string",
+      "description" : "Day of execution as string in the format DD. This string value cannot exceed the two characters limit. 31 is ultimo of the month. This value is accepted, but is ignored in processing for the moment.\n",
+      "enum" : [ "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31" ]
+    },
+    "batchBookingPreferred" : {
+      "type" : "boolean",
+      "description" : "If this value equals 'true', the PSU prefers only one booking entry. If this element equals 'false', the PSU prefers individual booking of all contained individual transactions.\n",
+      "example" : true
+    },
+    "Amount" : {
+      "type" : "object",
+      "required" : [ "amount", "currency" ],
+      "properties" : {
+        "amount" : {
+          "type" : "string",
+          "example" : "5877.78",
+          "description" : "The amount given with fractional digits, where fractions must be compliant to the currency definition. The decimal separator is a dot. Max digits: 14 (integer), 3 (fraction). **Example:** Valid representations for EUR with up to two decimals are:\n    * 1056\n    * 5768.2\n    * 5877.78",
+          "pattern" : "^[0-9]{1,14}(\\.[0-9]{1,3})?",
+          "x-ing-type" : "string"
+        },
+        "currency" : {
+          "type" : "string",
+          "example" : "EUR",
+          "description" : "3 Letter ISO Currency Code: ISO 4217 code",
+          "pattern" : "[A-Z]{3,3}",
+          "x-ing-type" : "string"
+        }
+      }
+    },
+    "Address" : {
+      "type" : "object",
+      "required" : [ "country" ],
+      "properties" : {
+        "street" : {
+          "type" : "string",
+          "description" : "street name",
+          "maxLength" : 70,
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
+          "x-ing-type" : "string"
+        },
+        "buildingNumber" : {
+          "type" : "string",
+          "description" : "building Number",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
+          "x-ing-type" : "string"
+        },
+        "city" : {
+          "type" : "string",
+          "description" : "city name",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
+          "x-ing-type" : "string"
+        },
+        "postalCode" : {
+          "type" : "string",
+          "description" : "postal Code",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
+          "x-ing-type" : "string"
+        },
+        "country" : {
+          "type" : "string",
+          "example" : "NL",
+          "description" : "ISO Country Code",
+          "pattern" : "[A-Z]{2,2}",
+          "x-ing-type" : "string"
+        }
+      }
+    },
+    "PaymentInitiationResponse" : {
+      "type" : "object",
+      "required" : [ "_links", "paymentId", "transactionStatus" ],
+      "properties" : {
+        "transactionStatus" : {
+          "$ref" : "#/definitions/TransactionStatus"
+        },
+        "paymentId" : {
+          "type" : "string",
+          "format" : "uuid",
+          "description" : "'Resource identification of the related payment initiation in UUID v04 format. A valid UUID,  contains sixteen octets, which are represented as 32 hexadecimal (base 16) digits, displayed  in five groups separated by hyphens, in the form 8-4-4-4-12 for a total of 36 characters  (32 alphanumeric characters and four hyphens)'",
+          "x-ing-type" : "string"
+        },
+        "_links" : {
+          "$ref" : "#/definitions/Links"
+        },
+        "tppMessages" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/TPPMessage"
+          },
+          "x-ing-type" : "array"
+        }
+      }
+    },
+    "BulkPaymentInitiationResponse" : {
+      "type" : "object",
+      "required" : [ "_links", "paymentId", "transactionStatus" ],
+      "properties" : {
+        "transactionStatus" : {
+          "$ref" : "#/definitions/TransactionStatus"
+        },
+        "paymentId" : {
+          "type" : "string",
+          "format" : "uuid",
+          "description" : "'Resource identification of the related payment initiation in UUID v04 format. A valid UUID,  contains sixteen octets, which are represented as 32 hexadecimal (base 16) digits, displayed  in five groups separated by hyphens, in the form 8-4-4-4-12 for a total of 36 characters  (32 alphanumeric characters and four hyphens)'",
+          "x-ing-type" : "string"
+        },
+        "_links" : {
+          "$ref" : "#/definitions/BulkLinks"
+        },
+        "tppMessages" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/TPPMessage"
+          },
+          "x-ing-type" : "array"
+        }
+      }
+    },
+    "PeriodicPaymentInitiationResponse" : {
+      "type" : "object",
+      "required" : [ "_links", "paymentId", "transactionStatus" ],
+      "properties" : {
+        "transactionStatus" : {
+          "$ref" : "#/definitions/TransactionStatus"
+        },
+        "paymentId" : {
+          "type" : "string",
+          "format" : "uuid",
+          "description" : "'Resource identification of the related payment initiation in UUID v04 format. A valid UUID,  contains sixteen octets, which are represented as 32 hexadecimal (base 16) digits, displayed  in five groups separated by hyphens, in the form 8-4-4-4-12 for a total of 36 characters  (32 alphanumeric characters and four hyphens)'",
+          "x-ing-type" : "string"
+        },
+        "_links" : {
+          "$ref" : "#/definitions/PeriodicLinks"
+        },
+        "tppMessages" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/TPPMessage"
+          },
+          "x-ing-type" : "array"
+        }
+      }
+    },
+    "TransactionStatus" : {
+      "type" : "string",
+      "title" : "TransactionStatus",
+      "description" : "The transaction status is filled with codes of the ISO 20022 data table:\n  - 'RCVD': 'Received' -\n    The payment initiation request has been received by ING, it is ready to be authorised by the customer. The customer did not yet authenticate in the ING domain, or the customer did authenticate but aborted the payment.\n  - 'ACTC': 'AcceptedTechnicalValidation' -\n    The payment request has passed the authentication, optionally selected an payment account. The payment is awaiting authorisation by the customer.\n  - 'PDNG': 'Pending' -\n    The payment request is pending. Further checks and status update will be performed by ING.\n  - 'ACCP': 'AcceptedCustomerProfile' -\n    The customer authorised the payment. The payment request passed the technical validation, the customer profile check was also successful.\n  - 'ACWC': 'AcceptedWithChange' -\n    The payment request is accepted but a change will be made in order to process the payment, such as requested execution date or the unstructured remittance information.\n  - 'ACSP': 'AcceptedSettlementInProcess' -\n    The payment request passed the technical validation and customer profile and therefore the payment request has been accepted for execution.\n  - 'PART': 'PartiallyAccepted' -\n    The bulk payment processing has been completed. A number of payments from the bulk payment have been accepted, whereas another number of payments have been 'rejected'.\n  - 'PATC': 'PartiallyAcceptedTechnicalCorrect' -\n    The payment requires multiple SCA, where some but not yet all have been performed. This payment is awaiting the final authorisation. Syntactical and semantical validations are successful.\n  - 'ACSC': 'AcceptedSettlementCompleted' -\n    The payment has been completed. The debtor account has been debited for the amount specified in the payment initiation request and has been sent to the creditor bank.\n  - 'CANC': 'Cancelled' -\n    The payment initiation request has been successfully cancelled after having received a request for cancellation.\n  - 'RJCT': 'Rejected' -\n    The payment has been rejected, or it has been cancelled either by your application or by the customer. A payment request with the status RJCT can no longer be authorised by the customer.",
+      "example" : "RCVD",
+      "enum" : [ "RCVD", "ACTC", "PDNG", "ACCP", "ACWC", "ACSP", "PART", "PATC", "ACSC", "CANC", "RJCT" ]
+    },
+    "PaymentStatusResponse" : {
+      "type" : "object",
+      "properties" : {
+        "transactionStatus" : {
+          "$ref" : "#/definitions/TransactionStatus"
+        },
+        "stsRsnInf" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/StatusReasonInformation"
+          },
+          "x-ing-type" : "array"
+        }
+      },
+      "title" : "paymentStatusResponse"
+    },
+    "StatusReasonInformation" : {
+      "type" : "object",
+      "properties" : {
+        "rsn" : {
+          "$ref" : "#/definitions/StatusReasonChoice"
+        },
+        "addtlInf" : {
+          "type" : "array",
+          "description" : "Additional Information - further details on the status reason",
+          "items" : {
+            "type" : "string",
+            "minLength" : 1,
+            "maxLength" : 105,
+            "x-ing-type" : "string"
+          },
+          "x-ing-type" : "array"
+        }
+      },
+      "description" : "Status Reason Information - provides detailed information on the status reason."
+    },
+    "StatusReasonChoice" : {
+      "type" : "object",
+      "properties" : {
+        "cd" : {
+          "type" : "string",
+          "description" : "Code - reason for the status",
+          "minLength" : 1,
+          "maxLength" : 4,
+          "x-ing-type" : "string"
+        },
+        "prtry" : {
+          "type" : "string",
+          "description" : "Proprietary - reason for the status, in a proprietary form",
+          "minLength" : 1,
+          "maxLength" : 35,
+          "x-ing-type" : "string"
+        }
+      }
+    },
+    "PaymentAgreementStatusResponse" : {
+      "type" : "object",
+      "properties" : {
+        "transactionStatus" : {
+          "type" : "string",
+          "example" : "RCVD",
+          "description" : "The transaction status is filled with codes of the ISO 20022 data table:\n  - 'RCVD': 'Received' -\n    The periodic payment initiation request has been received by ING, it is ready to be authorised by the customer. The customer did not yet authenticate in the ING domain, or the customer did authenticate but aborted the payment.\n  - 'PATC': 'PartiallyAcceptedTechnicalCorrect' -\n    The periodic payment requires multiple SCA, where some but not yet all have been performed. This periodic payment is awaiting the final authorisation. Syntactical and semantical validations are successful.\n  - 'ACTV': 'Active' -\n    The periodic payment agreement is successfully authorised by the customer and is active.\n  - 'EXPI': 'Expired' -\n    The periodic payment agreement has expired. It reached the specified end date and will no longer be executed.\n  - 'CANC': 'Canceled' -\n    The periodic payment agreement is no longer active. The periodic payment initiation request has been successfully cancelled after having received a request for cancellation.\n  - 'RJCT': 'Rejected' -\n    The periodic payment has been rejected, or it has been canceled either by your application or by the customer. A periodic payment request with the status RJCT can no longer be authorised by the customer.",
+          "enum" : [ "RCVD", "PATC", "ACTV", "EXPI", "CANC", "RJCT" ],
+          "x-ing-type" : "string"
+        },
+        "stsRsnInf" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/StatusReasonInformation"
+          },
+          "x-ing-type" : "array"
+        }
+      },
+      "title" : "paymentAgreementStatusResponse"
+    },
+    "Links" : {
+      "type" : "object",
+      "properties" : {
+        "scaRedirect" : {
+          "type" : "string",
+          "format" : "uri",
+          "example" : "https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL",
+          "description" : "'ING is transmitting the link to which to redirect the PSU browser.'",
+          "x-ing-type" : "string"
+        },
+        "self" : {
+          "type" : "string",
+          "format" : "uri",
+          "example" : "/payments/sepa-credit-transfers/cc04ef71-085e-468e-87bd-2881d8a03a5d",
+          "description" : "'The link to the payment initiation resource created by this request.'",
+          "x-ing-type" : "string"
+        },
+        "status" : {
+          "type" : "string",
+          "format" : "uri",
+          "example" : "/payments/sepa-credit-transfers/cc04ef71-085e-468e-87bd-2881d8a03a5d/status",
+          "description" : "'The link to retrieve the transaction status of the payment initiation request.'",
+          "x-ing-type" : "string"
+        },
+        "delete" : {
+          "type" : "string",
+          "format" : "uri",
+          "example" : "/payments/sepa-credit-transfers/cc04ef71-085e-468e-87bd-2881d8a03a5d",
+          "description" : "'The link to cancel the payment applicable. Only in the case if requestedExectionDate is greater than the current date.'",
+          "x-ing-type" : "string"
+        }
+      },
+      "title" : "links"
+    },
+    "PeriodicLinks" : {
+      "type" : "object",
+      "properties" : {
+        "scaRedirect" : {
+          "type" : "string",
+          "format" : "uri",
+          "example" : "https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL",
+          "description" : "'ING is transmitting the link to which to redirect the PSU browser.'",
+          "x-ing-type" : "string"
+        },
+        "self" : {
+          "type" : "string",
+          "format" : "uri",
+          "example" : "/periodic-payments/sepa-credit-transfers/cc04ef71-085e-468e-87bd-2881d8a03a5d",
+          "description" : "'The link to the periodic payment initiation resource created by this request.'",
+          "x-ing-type" : "string"
+        },
+        "status" : {
+          "type" : "string",
+          "format" : "uri",
+          "example" : "/periodic-payments/sepa-credit-transfers/cc04ef71-085e-468e-87bd-2881d8a03a5d/status",
+          "description" : "'The link to retrieve the transaction status of the periodic payment initiation request.'",
+          "x-ing-type" : "string"
+        },
+        "delete" : {
+          "type" : "string",
+          "format" : "uri",
+          "example" : "/periodic-payments/sepa-credit-transfers/cc04ef71-085e-468e-87bd-2881d8a03a5d",
+          "description" : "'The link to cancel the periodic payment.'",
+          "x-ing-type" : "string"
+        }
+      },
+      "title" : "periodicLinks"
+    },
+    "BulkLinks" : {
+      "type" : "object",
+      "properties" : {
+        "scaRedirect" : {
+          "type" : "string",
+          "format" : "uri",
+          "example" : "https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL",
+          "description" : "'ING is transmitting the link to which to redirect the PSU browser.'",
+          "x-ing-type" : "string"
+        },
+        "self" : {
+          "type" : "string",
+          "format" : "uri",
+          "example" : "/bulk-payments/sepa-credit-transfers/cc04ef71-085e-468e-87bd-2881d8a03a5d",
+          "description" : "'The link to the bulk payment initiation resource created by this request.'",
+          "x-ing-type" : "string"
+        },
+        "status" : {
+          "type" : "string",
+          "format" : "uri",
+          "example" : "/bulk-payments/sepa-credit-transfers/cc04ef71-085e-468e-87bd-2881d8a03a5d/status",
+          "description" : "'The link to retrieve the transaction status of the bulk payment initiation request.'",
+          "x-ing-type" : "string"
+        },
+        "delete" : {
+          "type" : "string",
+          "format" : "uri",
+          "example" : "/bulk-payments/sepa-credit-transfers/cc04ef71-085e-468e-87bd-2881d8a03a5d",
+          "description" : "'The link to cancel the bulk payment applicable. Only in the case if the requestedExectionDate is greater than the current date.'",
+          "x-ing-type" : "string"
+        }
+      },
+      "title" : "bulkLinks"
+    }
+  },
+  "parameters" : {
+    "payment-product" : {
+      "name" : "payment-product",
+      "in" : "path",
+      "description" : "The addressed payment product endpoint. The list of products supported is - sepa-credit-transfers - cross-border-credit-transfers - domestic-credit-transfers In due course, ING can communicate additional supported payment products.",
+      "required" : true,
+      "type" : "string",
+      "enum" : [ "sepa-credit-transfers", "cross-border-credit-transfers", "domestic-credit-transfers" ]
+    },
+    "paymentId" : {
+      "name" : "paymentId",
+      "in" : "path",
+      "description" : "Identification of payment instruction in ING (resource identification of the generated payment initiation resource).",
+      "required" : true,
+      "type" : "string",
+      "format" : "uuid"
+    },
+    "X-Request-ID" : {
+      "name" : "X-Request-ID",
+      "in" : "header",
+      "description" : "ID of the request, unique to the call, as determined by the initiating party (TPP).",
+      "required" : true,
+      "type" : "string",
+      "format" : "uuid"
+    },
+    "DateInHeader" : {
+      "name" : "Date",
+      "in" : "header",
+      "description" : "Standard HTTP header element for date and time. HTTP headers are represented as RFC 7231, chapter 7.1.1.1.  Date/Time Formats. Format: EEE, dd MMM yyyy HH:mm:ss 'GMT'",
+      "required" : true,
+      "type" : "string"
+    },
+    "PSU-ID" : {
+      "name" : "PSU-ID",
+      "in" : "header",
+      "description" : "PSU identification",
+      "required" : false,
+      "type" : "string",
+      "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$"
+    },
+    "PSU-ID-Type" : {
+      "name" : "PSU-ID-Type",
+      "in" : "header",
+      "description" : "PSU identification Type",
+      "required" : false,
+      "type" : "string",
+      "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$"
+    },
+    "PSU-Corporate-ID" : {
+      "name" : "PSU-Corporate-ID",
+      "in" : "header",
+      "description" : "Corporate identification",
+      "required" : false,
+      "type" : "string",
+      "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$"
+    },
+    "PSU-Corporate-ID-Type" : {
+      "name" : "PSU-Corporate-ID-Type",
+      "in" : "header",
+      "description" : "PSU Corporate identification type",
+      "required" : false,
+      "type" : "string",
+      "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$"
+    },
+    "PSU-IP-Address_mandatory" : {
+      "name" : "PSU-IP-Address",
+      "in" : "header",
+      "description" : "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP.",
+      "required" : true,
+      "type" : "string",
+      "format" : "ipv4,ipv6"
+    },
+    "PSU-IP-Address_optional" : {
+      "name" : "PSU-IP-Address",
+      "in" : "header",
+      "description" : "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP.",
+      "required" : false,
+      "type" : "string",
+      "format" : "ipv4,ipv6"
+    },
+    "PSU-User-Agent" : {
+      "name" : "PSU-User-Agent",
+      "in" : "header",
+      "description" : "PSU user agent",
+      "required" : false,
+      "type" : "string",
+      "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$"
+    },
+    "PSU-Geo-Location" : {
+      "name" : "PSU-Geo-Location",
+      "in" : "header",
+      "description" : "The forwarded Geo Location header field of the corresponding http request between PSU and TPP if available. The longitude and latitude values MUST be specified as decimal degrees and should be specified to six decimal places. The text components are separated by the SEMI-COLON character (ASCII decimal 59). Format using [RFC2426], i.e. \"GEO:\"latitude;longitude. For example: \"GEO:28.644800;77.216721\"",
+      "required" : false,
+      "type" : "string"
+    },
+    "TPP-Redirect-URI" : {
+      "name" : "TPP-Redirect-URI",
+      "in" : "header",
+      "description" : "URI of the TPP, where the transaction flow shall be redirected to after a Redirect",
+      "required" : true,
+      "type" : "string",
+      "format" : "uri"
+    },
+    "DigestInHeader" : {
+      "name" : "Digest",
+      "in" : "header",
+      "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+      "required" : true,
+      "type" : "string",
+      "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,='+ -]+$"
+    },
+    "AuthorizationInHeader" : {
+      "name" : "Authorization",
+      "in" : "header",
+      "description" : "Bearer Token. Represents TPP Application Access Token. The process to obtain the Application Access Token is described in Client Credentials \"Authentication Flow\": https://developer.ing.com/openbanking/get-started",
+      "required" : true,
+      "type" : "string",
+      "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./_,'+ -]+$"
+    },
+    "CertificateInHeader" : {
+      "name" : "TPP-Signature-Certificate",
+      "in" : "header",
+      "description" : "The certificate  of the TPP used for signing the request.",
+      "required" : false,
+      "type" : "string",
+      "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$"
+    },
+    "SignatureInHeader" : {
+      "name" : "Signature",
+      "in" : "header",
+      "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. For more details refer to: https://developer.ing.com/openbanking/get-started Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers required for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+      "required" : true,
+      "type" : "string",
+      "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./\"_=,'+ -]+$"
+    }
+  },
+  "responses" : {
+    "400BadRequest" : {
+      "description" : "Bad Request.",
+      "schema" : {
+        "$ref" : "#/definitions/TPPMessages"
+      }
+    },
+    "401Unauthorised" : {
+      "description" : "Unauthorised.",
+      "schema" : {
+        "$ref" : "#/definitions/TPPMessages"
+      }
+    },
+    "403Forbidden" : {
+      "description" : "Forbidden.",
+      "schema" : {
+        "$ref" : "#/definitions/TPPMessages"
+      }
+    },
+    "404NotFound" : {
+      "description" : "Not Found.",
+      "schema" : {
+        "$ref" : "#/definitions/TPPMessages"
+      }
+    },
+    "422UnProcessableEntity" : {
+      "description" : "UNPROCESSABLE ENTITY.",
+      "schema" : {
+        "$ref" : "#/definitions/TPPMessages"
+      }
+    },
+    "500SERVICEUNAVAILABLE" : {
+      "description" : "SERVICE UNAVAILABLE.",
+      "schema" : {
+        "$ref" : "#/definitions/TPPMessages"
+      }
+    },
+    "500TechnicalError" : {
+      "description" : "Internal Server Error.",
+      "schema" : {
+        "$ref" : "#/definitions/TPPMessages"
+      }
+    }
+  }
+}

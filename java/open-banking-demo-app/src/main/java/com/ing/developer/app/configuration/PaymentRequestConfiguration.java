@@ -22,9 +22,9 @@ public class PaymentRequestConfiguration {
     private final int proxyPort;
 
     public PaymentRequestConfiguration(Environment env) {
-        this.clientId = env.getRequiredProperty("open.oauth.client-id");
-        this.keyStoreFileName = env.getRequiredProperty("open.keystore.name");
-        this.keyStorePassword = env.getRequiredProperty("open.keystore.password").toCharArray();
+        this.clientId = env.getRequiredProperty("premium.oauth.client-id");
+        this.keyStoreFileName = env.getRequiredProperty("premium.keystore.name");
+        this.keyStorePassword = env.getRequiredProperty("premium.keystore.password").toCharArray();
         this.logging = env.getRequiredProperty("logging", Boolean.class);
         this.useProxy = env.getRequiredProperty("proxy.use", Boolean.class);
         this.proxyHost = env.getRequiredProperty("proxy.host");

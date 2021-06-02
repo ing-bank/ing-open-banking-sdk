@@ -15,7 +15,7 @@ public class PaymentRequestAdapter {
     private final RegistrationApi registrationApi;
 
     public PaymentRequestAdapter(Environment env, RegistrationApi registrationApi) {
-        this.clientId = env.getRequiredProperty("open.oauth.client-id");
+        this.clientId = env.getRequiredProperty("premium.oauth.client-id");
         this.registrationApi = registrationApi;
     }
 

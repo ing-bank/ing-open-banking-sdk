@@ -16,7 +16,7 @@
     <description>Open Banking Account Information Driver for developers</description>
 
     <properties>
-        <account-information-api.version>2.5.0</account-information-api.version>
+        <account-information-api.version>3.0.1</account-information-api.version>
         <base-package>com.ing.developer.account.information.client</base-package>
     </properties>
 

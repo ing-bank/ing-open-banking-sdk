@@ -24,7 +24,7 @@ To test your connection to ING Open Banking APIs we also provide a [Command Line
 
 ## Quick Start (*nix)
 * Run `./download-certificates.sh`
-* Run `./keygen-open.sh` and set `secret` as password.
+* Run `./keygen-premium.sh` and set `secret` as password.
 * Run `./keygen-psd2.sh` and set `secret2` as password.
 * Run  `mvn clean install`
 * Run `./run-java.sh`
@@ -41,7 +41,7 @@ In this repository you can find api descriptions in swagger json format in the `
 ### Download certificates
 On *nix systems use `download-certificates.sh` to automatically set up your certificates for the Sandbox environment. Alternatively you can manually download the required certificates as described below.
 #### Premium APIs
-At `developer.ing.com/openbanking/get-started/openbanking` (renaming `.cer` to `.pem`) (or [GitHub](https://github.com/ing-bank/ing-open-banking-cli/tree/develop/apps/sandbox/certificates)) download the certificates and keys and place them in the `./scripts/certs/` directory:
+At `developer.ing.com/openbanking/get-started/premium` (renaming `.cer` to `.pem`) (or [GitHub](https://github.com/ing-bank/ing-open-banking-cli/tree/master/apps/sandbox/certificates)) download the certificates and keys and place them in the `./scripts/certs/` directory:
 ```
 ./certs/example_client_signing.pem
 ./certs/example_client_signing.key
@@ -49,7 +49,7 @@ At `developer.ing.com/openbanking/get-started/openbanking` (renaming `.cer` to `
 ./certs/example_client_tls.key
 ``` 
 #### PSD2 APIs
-At `https://developer.ing.com/openbanking/get-started/psd2` (renaming `.cer` to `.pem`) (or [GitHub](https://github.com/ing-bank/ing-open-banking-cli/tree/develop/apps/sandbox/certificates)) download the certificates and keys and place them in the `./scripts/certs/` directory:
+At `https://developer.ing.com/openbanking/get-started/psd2` (renaming `.cer` to `.pem`) (or [GitHub](https://github.com/ing-bank/ing-open-banking-cli/tree/master/apps/sandbox/certificates)) download the certificates and keys and place them in the `./scripts/certs/` directory:
 ```
 ./certs/example_eidas_client_signing.pem
 ./certs/example_eidas_client_signing.key
@@ -59,7 +59,7 @@ At `https://developer.ing.com/openbanking/get-started/psd2` (renaming `.cer` to 
 
 ### Create keystores
 #### Premium APIs
-Run `keygen-open.sh` and provide a password (use `secret` for quick test; see below). This password is used to access the keystore that will be generated. The keystore can be found in `./java/open-banking-demo-app/src/main/resources/keystore-open.jks`.
+Run `keygen-premium.sh` and provide a password (use `secret` for quick test; see below). This password is used to access the keystore that will be generated. The keystore can be found in `./java/open-banking-demo-app/src/main/resources/keystore-premium.jks`.
 #### PSD2 APIs
 Run `keygen-psd2.sh` and provide a password (use `secret2` for quick test; see below). This password is used to access the keystore that will be generated. The keystore can be found in `./java/open-banking-demo-app/src/main/resources/keystore-psd2.jks`.
 

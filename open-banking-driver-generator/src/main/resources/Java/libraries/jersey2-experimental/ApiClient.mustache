@@ -55,6 +55,7 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Optional;
 import java.util.TimeZone;
 
 import java.net.URLEncoder;
@@ -89,10 +90,10 @@ public class ApiClient {
 
   protected Map<String, String> defaultHeaderMap = new HashMap<String, String>();
   protected Map<String, String> defaultCookieMap = new HashMap<String, String>();
-  protected String basePath = "{{{basePath}}}";
+  protected String basePath = Optional.ofNullable(System.getenv("SDK_URL")).orElse("{{{basePath}}}");
   protected List<ServerConfiguration> servers = new ArrayList<ServerConfiguration>({{#servers}}{{#-first}}Arrays.asList(
 {{/-first}}    new ServerConfiguration(
-      "{{{url}}}",
+      basePath,
       "{{{description}}}{{^description}}No description provided{{/description}}",
       new HashMap<String, ServerVariable>(){{#variables}}{{#-first}} {{
 {{/-first}}        put("{{{name}}}", new ServerVariable(
@@ -127,7 +128,7 @@ public class ApiClient {
     put("{{{classname}}}.{{{operationId}}}", new ArrayList<ServerConfiguration>(Arrays.asList(
     {{/-first}}
       new ServerConfiguration(
-        "{{{url}}}",
+        "basePath",
         "{{{description}}}{{^description}}No description provided{{/description}}",
         new HashMap<String, ServerVariable>(){{#variables}}{{#-first}} {{
 {{/-first}}          put("{{{name}}}", new ServerVariable(

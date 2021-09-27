@@ -105,7 +105,7 @@ public class ApiClient {
     put("{{{classname}}}.{{{operationId}}}", new ArrayList<ServerConfiguration>(Arrays.asList(
     {{/-first}}
       new ServerConfiguration(
-        "basePath",
+        basePath,
         "{{{description}}}{{^description}}No description provided{{/description}}",
         new HashMap<String, ServerVariable>(){{#variables}}{{#-first}} {{
 {{/-first}}          put("{{{name}}}", new ServerVariable(

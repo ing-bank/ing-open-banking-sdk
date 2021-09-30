@@ -11,16 +11,25 @@ import com.ing.developer.app.apis.payment.request.PaymentRequestAdapter;
 import com.ing.developer.common.exceptions.http.OpenBankingHttpNotFoundException;
 import com.ing.developer.payment.request.client.model.DailyReceivableLimit;
 import com.ing.developer.payment.request.client.model.RegistrationRequest;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
+import javax.ws.rs.ProcessingException;
 import java.math.BigDecimal;
+import java.net.UnknownHostException;
 
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class OpenBankingDemoApplicationTests {
+
+    static {
+        System.setProperty("SDK_URL", "https://api.sandbox.ing.com");
+    }
 
     @Autowired
     private PaymentRequestAdapter paymentRequestAdapter;
@@ -79,6 +88,26 @@ class OpenBankingDemoApplicationTests {
     @Test
     void getGreeting() {
         Assertions.assertThrows(OpenBankingHttpNotFoundException.class, () -> greetingsAdapter.getGreeting());
+    }
+
+}
+
+@SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+class OpenBankingDemoApplicationSdkChangeTests {
+
+    static {
+        System.setProperty("SDK_URL", "https://unknown.host.com");
+    }
+
+    @Autowired
+    private GreetingsAdapter greetingsAdapter;
+
+    @Test
+    void setSdkUrl() {
+        Exception exception = Assertions.assertThrows(ProcessingException.class, () -> greetingsAdapter.getGreeting());
+        Assertions.assertEquals(UnknownHostException.class, exception.getCause().getClass());
+        Assertions.assertEquals(exception.getCause().toString(), "java.net.UnknownHostException: unknown.host.com");
     }
 
 }

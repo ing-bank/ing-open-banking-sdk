@@ -13,15 +13,14 @@ import com.ing.developer.payment.request.client.model.DailyReceivableLimit;
 import com.ing.developer.payment.request.client.model.RegistrationRequest;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import javax.ws.rs.ProcessingException;
-import java.math.BigDecimal;
 import java.net.UnknownHostException;
+import java.math.BigDecimal;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)

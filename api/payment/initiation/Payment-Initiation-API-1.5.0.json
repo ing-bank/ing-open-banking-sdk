@@ -14,7 +14,7 @@
       "url" : "http://developer.ing.com"
     }
   },
-  "host" : "api.sandbox.ing.com",
+  "host" : "api.ing.com",
   "basePath" : "/",
   "tags" : [ {
     "name" : "PSD2",

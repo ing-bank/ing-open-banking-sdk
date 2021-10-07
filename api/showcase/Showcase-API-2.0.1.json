@@ -10,7 +10,7 @@
       "email" : "developerportal@ing.com"
     }
   },
-  "host" : "api.sandbox.ing.com",
+  "host" : "api.ing.com",
   "basePath" : "/",
   "schemes" : [ "https" ],
   "consumes" : [ "application/json" ],

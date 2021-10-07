@@ -10,7 +10,7 @@
       "email" : "developerportal@ing.com"
     }
   },
-  "host" : "api.sandbox.ing.com",
+  "host" : "api.ing.com",
   "tags" : [ {
     "name" : "Payment Request",
     "description" : "Actions relating to specific payment requests"

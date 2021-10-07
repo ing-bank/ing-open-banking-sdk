@@ -16,19 +16,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 
-import javax.ws.rs.ProcessingException;
-import java.net.UnknownHostException;
 import java.math.BigDecimal;
 
 @SpringBootTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-class OpenBankingDemoApplicationTests {
-
-    static {
-        System.setProperty("SDK_URL", "https://api.sandbox.ing.com");
-    }
+class OpenBankingDemoApplicationTestIntegration {
 
     @Autowired
     private PaymentRequestAdapter paymentRequestAdapter;
@@ -88,25 +80,4 @@ class OpenBankingDemoApplicationTests {
     void getGreeting() {
         Assertions.assertThrows(OpenBankingHttpNotFoundException.class, () -> greetingsAdapter.getGreeting());
     }
-
-}
-
-@SpringBootTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-class OpenBankingDemoApplicationSdkChangeTests {
-
-    static {
-        System.setProperty("SDK_URL", "https://unknown.host.com");
-    }
-
-    @Autowired
-    private GreetingsAdapter greetingsAdapter;
-
-    @Test
-    void setSdkUrl() {
-        Exception exception = Assertions.assertThrows(ProcessingException.class, () -> greetingsAdapter.getGreeting());
-        Assertions.assertEquals(UnknownHostException.class, exception.getCause().getClass());
-        Assertions.assertEquals(exception.getCause().toString(), "java.net.UnknownHostException: unknown.host.com");
-    }
-
 }

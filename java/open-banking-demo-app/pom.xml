@@ -90,7 +90,7 @@
                         <id>default-test</id>
                         <configuration>
                             <excludes>
-                                <exclude>**/*Integration*</exclude>
+                                <exclude>**/*Integration.java</exclude>
                             </excludes>
                             <environmentVariables>
                                 <SDK_URL>my_url_here</SDK_URL>
@@ -103,7 +103,7 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <includes>
-                        <include>**/*Integration*</include>
+                        <include>**/*Integration.java</include>
                     </includes>
                     <environmentVariables>
                         <SDK_URL>https://api.sandbox.ing.com</SDK_URL>

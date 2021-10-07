@@ -90,7 +90,7 @@ public class ApiClient {
 
   protected Map<String, String> defaultHeaderMap = new HashMap<String, String>();
   protected Map<String, String> defaultCookieMap = new HashMap<String, String>();
-  protected String basePath = Optional.ofNullable(System.getenv("SDK_URL")).orElse("{{{basePath}}}");
+  protected String basePath = Optional.ofNullable(System.getenv("BASE_URL")).orElse("{{{basePath}}}");
   protected List<ServerConfiguration> servers = new ArrayList<ServerConfiguration>({{#servers}}{{#-first}}Arrays.asList(
 {{/-first}}    new ServerConfiguration(
       basePath,

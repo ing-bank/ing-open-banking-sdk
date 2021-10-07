@@ -7,6 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ApiClientTest {
     @Test
     public void testApiClient() {
-        assertEquals("my_url_here", new ApiClient().getBasePath());
+        assertEquals("https://api.ing.com", new ApiClient().getBasePath());
     }
 }

@@ -49,12 +49,12 @@ At `developer.ing.com/openbanking/get-started/premium` (renaming `.cer` to `.pem
 ./certs/example_client_tls.key
 ``` 
 #### PSD2 APIs
-At `https://developer.ing.com/openbanking/get-started/psd2` (renaming `.cer` to `.pem`) (or [GitHub](https://github.com/ing-bank/ing-open-banking-cli/tree/master/apps/sandbox/certificates)) download the certificates and keys and place them in the `./scripts/certs/` directory:
+At `https://developer.ing.com/openbanking/get-started/psd2` (renaming `.cer` to `.pem`) (or [GitHub](https://github.com/ing-bank/ing-open-banking-cli/tree/master/apps/sandbox/certificates/psd2/)) download the certificates and keys and place them in the `./scripts/certs/psd2` directory:
 ```
-./certs/example_eidas_client_signing.pem
-./certs/example_eidas_client_signing.key
-./certs/example_eidas_client_tls.pem
-./certs/example_eidas_client_tls.key
+./certs/psd2/example_client_signing.pem
+./certs/psd2/example_client_signing.key
+./certs/psd2/example_client_tls.pem
+./certs/psd2/example_client_tls.key
 ```
 
 ### Create keystores

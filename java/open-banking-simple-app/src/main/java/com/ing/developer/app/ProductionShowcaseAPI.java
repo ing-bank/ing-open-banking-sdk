@@ -3,13 +3,14 @@ package com.ing.developer.app;
 import com.ing.developer.common.Utils;
 import com.ing.developer.common.clients.Companion;
 import com.ing.developer.showcase.client.ApiClient;
+import com.ing.developer.showcase.client.ApiException;
 import com.ing.developer.showcase.client.api.GreetingsApi;
 
 import javax.ws.rs.client.ClientBuilder;
 import java.security.PrivateKey;
 
 public class ProductionShowcaseAPI {
-    public static void callShowcaseAPI() throws Exception {
+    public static void callShowcaseAPI() throws ApiException {
         // Set the BASE_URL=https://api.ing.com.
         // Use own client key.
         // Use certs uploaded to the developer portal

@@ -7,6 +7,7 @@ import com.ing.developer.common.clients.OpenBankingOAuthApi;
 import javax.ws.rs.client.Client;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
+
 public class Psd2AuthUrl {
     public static void getAuthUrl() {
         String keyId = "SN=5E4299BE";

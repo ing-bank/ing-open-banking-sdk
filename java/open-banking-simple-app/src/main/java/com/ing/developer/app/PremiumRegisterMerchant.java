@@ -3,6 +3,7 @@ package com.ing.developer.app;
 import com.ing.developer.common.Utils;
 import com.ing.developer.common.clients.Companion;
 import com.ing.developer.payment.request.client.ApiClient;
+import com.ing.developer.payment.request.client.ApiException;
 import com.ing.developer.payment.request.client.api.RegistrationApi;
 import com.ing.developer.payment.request.client.model.DailyReceivableLimit;
 import com.ing.developer.payment.request.client.model.RegistrationRequest;
@@ -12,7 +13,7 @@ import java.math.BigDecimal;
 import java.security.PrivateKey;
 
 public class PremiumRegisterMerchant {
-    public static void registerMerchant() throws Exception {
+    public static void registerMerchant() throws ApiException {
         String clientId = "e77d776b-90af-4684-bebc-521e5b2614dd";
         String keyStoreFileName = "keystore-premium.jks";
         char[] keyStorePassword = "secret".toCharArray();

@@ -161,6 +161,7 @@ import com.ing.developer.common.clients.OpenBankingOAuthApi;
 import javax.ws.rs.client.Client;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
+
 public class psd2AuthUrl {
     public static void getAuthUrl() {
         String keyId = "SN=5E4299BE";
@@ -236,6 +237,7 @@ The classes required to fetch account information can be imported as seen below.
 
 ```java
 import com.ing.developer.account.information.client.ApiClient;
+import com.ing.developer.account.information.client.ApiException;
 import com.ing.developer.account.information.client.api.AccountDetailsApi;
 import com.ing.developer.account.information.client.model.Account;
 ```
@@ -342,6 +344,7 @@ The classes required to create the request can be imported as seen below.
 import com.ing.developer.common.Utils;
 import com.ing.developer.common.clients.Companion;
 import com.ing.developer.payment.request.client.ApiClient;
+import com.ing.developer.payment.request.client.ApiException;
 import com.ing.developer.payment.request.client.api.RegistrationApi;
 import com.ing.developer.payment.request.client.model.DailyReceivableLimit;
 import com.ing.developer.payment.request.client.model.RegistrationRequest;
@@ -392,6 +395,7 @@ Full Example:
 import com.ing.developer.common.Utils;
 import com.ing.developer.common.clients.Companion;
 import com.ing.developer.payment.request.client.ApiClient;
+import com.ing.developer.payment.request.client.ApiException;
 import com.ing.developer.payment.request.client.api.RegistrationApi;
 import com.ing.developer.payment.request.client.model.DailyReceivableLimit;
 import com.ing.developer.payment.request.client.model.RegistrationRequest;
@@ -401,7 +405,7 @@ import java.math.BigDecimal;
 import java.security.PrivateKey;
 
 public class PremiumRegisterMerchant {
-    public static void registerMerchant() throws Exception {
+    public static void registerMerchant() throws ApiException {
         String clientId = "e77d776b-90af-4684-bebc-521e5b2614dd";
         String keyStoreFileName = "keystore-premium.jks";
         char[] keyStorePassword = "secret".toCharArray();
@@ -468,14 +472,14 @@ Full Example:
 ```java
 import com.ing.developer.common.Utils;
 import com.ing.developer.common.clients.Companion;
-import com.ing.developer.showcase.client.ApiClient;
+import com.ing.developer.showcase.client.ApiException;
 import com.ing.developer.showcase.client.api.GreetingsApi;
 
 import javax.ws.rs.client.ClientBuilder;
 import java.security.PrivateKey;
 
 public class ProductionShowcaseAPI {
-    public static void callShowcaseAPI() throws Exception {
+    public static void callShowcaseAPI() throws ApiException {
         String clientId = "3e19a706-511d-480c-ac3e-4ba135b154f4";
         String keyStoreFileName = "keystore-premium.jks";
         char[] keyStorePassword = "secret".toCharArray();

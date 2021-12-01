@@ -1,0 +1,6 @@
+#!/bin/bash
+export BASE_URL=https://api.sandbox.ing.com
+java -jar java/open-banking-simple-app/target/open-banking-simple-app-*.jar
+
+export BASE_URL=https://api.ing.com
+java -jar java/open-banking-simple-app/target/open-banking-simple-app-*.jar

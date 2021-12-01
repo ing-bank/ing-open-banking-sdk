@@ -39,6 +39,7 @@
         <module>open-banking-drivers</module>
         <module>open-banking-common</module>
         <module>open-banking-demo-app</module>
+        <module>open-banking-simple-app</module>
     </modules>
 
 </project>

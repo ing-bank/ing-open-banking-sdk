@@ -41,7 +41,7 @@ In this repository you can find api descriptions in swagger json format in the `
 ### Download certificates
 On *nix systems use `download-certificates.sh` to automatically set up your certificates for the Sandbox environment. Alternatively you can manually download the required certificates as described below.
 #### Premium APIs
-At `developer.ing.com/openbanking/get-started/premium` (renaming `.cer` to `.pem`) (or [GitHub](https://github.com/ing-bank/ing-open-banking-cli/tree/master/apps/sandbox/certificates)) download the certificates and keys and place them in the `./scripts/certs/` directory:
+At `developer.ing.com/openbanking/get-started/premium` (renaming `.cer` to `.pem`) (or [GitHub](https://github.com/ing-bank/ing-open-banking-cli/tree/master/apps/sandbox/certificates)) download the certificates and keys and place them in the `./certs/` directory:
 ```
 ./certs/example_client_signing.pem
 ./certs/example_client_signing.key
@@ -49,7 +49,7 @@ At `developer.ing.com/openbanking/get-started/premium` (renaming `.cer` to `.pem
 ./certs/example_client_tls.key
 ``` 
 #### PSD2 APIs
-At `https://developer.ing.com/openbanking/get-started/psd2` (renaming `.cer` to `.pem`) (or [GitHub](https://github.com/ing-bank/ing-open-banking-cli/tree/master/apps/sandbox/certificates/psd2/)) download the certificates and keys and place them in the `./scripts/certs/psd2` directory:
+At `https://developer.ing.com/openbanking/get-started/psd2` (renaming `.cer` to `.pem`) (or [GitHub](https://github.com/ing-bank/ing-open-banking-cli/tree/master/apps/sandbox/certificates/psd2/)) download the certificates and keys and place them in the `./certs/psd2` directory:
 ```
 ./certs/psd2/example_client_signing.pem
 ./certs/psd2/example_client_signing.key
@@ -57,6 +57,7 @@ At `https://developer.ing.com/openbanking/get-started/psd2` (renaming `.cer` to 
 ./certs/psd2/example_client_tls.key
 ```
 
+These certificates are used to generate the required keystore files required to call the sandbox api's.
 ### Create keystores
 #### Premium APIs
 Run `keygen-premium.sh` and provide a password (use `secret` for quick test; see below). This password is used to access the keystore that will be generated. The keystore can be found in `./java/open-banking-demo-app/src/main/resources/keystore-premium.jks`.
@@ -71,8 +72,9 @@ In the application properties you can configure proxy settings as well.
 #### Start testing
 Run `mvn clean install` to test the SDK. Alternatively run `mvn clean install -Dproxy.use` to enable your proxy settings when the default setting in properties is `false`. 
 
-## Slow Start using the ING Open Banking Drivers
-This section contains Java code snippets to assist in the implementation the ING Open Banking Drivers.
+
+## Examples using the ING Open Banking Drivers
+This section contains example Java code snippets to assist in the implementation the ING Open Banking Drivers.
 
 Make sure to have downloaded or created the certificates as mentioned above.
 

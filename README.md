@@ -1,9 +1,11 @@
 # ING Open Banking SDK
 With this SDK we provide the means to generate drivers to interact with ING's Open Banking APIs. It includes a custom generator that creates drivers which encapsulate HTTP signature signing and OAuth application token flows. As shown by the demo-app these drivers significantly reduce complexity to interact with ING's Open Banking APIs. Since the drivers are generated from OpenAPI Specification files, updating is easy by regenerating the drivers based on updated files.
 
+## CLI
+To test your connection to ING Open Banking APIs we also provide a [Command Line Interface (CLI)](https://github.com/ing-bank/ing-open-banking-cli) using scripts.
+
 ## Features:
 - [x] Open Banking Driver Generator (OpenApi Generator extension)
-### Features (Java):
 - [x] Open Banking Driver Generator Java templates
 - [x] Example of generated drivers based on Swagger API definition targeting the ING Sandbox
 - [x] Demo App for educational purposes
@@ -11,11 +13,6 @@ With this SDK we provide the means to generate drivers to interact with ING's Op
 - [x] Wrapper class for OAuth 2.0 technical driver (using OpenAPI Generator)
 - [ ] Test generated drivers for feature completeness on Open Banking APIs (including PSD2)
 - [ ] Publicly available drivers
-### Features (Other languages):
-- [ ] ...
-
-## CLI
-To test your connection to ING Open Banking APIs we also provide a [Command Line Interface (CLI)](https://github.com/ing-bank/ing-open-banking-cli) using scripts.
 
 ## Dependencies:
 * Java JDK 1.8+
@@ -38,7 +35,7 @@ To test your connection to ING Open Banking APIs we also provide a [Command Line
 ### Folder structure
 In this repository you can find api descriptions in swagger json format in the `api` directory. In addition, you can find the `open-banking-driver-generator` folder containing the modified Java [Open API Generator](https://github.com/OpenAPITools/openapi-generator) to generate drivers. Moreover, you can find a demo app, modules to generate Open Banking Drivers using the modified generator, and some wrapper classes in the `java` folder.
 
-### Download certificates
+### Step1: Download certificates
 On *nix systems use `download-certificates.sh` to automatically set up your certificates for the Sandbox environment. Alternatively you can manually download the required certificates as described below.
 #### Premium APIs
 At `developer.ing.com/openbanking/get-started/premium` (renaming `.cer` to `.pem`) (or [GitHub](https://github.com/ing-bank/ing-open-banking-cli/tree/master/apps/sandbox/certificates)) download the certificates and keys and place them in the `./certs/` directory:
@@ -58,13 +55,13 @@ At `https://developer.ing.com/openbanking/get-started/psd2` (renaming `.cer` to 
 ```
 
 These certificates are used to generate the required keystore files required to call the sandbox api's.
-### Create keystores
+### Step2: Create keystores
 #### Premium APIs
 Run `keygen-premium.sh` and provide a password (use `secret` for quick test; see below). This password is used to access the keystore that will be generated. The keystore can be found in `./java/open-banking-demo-app/src/main/resources/keystore-premium.jks`.
 #### PSD2 APIs
 Run `keygen-psd2.sh` and provide a password (use `secret2` for quick test; see below). This password is used to access the keystore that will be generated. The keystore can be found in `./java/open-banking-demo-app/src/main/resources/keystore-psd2.jks`.
 
-### Test the provided app
+### Step3: Test the provided app
 #### Configuration
 Configure the `open-banking-demo-app` module for a test run. If you used `secret` and `secret2` for openbanking and psd2 keystores respectively you are all set! If not you can configure the passwords used in `./java/open-banking-demo-app/src/main/resources/application.properties`. You can find other settings there as well. The open-banking-demo-app is just a showcase of how to use the SDK.
 ##### Proxy settings
@@ -78,7 +75,7 @@ This section contains example Java code snippets to assist in the implementation
 
 Make sure to have downloaded or created the certificates as mentioned above.
 
-Run `mvn clean install` to build the drivers, and then add the following dependencies to your java app.
+Run `mvn clean install` to build the drivers, and then add the following dependencies to the pom.xml file of your java app.
 
 ```xml
 <dependency>
@@ -108,7 +105,7 @@ Run `mvn clean install` to build the drivers, and then add the following depende
 </dependency>
 ```
 
-### PSD2
+### Using ING Open Banking Drivers for PSD2 API's
 #### Request an authorization URL
 
 The OpenBankingOAuthApi driver is used to request an authorization URL.
@@ -137,7 +134,7 @@ Client openBankingClient = Companion.Utils.createOpenBankingClient(keyStoreFileN
 OpenBankingOAuthApi openBankingOAuthApi = new OpenBankingOAuthApi(keyId, trustMaterial, openBankingClient);
 ```
 
-Once the OpenBankingOAuthApi is initialized a authorization URL can be requested by calling the code below.
+Once the OpenBankingOAuthApi is initialized an authorization URL can be requested by calling the code below.
 Scope and redirectUri are mandatory fields. For more information please visit the [psd2 get-gestarted page](https://developer.ing.com/openbanking/get-started/psd2#step-3-request-an-authorization-code-and-the-customer-access-token).
 
 ```java
@@ -149,7 +146,7 @@ String consentUri = openBankingOAuthApi.getConsentUri(redirectUri, scope, countr
 ```
 The getConsentUri command will request a token from the OAuth api.
 After a successful token response, the driver will request an authorization URL from the OAuth api. 
-A successful request will return a URL similar to the example below:
+A successful request will return an URL similar to the example below:
 ```
 https://myaccount.sandbox.ing.com/granting/cf29c75e-ffc7-42aa-8e0c-ce782aa129e8/NL?client_id=5ca1ab1e-c0ca-c01a-cafe-154deadbea75&scope=payment-accounts%3Abalances%3Aview%20payment-accounts%3Atransactions%3Aview&redirect_uri=https://www.example.com
 ```
@@ -244,7 +241,7 @@ import com.ing.developer.account.information.client.api.AccountDetailsApi;
 import com.ing.developer.account.information.client.model.Account;
 ```
 
-The AccountDetailsApi requires a ApiClient object which has a similar setup as the Client used in the openBankingOAuthApi above.
+The AccountDetailsApi requires an ApiClient object which has a similar setup as the Client used in the openBankingOAuthApi above.
 
 ```java
 String keyId = "SN=5E4299BE";
@@ -336,7 +333,7 @@ public class psd2AccountInfo {
 }
 
 ```
-### Premium
+### Using ING Open Banking Drivers for Premium API's
 #### Call Payment Request API:
 
 The RegistrationApi is used to create the payment requests registration.
@@ -432,7 +429,7 @@ public class PremiumRegisterMerchant {
     }
 }
 ```
-### Production
+### Using ING Open Banking Drivers for Production API's
 #### Call Showcase API in production:
 
 The GreetingsApi is used to test a connection with a production API.

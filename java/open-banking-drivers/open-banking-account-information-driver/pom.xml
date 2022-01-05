@@ -15,6 +15,14 @@
     <name>Open Banking Account Information Driver</name>
     <description>Open Banking Account Information Driver for developers</description>
 
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>benneb2</name>
+            <url>https://maven.pkg.github.com/benneb2/ing-open-banking-sdk</url>
+        </repository>
+    </distributionManagement>
+
     <properties>
         <account-information-api.version>3.0.1</account-information-api.version>
         <base-package>com.ing.developer.account.information.client</base-package>

@@ -32,6 +32,7 @@ jobs:
           server-id: github
           server-username: GITHUB_USER_REF  # env variable name for username
           server-password: GITHUB_TOKEN_REF
+      - run: mvn -B package -DskipTests
       - run: mvn deploy -f java/open-banking-drivers/open-banking-account-information-driver/pom.xml
       - run: mvn deploy -f java/open-banking-drivers/open-banking-payment-initiation-driver/pom.xml
       - run: mvn deploy -f java/open-banking-drivers/open-banking-payment-request-driver/pom.xml

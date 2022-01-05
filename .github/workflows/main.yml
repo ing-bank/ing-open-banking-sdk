@@ -24,9 +24,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v1
-        env:
-          GITHUB_USER_REF: ${{ secrets.GIT_USERNAME }}
-          GITHUB_TOKEN_REF: ${{ secrets.GIT_TOKEN }}
         with:
           java-version: 11
           server-id: github
@@ -34,8 +31,20 @@ jobs:
           server-password: GITHUB_TOKEN_REF
       - run: mvn clean install -DskipTests
       - run: mvn deploy -f java/open-banking-drivers/open-banking-account-information-driver/pom.xml
+        env:
+          GITHUB_USER_REF: ${{ secrets.GIT_USERNAME }}
+          GITHUB_TOKEN_REF: ${{ secrets.GIT_TOKEN }}
       - run: mvn deploy -f java/open-banking-drivers/open-banking-payment-initiation-driver/pom.xml
+        env:
+          GITHUB_USER_REF: ${{ secrets.GIT_USERNAME }}
+          GITHUB_TOKEN_REF: ${{ secrets.GIT_TOKEN }}
       - run: mvn deploy -f java/open-banking-drivers/open-banking-payment-request-driver/pom.xml
+        env:
+          GITHUB_USER_REF: ${{ secrets.GIT_USERNAME }}
+          GITHUB_TOKEN_REF: ${{ secrets.GIT_TOKEN }}
       - run: mvn deploy -f java/open-banking-drivers/open-banking-showcase-driver
+        env:
+          GITHUB_USER_REF: ${{ secrets.GIT_USERNAME }}
+          GITHUB_TOKEN_REF: ${{ secrets.GIT_TOKEN }}
         
 

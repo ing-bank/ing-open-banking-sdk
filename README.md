@@ -1,9 +1,6 @@
 # ING Open Banking SDK
 With this SDK we provide the means to generate drivers to interact with ING's Open Banking APIs. It includes a custom generator that creates drivers which encapsulate HTTP signature signing and OAuth application token flows. As shown by the demo-app these drivers significantly reduce complexity to interact with ING's Open Banking APIs. Since the drivers are generated from OpenAPI Specification files, updating is easy by regenerating the drivers based on updated files.
 
-## CLI
-To test your connection to ING Open Banking APIs we also provide a [Command Line Interface (CLI)](https://github.com/ing-bank/ing-open-banking-cli) using scripts.
-
 ## Features:
 - [x] Open Banking Driver Generator (OpenApi Generator extension)
 - [x] Open Banking Driver Generator Java templates
@@ -491,3 +488,7 @@ public class ProductionShowcaseAPI {
     }
 }
 ```
+
+## CLI
+To test your connection to ING Open Banking APIs we also provide a [Command Line Interface (CLI)](https://github.com/ing-bank/ing-open-banking-cli) using scripts.
+

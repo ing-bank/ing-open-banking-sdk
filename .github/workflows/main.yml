@@ -26,9 +26,15 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 11
-      - run: mvn -B package --file pom.xml -DskipTests
-      - run: mkdir staging && find . -name "*SNAPSHOT.jar" -type f -exec cp {} ./staging/ \
-      - uses: actions/upload-artifact@v1
-        with:
-          name: Package
-          path: staging
+          server-id: github
+          server-username: GITHUB_USER_REF  # env variable name for username
+          server-password: GITHUB_TOKEN_REF
+      - run: mvn clean install -DskipTests
+      - run: | 
+          mvn deploy -f java/open-banking-drivers/open-banking-account-information-driver/pom.xml
+          mvn deploy -f java/open-banking-drivers/open-banking-payment-initiation-driver/pom.xml
+          mvn deploy -f java/open-banking-drivers/open-banking-payment-request-driver/pom.xml
+          mvn deploy -f java/open-banking-drivers/open-banking-showcase-driver
+        env:
+          GITHUB_USER_REF: ${{ secrets.GIT_USERNAME }}
+          GITHUB_TOKEN_REF: ${{ secrets.GIT_TOKEN }}

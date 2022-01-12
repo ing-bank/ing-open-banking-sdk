@@ -18,8 +18,8 @@
     <distributionManagement>
         <repository>
             <id>github</id>
-            <name>benneb2</name>
-            <url>https://maven.pkg.github.com/benneb2/ing-open-banking-sdk</url>
+            <name>ing-bank</name>
+            <url>https://maven.pkg.github.com/ing-bank/ing-open-banking-sdk</url>
         </repository>
     </distributionManagement>
 

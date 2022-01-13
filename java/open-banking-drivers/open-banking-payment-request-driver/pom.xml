@@ -15,6 +15,14 @@
     <name>Open Banking Payment Request Driver</name>
     <description>Open Banking Payment Request Driver for developers</description>
 
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>ing-bank</name>
+            <url>https://maven.pkg.github.com/ing-bank/ing-open-banking-sdk</url>
+        </repository>
+    </distributionManagement>
+
     <properties>
         <payment-request-api.version>4.2.1</payment-request-api.version>
         <base-package>com.ing.developer.payment.request.client</base-package>

@@ -14,6 +14,14 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>ing-bank</name>
+            <url>https://maven.pkg.github.com/ing-bank/ing-open-banking-sdk</url>
+        </repository>
+    </distributionManagement>
+
     <dependencies>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

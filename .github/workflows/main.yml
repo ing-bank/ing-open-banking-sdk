@@ -36,6 +36,7 @@ jobs:
           mvn deploy -f java/open-banking-drivers/open-banking-payment-request-driver/pom.xml
           mvn deploy -f java/open-banking-drivers/open-banking-showcase-driver/pom.xml
           mvn deploy -f java/open-banking-common/pom.xml
+          mvn deploy -f java/open-banking-drivers/pom.xml
         env:
           GITHUB_USER_REF: ${{ secrets.GIT_USERNAME }}
           GITHUB_TOKEN_REF: ${{ secrets.GIT_TOKEN }}

@@ -29,9 +29,7 @@ jobs:
           server-id: github
           server-username: GITHUB_USER_REF  # env variable name for username
           server-password: GITHUB_TOKEN_REF
-      - run: mvn clean install -DskipTests
-      - run: | 
-          mvn deploy
+      - run: mvn clean install deploy -DskipTests
         env:
           GITHUB_USER_REF: ${{ secrets.GIT_USERNAME }}
           GITHUB_TOKEN_REF: ${{ secrets.GIT_TOKEN }}

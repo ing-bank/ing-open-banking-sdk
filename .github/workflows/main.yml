@@ -31,6 +31,8 @@ jobs:
           server-password: GITHUB_TOKEN_REF
       - run: mvn clean install -DskipTests
       - run: | 
+          mvn deploy -f java/open-banking-drivers/pom.xml
+          mvn deploy -f java/open-banking-common/pom.xml
           mvn deploy -f java/open-banking-drivers/open-banking-account-information-driver/pom.xml
           mvn deploy -f java/open-banking-drivers/open-banking-payment-initiation-driver/pom.xml
           mvn deploy -f java/open-banking-drivers/open-banking-payment-request-driver/pom.xml

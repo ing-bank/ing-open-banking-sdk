@@ -29,12 +29,7 @@ jobs:
           server-id: github
           server-username: GITHUB_USER_REF  # env variable name for username
           server-password: GITHUB_TOKEN_REF
-      - run: mvn clean install -DskipTests
-      - run: | 
-          mvn deploy -f java/open-banking-drivers/open-banking-account-information-driver/pom.xml
-          mvn deploy -f java/open-banking-drivers/open-banking-payment-initiation-driver/pom.xml
-          mvn deploy -f java/open-banking-drivers/open-banking-payment-request-driver/pom.xml
-          mvn deploy -f java/open-banking-drivers/open-banking-showcase-driver/pom.xml
+      - run: mvn clean install deploy -DskipTests
         env:
           GITHUB_USER_REF: ${{ secrets.GIT_USERNAME }}
           GITHUB_TOKEN_REF: ${{ secrets.GIT_TOKEN }}

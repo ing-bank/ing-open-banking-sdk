@@ -75,7 +75,7 @@ public class OpenBankingOAuthApi {
         }
     }
 
-    private TokenResponse getToken() {
+    public TokenResponse getToken() {
         if (!isTokenExpired(tokenTimeStampPair)) {
             return tokenTimeStampPair.getFirst();
         }

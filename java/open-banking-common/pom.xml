@@ -11,7 +11,7 @@
     <parent>
         <groupId>com.ing.developer</groupId>
         <artifactId>ing-open-banking-java-sdk</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.2-SNAPSHOT</version>
     </parent>
 
     <distributionManagement>

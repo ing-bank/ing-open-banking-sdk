@@ -5,14 +5,14 @@
     <packaging>pom</packaging>
 
     <artifactId>ing-open-banking-java-sdk</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>Open Banking Java SDK</name>
     <description>Open Banking Java SDK and demo App for developers</description>
 
     <parent>
         <groupId>com.ing.developer</groupId>
         <artifactId>ing-open-banking-sdk</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.2-SNAPSHOT</version>
     </parent>
 
     <distributionManagement>

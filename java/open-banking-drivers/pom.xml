@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>open-banking-drivers</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>Open Banking Drivers</name>
     <description>Open Banking Drivers for developers</description>
     <packaging>pom</packaging>
@@ -12,7 +12,7 @@
     <parent>
         <groupId>com.ing.developer</groupId>
         <artifactId>ing-open-banking-java-sdk</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.2-SNAPSHOT</version>
     </parent>
 
     <distributionManagement>

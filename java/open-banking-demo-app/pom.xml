@@ -32,7 +32,7 @@
         <dependency>
             <groupId>com.ing.developer</groupId>
             <artifactId>open-banking-common</artifactId>
-            <version>${open-banking-sdk.version}</version>
+            <version>0.0.2-SNAPSHOT</version>
         </dependency>
 
         <dependency>

@@ -6,12 +6,12 @@
     <parent>
         <groupId>com.ing.developer</groupId>
         <artifactId>open-banking-drivers</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>open-banking-account-information-driver</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>Open Banking Account Information Driver</name>
     <description>Open Banking Account Information Driver for developers</description>
 

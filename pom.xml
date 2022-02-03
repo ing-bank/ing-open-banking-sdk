@@ -6,7 +6,7 @@
 
     <groupId>com.ing.developer</groupId>
     <artifactId>ing-open-banking-sdk</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>Open Banking SDK</name>
     <description>Open Banking SDK for developers</description>
 

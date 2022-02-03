@@ -12,13 +12,13 @@
 
     <groupId>com.ing.developer</groupId>
     <artifactId>open-banking-simple-app</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>Open Banking Simple App</name>
     <description>Open Banking simple app for testing purposes</description>
 
     <properties>
         <java.version>1.8</java.version>
-        <open-banking-sdk.version>0.0.1-SNAPSHOT</open-banking-sdk.version>
+        <open-banking-sdk.version>0.0.2-SNAPSHOT</open-banking-sdk.version>
         <jackson.version>2.11.2</jackson.version>
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
@@ -27,7 +27,7 @@
         <dependency>
             <groupId>com.ing.developer</groupId>
             <artifactId>open-banking-common</artifactId>
-            <version>${open-banking-sdk.version}</version>
+            <version>0.0.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.ing.developer</groupId>

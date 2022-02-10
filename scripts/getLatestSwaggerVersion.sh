@@ -7,6 +7,7 @@ prefix=")]}',"
 _jq() {
     echo "${row}" | base64 --decode | jq -r "${1}"
 }
+
 raw_versions=$(curl "https://api.developer.ing.com/apis/$1/versions")
 
 cleaned_versions=$(echo "$raw_versions" | sed -e "s/^$prefix//") 
@@ -14,7 +15,6 @@ cleaned_versions=$(echo "$raw_versions" | sed -e "s/^$prefix//")
 echo "$cleaned_versions"
 
 for row in $(echo "${cleaned_versions}" | jq -r '.apis[] | @base64'); do
-    
     name=$(_jq '.api.name')
     versionNumber=$(_jq '.versionNumber')
     versionId=$(_jq '.versionId')

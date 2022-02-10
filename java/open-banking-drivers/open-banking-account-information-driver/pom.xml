@@ -24,7 +24,6 @@
     </distributionManagement>
 
     <properties>
-        <account-information-api.version>3.0.1</account-information-api.version>
         <base-package>com.ing.developer.account.information.client</base-package>
     </properties>
 
@@ -34,7 +33,7 @@
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <configuration>
-                    <inputSpec>${project.basedir}/../../../api/account/information/Account-Information-API-${account-information-api.version}.json</inputSpec>
+                    <inputSpec>${project.basedir}/../../../api/account/information/Account-Information-API.json</inputSpec>
                     <configOptions>
                         <invokerPackage>${base-package}</invokerPackage>
                         <apiPackage>${base-package}.api</apiPackage>

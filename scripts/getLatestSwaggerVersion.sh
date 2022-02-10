@@ -7,14 +7,11 @@ prefix=")]}',"
 _jq() {
     echo "${row}" | base64 --decode | jq -r "${1}"
 }
-
 raw_versions=$(curl "https://api.developer.ing.com/apis/$1/versions")
 
 cleaned_versions=$(echo "$raw_versions" | sed -e "s/^$prefix//") 
 
 echo "$cleaned_versions"
-
-
 
 for row in $(echo "${cleaned_versions}" | jq -r '.apis[] | @base64'); do
     
@@ -31,7 +28,6 @@ for row in $(echo "${cleaned_versions}" | jq -r '.apis[] | @base64'); do
 
     if [ "$status" == "LIVE" ]; then 
 	file_name=$(echo "api/${2}/${name}.json" | tr " " "-")
-
         if [ ! -f "$file_name" ]; then
              echo "$file_name does not exist. Downloading...."
              curl "https://api.developer.ing.com/apis/$1/versions/${versionId}/specification/download?format=json&pretty=true&resolved=false" -o "$file_name"

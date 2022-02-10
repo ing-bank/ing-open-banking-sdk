@@ -15,7 +15,6 @@
     </parent>
 
     <properties>
-        <oauth-api.version>2.1.0</oauth-api.version>
         <base-package>com.ing.developer.oauth.client</base-package>
     </properties>
 
@@ -95,7 +94,7 @@
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <version>${openapi-generator-maven-plugin.version}</version>
                 <configuration>
-                    <inputSpec>${project.basedir}/../../api/oauth2/OAuth-2.0-API-${oauth-api.version}.json</inputSpec>
+                    <inputSpec>${project.basedir}/../../api/oauth2/OAuth-2.0-API.json</inputSpec>
                     <generatorName>java</generatorName>
                     <generateApiTests>false</generateApiTests>
                     <generateModelTests>false</generateModelTests>

@@ -24,7 +24,6 @@
     </distributionManagement>
 
     <properties>
-        <showcase-api.version>2.0.1</showcase-api.version>
         <base-package>com.ing.developer.showcase.client</base-package>
     </properties>
 
@@ -34,7 +33,7 @@
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <configuration>
-                    <inputSpec>${project.basedir}/../../../api/showcase/Showcase-API-${showcase-api.version}.json</inputSpec>
+                    <inputSpec>${project.basedir}/../../../api/showcase/Showcase-API.json</inputSpec>
                     <configOptions>
                         <invokerPackage>${base-package}</invokerPackage>
                         <apiPackage>${base-package}.api</apiPackage>

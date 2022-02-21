@@ -1,10 +1,9 @@
 {
   "swagger" : "2.0",
-  "x-ing-guidelines-version" : 1,
   "info" : {
-    "title" : "Showcase API",
     "description" : "The API shows the Open Banking Platform in operation through its endpoint. It is available on the marketplace to subscribe to, and it is accessible to internal and external applications. The '/greetings/single' endpoint shows the functionality of the platform in action.",
-    "version" : "2.0.3",
+    "version" : "2.0.7",
+    "title" : "Showcase API",
     "contact" : {
       "name" : "ING Developer Portal",
       "url" : "https://developer.ing.com",
@@ -13,221 +12,227 @@
   },
   "host" : "api.ing.com",
   "basePath" : "/",
-  "securityDefinitions" : {
-    "ING-Application-Security" : {
-      "type" : "oauth2",
-      "flow" : "application",
-      "tokenUrl" : "https://api.ing.com/oauth2/token",
-      "scopes" : {
-        "greetings:view" : "Get greetings messages."
-      }
-    }
-  },
+  "tags" : [ {
+    "name" : "greetings"
+  } ],
   "schemes" : [ "https" ],
-  "consumes" : [ "application/json" ],
-  "produces" : [ "application/json" ],
   "paths" : {
     "/greetings/single" : {
       "get" : {
+        "tags" : [ "greetings" ],
         "summary" : "Gives a greeting message from one of the available instances",
         "description" : "Returns a message generated with a unique id and a timestamp indicating when it was produced.",
-        "tags" : [ "greetings" ],
-        "security" : [ {
-          "ING-Application-Security" : [ "greetings:view" ]
-        } ],
+        "operationId" : "greetingsSingleGet",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
         "parameters" : [ {
-          "$ref" : "#/parameters/AuthorizationBearerInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "OAuth2 token",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the third party on application level. See \"Get Started\" for more information on how to generate.",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "SHA256 of the body.",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard http header element for date and time",
+          "required" : true,
+          "type" : "string",
+          "format" : "date-time"
         } ],
         "responses" : {
           "200" : {
             "description" : "OK",
-            "schema" : {
-              "$ref" : "#/definitions/Greeting"
-            },
             "headers" : {
               "X-ING-ReqID" : {
                 "type" : "string",
-                "description" : "Request ID, can be a UUID"
+                "description" : "Request ID, can be a UUID",
+                "x-ing-type" : "string"
               },
               "X-ING-Response-ID" : {
                 "type" : "string",
-                "description" : "Response UUID, if X-ING-ReqID supplied in the request"
+                "description" : "Response UUID, if X-ING-ReqID supplied in the request",
+                "x-ing-type" : "string"
               },
               "Signature" : {
                 "type" : "string",
-                "description" : "A signature of the response based on X-ING-ReqID and X-ING-Response-ID. This header is deprecated"
+                "description" : "A signature of the response based on X-ING-ReqID and X-ING-Response-ID. This header is deprecated",
+                "x-ing-type" : "string"
               }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/Greeting"
             }
           },
           "400" : {
-            "$ref" : "#/responses/BadRequest"
+            "description" : "Bad Request - The request was malformed, headers may be missing or invalid.",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           },
           "401" : {
-            "$ref" : "#/responses/Unauthorized"
+            "description" : "Unauthorized - The request did not contain authorisation evidence. A valid subscription to the scope(s) that contain this API endpoint is required to allow the request to succeed.",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           },
           "404" : {
-            "$ref" : "#/responses/NotFound"
+            "description" : "Not Found - The requested resource cannot be found. Check the request URL if it matches with the endpoint described.",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           },
           "500" : {
-            "$ref" : "#/responses/InternalServerError"
+            "description" : "Internal Server Error - Something went wrong on the server, check status site and/or report the issue. There's no need to really specify this any further (other than 503 below) as the client is powerless in fixing the condition that caused the error.",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           },
           "503" : {
-            "$ref" : "#/responses/ServiceUnavailable"
+            "description" : "Service Unavailable - The API is temporarily unavailable. This is the only 500 code that allows for the client to try and remedy the condition (i.e. by retrying).",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
           }
-        }
+        },
+        "security" : [ {
+          "ING-Application-Security" : [ "greetings:view" ]
+        } ]
+      },
+      "parameters" : [ ]
+    }
+  },
+  "securityDefinitions" : {
+    "ING-Application-Security" : {
+      "type" : "oauth2",
+      "tokenUrl" : "https://api.ing.com/oauth2/token",
+      "flow" : "application",
+      "scopes" : {
+        "greetings:view" : "Get greetings messages."
       }
     }
   },
   "definitions" : {
     "Greeting" : {
       "type" : "object",
-      "required" : [ "message", "id", "messageTimestamp" ],
+      "required" : [ "id", "message", "messageTimestamp" ],
       "properties" : {
         "message" : {
           "type" : "string",
+          "example" : "Welcome to ING!",
           "description" : "A greeting message",
-          "example" : "Welcome to ING!"
+          "x-ing-type" : "string"
         },
         "id" : {
           "type" : "string",
+          "example" : "aba4b176-8834-467d-9c2a-ee6acfc8fceb",
           "description" : "A generated uuid",
-          "example" : "aba4b176-8834-467d-9c2a-ee6acfc8fceb"
+          "x-ing-type" : "string"
         },
         "messageTimestamp" : {
           "type" : "string",
+          "example" : "2018-07-30 15:42:17 GMT",
           "description" : "The current time (GMT)",
-          "example" : "2018-07-30 15:42:17 GMT"
+          "x-ing-type" : "string"
         }
       }
-    }
-  },
-  "responses" : {
-    "BadRequest" : {
-      "description" : "Bad Request - The request was malformed, headers may be missing or invalid.",
-      "schema" : {
-        "$ref" : "https://api.touchpoint.ing.net/schemas/error/1.0"
+    },
+    "Error" : {
+      "type" : "object",
+      "required" : [ "error" ],
+      "properties" : {
+        "error" : {
+          "$ref" : "#/definitions/ErrorModel"
+        }
+      }
+    },
+    "ErrorModel" : {
+      "type" : "object",
+      "required" : [ "code", "message", "severity" ],
+      "properties" : {
+        "severity" : {
+          "type" : "string",
+          "enum" : [ "critical", "error", "warning", "info" ],
+          "x-ing-type" : "string"
+        },
+        "message" : {
+          "type" : "string",
+          "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+          "description" : "A descriptive error message for the consumer",
+          "x-ing-type" : "string"
+        },
+        "target" : {
+          "type" : "string",
+          "description" : "Key/value pair indicating which input property caused the error",
+          "x-ing-type" : "string"
+        },
+        "source" : {
+          "type" : "string",
+          "example" : "system76",
+          "description" : "Optional source descriptor for this error",
+          "x-ing-type" : "string"
+        },
+        "code" : {
+          "type" : "string",
+          "example" : "errParseFailed",
+          "description" : "Service-specific error code/keyword",
+          "x-ing-type" : "string"
+        },
+        "innerErrors" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/InnerErrors"
+          },
+          "x-ing-type" : "array"
+        }
       },
-      "examples" : {
-        "application/json" : {
-          "error" : {
-            "code" : "DigestError",
-            "message" : "Missing or invalid Digest header",
-            "severity" : "ERROR"
-          }
-        }
-      }
+      "description" : "Error message"
     },
-    "Unauthorized" : {
-      "description" : "Unauthorized - The request did not contain authorisation evidence. A valid subscription to the scope(s) that contain this API endpoint is required to allow the request to succeed.",
-      "schema" : {
-        "$ref" : "https://api.touchpoint.ing.net/schemas/error/1.0"
+    "InnerErrors" : {
+      "type" : "object",
+      "required" : [ "code", "message", "severity" ],
+      "properties" : {
+        "severity" : {
+          "type" : "string",
+          "enum" : [ "critical", "error", "warning", "info" ],
+          "x-ing-type" : "string"
+        },
+        "message" : {
+          "type" : "string",
+          "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+          "description" : "A descriptive error message for the consumer",
+          "x-ing-type" : "string"
+        },
+        "target" : {
+          "type" : "string",
+          "description" : "Key/value pair indicating which input property caused the error",
+          "x-ing-type" : "string"
+        },
+        "source" : {
+          "type" : "string",
+          "example" : "system76",
+          "description" : "Optional source descriptor for this error",
+          "x-ing-type" : "string"
+        },
+        "code" : {
+          "type" : "string",
+          "example" : "errParseFailed",
+          "description" : "Service-specific error code/keyword",
+          "x-ing-type" : "string"
+        }
       },
-      "examples" : {
-        "application/json" : {
-          "error" : {
-            "code" : "Unauthorized",
-            "message" : "Missing or invalid Access Token",
-            "severity" : "ERROR"
-          }
-        }
-      }
-    },
-    "NotFound" : {
-      "description" : "Not Found - The requested resource cannot be found. Check the request URL if it matches with the endpoint described.",
-      "schema" : {
-        "$ref" : "https://api.touchpoint.ing.net/schemas/error/1.0"
-      },
-      "examples" : {
-        "application/json" : {
-          "error" : {
-            "code" : "NotFoundError",
-            "message" : "Either there is no API method associated with the URL path of the request, or the request refers to one or more resources that were not found.",
-            "severity" : "ERROR"
-          }
-        }
-      }
-    },
-    "MethodNotAllowed" : {
-      "description" : "Method Not Allowed - The HTTP verb is not supported by the URL endpoint used in the request.",
-      "schema" : {
-        "$ref" : "https://api.touchpoint.ing.net/schemas/error/1.0"
-      },
-      "examples" : {
-        "application/json" : {
-          "error" : {
-            "code" : "MethodNotAllowed",
-            "message" : "The HTTP verb is not supported by the URL endpoint used in the request.",
-            "severity" : "ERROR"
-          }
-        }
-      }
-    },
-    "InternalServerError" : {
-      "description" : "Internal Server Error - Something went wrong on the server, check status site and/or report the issue. There's no need to really specify this any further (other than 503 below) as the client is powerless in fixing the condition that caused the error.",
-      "schema" : {
-        "$ref" : "https://api.touchpoint.ing.net/schemas/error/1.0"
-      },
-      "examples" : {
-        "application/json" : {
-          "error" : {
-            "code" : "InternalServerError",
-            "message" : "We encountered an internal error",
-            "severity" : "ERROR"
-          }
-        }
-      }
-    },
-    "ServiceUnavailable" : {
-      "description" : "Service Unavailable - The API is temporarily unavailable. This is the only 500 code that allows for the client to try and remedy the condition (i.e. by retrying).",
-      "schema" : {
-        "$ref" : "https://api.touchpoint.ing.net/schemas/error/1.0"
-      },
-      "examples" : {
-        "application/json" : {
-          "error" : {
-            "code" : "ServiceInMaintenance",
-            "message" : "The API is temporarily unavailable, please try again later.",
-            "severity" : "ERROR"
-          }
-        }
-      }
-    }
-  },
-  "parameters" : {
-    "AuthorizationBearerInHeader" : {
-      "name" : "Authorization",
-      "in" : "header",
-      "type" : "string",
-      "required" : true,
-      "description" : "OAuth2 token"
-    },
-    "SignatureInHeader" : {
-      "name" : "Signature",
-      "in" : "header",
-      "type" : "string",
-      "required" : true,
-      "description" : "A signature of the request by the third party on application level. See \"Get Started\" for more information on how to generate."
-    },
-    "DigestInHeader" : {
-      "name" : "Digest",
-      "in" : "header",
-      "type" : "string",
-      "required" : true,
-      "description" : "SHA256 of the body."
-    },
-    "DateInHeader" : {
-      "name" : "Date",
-      "in" : "header",
-      "type" : "string",
-      "format" : "date-time",
-      "required" : true,
-      "description" : "Standard http header element for date and time"
+      "description" : "Upstream error messages and detailed information on error state"
     }
   }
 }

@@ -45,8 +45,11 @@ jobs:
 
       - name: Initialize Pull Request
         if: env.GIT_PUSH == 'true'
-        uses: gha-utilities/init-pull-request@v0.1.1
+        uses: gha-utilities/init-pull-request@v0.3.2
         with:
+          body: >
+            Perhaps a multi-line description
+            about latest features and such.
           verbose: true
           debug: true
           pull_request_token: ${{ secrets.GIT_TOKEN }}

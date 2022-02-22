@@ -40,14 +40,14 @@ jobs:
         if: env.GIT_PUSH == 'true'
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GIT_TOKEN }}
           branch: ${{ env.GIT_BRANCH }}
 
       - name: Initialize Pull Request
         if: env.GIT_PUSH == 'true'
         uses: gha-utilities/init-pull-request@v0.0.8
         with:
-          pull_request_token: ${{ secrets.GITHUB_TOKEN }}
+          pull_request_token: ${{ secrets.GIT_TOKEN }}
           head: ${{ env.GIT_BRANCH }}
           base: master
           title: 'automation: Updates swagger spec files'

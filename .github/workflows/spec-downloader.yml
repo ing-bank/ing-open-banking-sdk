@@ -45,7 +45,7 @@ jobs:
 
       - name: Initialize Pull Request
         if: env.GIT_PUSH == 'true'
-        uses: gha-utilities/init-pull-request@v0.0.8
+        uses: gha-utilities/init-pull-request@v0.1.1
         with:
           verbose: true
           debug: true

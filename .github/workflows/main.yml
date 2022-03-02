@@ -30,4 +30,4 @@ jobs:
       - run: mvn clean install deploy -DskipTests
         env:
           GITHUB_USER_REF: ${{ secrets.GIT_USERNAME }}
-          GITHUB_TOKEN_REF: ${{ secrets.GIT_TOKEN }}
+          GITHUB_TOKEN_REF: ${{ secrets.GITHUB_TOKEN }}

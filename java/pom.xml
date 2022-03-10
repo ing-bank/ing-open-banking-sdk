@@ -30,7 +30,7 @@
         <junit.version>5.7.1</junit.version>
 
         <swagger-annotations.version>1.6.2</swagger-annotations.version>
-
+        <scribejava-apis.version>6.9.0</scribejava-apis.version>
         <maven-surefire-plugin.version>3.0.0-M4</maven-surefire-plugin.version>
     </properties>
 

@@ -1,0 +1,238 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "The API shows the Open Banking Platform in operation through its endpoint. It is available on the marketplace to subscribe to, and it is accessible to internal and external applications. The '/greetings/single' endpoint shows the functionality of the platform in action.",
+    "version" : "2.0.7",
+    "title" : "Showcase API",
+    "contact" : {
+      "name" : "ING Developer Portal",
+      "url" : "https://developer.ing.com",
+      "email" : "developerportal@ing.com"
+    }
+  },
+  "host" : "api.ing.com",
+  "basePath" : "/",
+  "tags" : [ {
+    "name" : "greetings"
+  } ],
+  "schemes" : [ "https" ],
+  "paths" : {
+    "/greetings/single" : {
+      "get" : {
+        "tags" : [ "greetings" ],
+        "summary" : "Gives a greeting message from one of the available instances",
+        "description" : "Returns a message generated with a unique id and a timestamp indicating when it was produced.",
+        "operationId" : "greetingsSingleGet",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "OAuth2 token",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the third party on application level. See \"Get Started\" for more information on how to generate.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "SHA256 of the body.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard http header element for date and time",
+          "required" : true,
+          "type" : "string",
+          "format" : "date-time"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-ING-ReqID" : {
+                "type" : "string",
+                "description" : "Request ID, can be a UUID",
+                "x-ing-type" : "string"
+              },
+              "X-ING-Response-ID" : {
+                "type" : "string",
+                "description" : "Response UUID, if X-ING-ReqID supplied in the request",
+                "x-ing-type" : "string"
+              },
+              "Signature" : {
+                "type" : "string",
+                "description" : "A signature of the response based on X-ING-ReqID and X-ING-Response-ID. This header is deprecated",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/Greeting"
+            }
+          },
+          "400" : {
+            "description" : "Bad Request - The request was malformed, headers may be missing or invalid.",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized - The request did not contain authorisation evidence. A valid subscription to the scope(s) that contain this API endpoint is required to allow the request to succeed.",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          },
+          "404" : {
+            "description" : "Not Found - The requested resource cannot be found. Check the request URL if it matches with the endpoint described.",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error - Something went wrong on the server, check status site and/or report the issue. There's no need to really specify this any further (other than 503 below) as the client is powerless in fixing the condition that caused the error.",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          },
+          "503" : {
+            "description" : "Service Unavailable - The API is temporarily unavailable. This is the only 500 code that allows for the client to try and remedy the condition (i.e. by retrying).",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        },
+        "security" : [ {
+          "ING-Application-Security" : [ "greetings:view" ]
+        } ]
+      },
+      "parameters" : [ ]
+    }
+  },
+  "securityDefinitions" : {
+    "ING-Application-Security" : {
+      "type" : "oauth2",
+      "tokenUrl" : "https://api.ing.com/oauth2/token",
+      "flow" : "application",
+      "scopes" : {
+        "greetings:view" : "Get greetings messages."
+      }
+    }
+  },
+  "definitions" : {
+    "Greeting" : {
+      "type" : "object",
+      "required" : [ "id", "message", "messageTimestamp" ],
+      "properties" : {
+        "message" : {
+          "type" : "string",
+          "example" : "Welcome to ING!",
+          "description" : "A greeting message",
+          "x-ing-type" : "string"
+        },
+        "id" : {
+          "type" : "string",
+          "example" : "aba4b176-8834-467d-9c2a-ee6acfc8fceb",
+          "description" : "A generated uuid",
+          "x-ing-type" : "string"
+        },
+        "messageTimestamp" : {
+          "type" : "string",
+          "example" : "2018-07-30 15:42:17 GMT",
+          "description" : "The current time (GMT)",
+          "x-ing-type" : "string"
+        }
+      }
+    },
+    "Error" : {
+      "type" : "object",
+      "required" : [ "error" ],
+      "properties" : {
+        "error" : {
+          "$ref" : "#/definitions/ErrorModel"
+        }
+      }
+    },
+    "ErrorModel" : {
+      "type" : "object",
+      "required" : [ "code", "message", "severity" ],
+      "properties" : {
+        "severity" : {
+          "type" : "string",
+          "enum" : [ "critical", "error", "warning", "info" ],
+          "x-ing-type" : "string"
+        },
+        "message" : {
+          "type" : "string",
+          "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+          "description" : "A descriptive error message for the consumer",
+          "x-ing-type" : "string"
+        },
+        "target" : {
+          "type" : "string",
+          "description" : "Key/value pair indicating which input property caused the error",
+          "x-ing-type" : "string"
+        },
+        "source" : {
+          "type" : "string",
+          "example" : "system76",
+          "description" : "Optional source descriptor for this error",
+          "x-ing-type" : "string"
+        },
+        "code" : {
+          "type" : "string",
+          "example" : "errParseFailed",
+          "description" : "Service-specific error code/keyword",
+          "x-ing-type" : "string"
+        },
+        "innerErrors" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/InnerErrors"
+          },
+          "x-ing-type" : "array"
+        }
+      },
+      "description" : "Error message"
+    },
+    "InnerErrors" : {
+      "type" : "object",
+      "required" : [ "code", "message", "severity" ],
+      "properties" : {
+        "severity" : {
+          "type" : "string",
+          "enum" : [ "critical", "error", "warning", "info" ],
+          "x-ing-type" : "string"
+        },
+        "message" : {
+          "type" : "string",
+          "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+          "description" : "A descriptive error message for the consumer",
+          "x-ing-type" : "string"
+        },
+        "target" : {
+          "type" : "string",
+          "description" : "Key/value pair indicating which input property caused the error",
+          "x-ing-type" : "string"
+        },
+        "source" : {
+          "type" : "string",
+          "example" : "system76",
+          "description" : "Optional source descriptor for this error",
+          "x-ing-type" : "string"
+        },
+        "code" : {
+          "type" : "string",
+          "example" : "errParseFailed",
+          "description" : "Service-specific error code/keyword",
+          "x-ing-type" : "string"
+        }
+      },
+      "description" : "Upstream error messages and detailed information on error state"
+    }
+  }
+}

@@ -6,17 +6,24 @@
     <parent>
         <groupId>com.ing.developer</groupId>
         <artifactId>open-banking-drivers</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>open-banking-account-information-driver</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>Open Banking Account Information Driver</name>
     <description>Open Banking Account Information Driver for developers</description>
 
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>ing-bank</name>
+            <url>https://maven.pkg.github.com/ing-bank/ing-open-banking-sdk</url>
+        </repository>
+    </distributionManagement>
+
     <properties>
-        <account-information-api.version>3.0.1</account-information-api.version>
         <base-package>com.ing.developer.account.information.client</base-package>
     </properties>
 
@@ -26,7 +33,7 @@
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <configuration>
-                    <inputSpec>${project.basedir}/../../../api/account/information/Account-Information-API-${account-information-api.version}.json</inputSpec>
+                    <inputSpec>${project.basedir}/../../../api/account/information/Account-Information-API.json</inputSpec>
                     <configOptions>
                         <invokerPackage>${base-package}</invokerPackage>
                         <apiPackage>${base-package}.api</apiPackage>

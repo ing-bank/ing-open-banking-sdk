@@ -6,17 +6,24 @@
     <parent>
         <groupId>com.ing.developer</groupId>
         <artifactId>open-banking-drivers</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>open-banking-showcase-driver</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>Open Banking Showcase Driver</name>
     <description>Open Showcase Driver for developers</description>
 
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>ing-bank</name>
+            <url>https://maven.pkg.github.com/ing-bank/ing-open-banking-sdk</url>
+        </repository>
+    </distributionManagement>
+
     <properties>
-        <showcase-api.version>2.0.1</showcase-api.version>
         <base-package>com.ing.developer.showcase.client</base-package>
     </properties>
 
@@ -26,7 +33,7 @@
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <configuration>
-                    <inputSpec>${project.basedir}/../../../api/showcase/Showcase-API-${showcase-api.version}.json</inputSpec>
+                    <inputSpec>${project.basedir}/../../../api/showcase/Showcase-API.json</inputSpec>
                     <configOptions>
                         <invokerPackage>${base-package}</invokerPackage>
                         <apiPackage>${base-package}.api</apiPackage>

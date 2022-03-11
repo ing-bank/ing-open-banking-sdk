@@ -1,0 +1,48 @@
+name: Trigger ING Openbanking swagger updater
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  spec_sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout master branch
+        uses: actions/checkout@v2
+        with:
+          ref: master
+      - name: Make build destination directory
+        run: ./scripts/getAllLatestSwaggerVersion.sh
+
+      - name: Changed
+        run: |
+          git diff-index --quiet HEAD || (echo "GIT_PUSH=$(echo true)" >> $GITHUB_ENV)
+          echo "GIT_BRANCH=$(date +auto-spec-%Y%m%d%H%M%S)" >> $GITHUB_ENV
+      - name: Test
+        if: env.GIT_PUSH == 'true'
+        run: |
+          echo ${{ env.GIT_PUSH }}
+          echo ${{ env.GIT_BRANCH }}
+      - name: Commit changes
+        if: env.GIT_PUSH == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git checkout -b ${{ env.GIT_BRANCH }}
+          git commit -m 'chore: Update swagger docs'
+      - name: Push changes
+        if: env.GIT_PUSH == 'true'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ env.GIT_BRANCH }}
+
+      - name: Initialize Pull Request
+        if: env.GIT_PUSH == 'true'
+        run: |
+          curl --request POST --header "Content-Type: application/json" --header "Authorization: token $GITHUB_TOKEN" -d '{"title":"automation: Updates swagger spec files","base":"master", "head":"${{ env.GIT_BRANCH }}"}' --url "https://api.github.com/repos/ing-bank/ing-open-banking-sdk/pulls"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

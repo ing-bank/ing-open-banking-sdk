@@ -5,19 +5,27 @@
     <packaging>pom</packaging>
 
     <artifactId>ing-open-banking-java-sdk</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>Open Banking Java SDK</name>
     <description>Open Banking Java SDK and demo App for developers</description>
 
     <parent>
         <groupId>com.ing.developer</groupId>
         <artifactId>ing-open-banking-sdk</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.2-SNAPSHOT</version>
     </parent>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>ing-bank</name>
+            <url>https://maven.pkg.github.com/ing-bank/ing-open-banking-sdk</url>
+        </repository>
+    </distributionManagement>
 
     <properties>
         <java.version>1.8</java.version>
-        <open-banking-sdk.version>0.0.1-SNAPSHOT</open-banking-sdk.version>
+        <open-banking-sdk.version>0.0.2-SNAPSHOT</open-banking-sdk.version>
 
         <apache-httpclient.version>4.5.13</apache-httpclient.version>
         <jersey.version>2.33</jersey.version>
@@ -39,6 +47,7 @@
         <module>open-banking-drivers</module>
         <module>open-banking-common</module>
         <module>open-banking-demo-app</module>
+        <module>open-banking-simple-app</module>
     </modules>
 
 </project>

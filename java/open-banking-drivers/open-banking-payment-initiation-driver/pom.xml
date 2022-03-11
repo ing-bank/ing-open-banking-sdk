@@ -6,17 +6,24 @@
     <parent>
         <groupId>com.ing.developer</groupId>
         <artifactId>open-banking-drivers</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>open-banking-payment-initiation-driver</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>Open Banking Payment Initiation Driver</name>
     <description>Open Banking Payment Initiation Driver for developers</description>
 
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>ing-bank</name>
+            <url>https://maven.pkg.github.com/ing-bank/ing-open-banking-sdk</url>
+        </repository>
+    </distributionManagement>
+
     <properties>
-        <payment-initiation-api.version>1.5.0</payment-initiation-api.version>
         <base-package>com.ing.developer.payment.initiation.client</base-package>
     </properties>
 
@@ -26,7 +33,7 @@
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <configuration>
-                    <inputSpec>${project.basedir}/../../../api/payment/initiation/Payment-Initiation-API-${payment-initiation-api.version}.json</inputSpec>
+                    <inputSpec>${project.basedir}/../../../api/payment/initiation/Payment-Initiation-API.json</inputSpec>
                     <configOptions>
                         <invokerPackage>${base-package}</invokerPackage>
                         <apiPackage>${base-package}.api</apiPackage>

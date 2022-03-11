@@ -6,9 +6,17 @@
 
     <groupId>com.ing.developer</groupId>
     <artifactId>ing-open-banking-sdk</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>Open Banking SDK</name>
     <description>Open Banking SDK for developers</description>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>ing-bank</name>
+            <url>https://maven.pkg.github.com/ing-bank/ing-open-banking-sdk</url>
+        </repository>
+    </distributionManagement>
 
     <properties>
         <openapi-generator-maven-plugin.version>5.2.1</openapi-generator-maven-plugin.version>

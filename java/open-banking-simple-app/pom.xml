@@ -11,10 +11,10 @@
     </parent>
 
     <groupId>com.ing.developer</groupId>
-    <artifactId>open-banking-demo-app</artifactId>
+    <artifactId>open-banking-simple-app</artifactId>
     <version>0.0.2-SNAPSHOT</version>
-    <name>Open Banking Demo App</name>
-    <description>Open Banking demo app for testing purposes</description>
+    <name>Open Banking Simple App</name>
+    <description>Open Banking simple app for testing purposes</description>
 
     <properties>
         <java.version>1.8</java.version>
@@ -25,16 +25,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.ing.developer</groupId>
             <artifactId>open-banking-common</artifactId>
             <version>0.0.2-SNAPSHOT</version>
         </dependency>
-
         <dependency>
             <groupId>com.ing.developer</groupId>
             <artifactId>open-banking-account-information-driver</artifactId>
@@ -68,49 +62,21 @@
             <scope>runtime</scope>
             <version>${httpclient.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.junit.vintage</groupId>
-                    <artifactId>junit-vintage-engine</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-test</id>
-                        <configuration>
-                            <excludes>
-                                <exclude>**/*Integration.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <configuration>
-                            <includes>
-                                <include>**/*Integration.java</include>
-                            </includes>
-                            <environmentVariables>
-                                <BASE_URL>https://api.sandbox.ing.com</BASE_URL>
-                            </environmentVariables>
-                        </configuration>
-                    </execution>
-                </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.ing.developer.app.OpenBankingSimpleApplication</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

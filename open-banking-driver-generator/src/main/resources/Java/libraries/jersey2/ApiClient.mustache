@@ -1145,9 +1145,9 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
       }
     }
 
-    token = getToken();
+    token = getApplicationAccessToken();
     Signer signer = getFeatSigner(token.client_id, signatureKey);
-    String accessToken = token.access_token;
+    String applicationAccessToken = token.access_token;
 
     final Map<String, String> mandatoryHeaders = new HashMap<String, String>();
     mandatoryHeaders.put("Accept", "application/json");
@@ -1156,7 +1156,7 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
 
     String signature = sign(signer, method.toLowerCase(), path, mandatoryHeaders).toString();
 
-    if (!headerParams.containsKey("Authorization")) mandatoryHeaders.put("Authorization", "Bearer " + accessToken);
+    if (!headerParams.containsKey("Authorization")) mandatoryHeaders.put("Authorization", "Bearer " + applicationAccessToken);
     mandatoryHeaders.put("Signature", signature.substring("Signature ".length()));
 
     Entity<?> entity = serialize(body, formParams, contentType, isBodyNullable);
@@ -1188,6 +1188,24 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
     try {
       response = sendRequest(method, invocationBuilder, entity);
 
+      {{#hasOAuthMethods}}
+      // If OAuth is used and a status 401 is received, renew the access token and retry the request
+      if (response.getStatusInfo() == Status.UNAUTHORIZED) {
+        for (String authName : authNames) {
+          Authentication authentication = authentications.get(authName);
+          if (authentication instanceof OAuth) {
+            OAuth2AccessToken accessToken = ((OAuth) authentication).renewAccessToken();
+            if (accessToken != null) {
+              invocationBuilder.header("Authorization", null);
+              invocationBuilder.header("Authorization", "Bearer " + accessToken.getAccessToken());
+              response = sendRequest(method, invocationBuilder, entity);
+            }
+            break;
+          }
+        }
+      }
+
+      {{/hasOAuthMethods}}
       int statusCode = response.getStatusInfo().getStatusCode();
       Map<String, List<String>> responseHeaders = buildResponseHeaders(response);
 
@@ -1369,7 +1387,7 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
   }
 
 
-  public Token getToken() throws ApiException {
+  public Token getApplicationAccessToken() throws ApiException {
       if (!isTokenExpired(token) && token.client_id != null) {
         return token;
       }

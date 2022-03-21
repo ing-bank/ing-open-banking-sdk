@@ -1,6 +1,6 @@
 package com.ing.developer.codegen;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.DefaultGenerator;
 import org.openapitools.codegen.config.CodegenConfigurator;
@@ -27,7 +27,7 @@ public class JavaOpenBankingCodegenTest {
               .setGeneratorName("Java") // use this codegen library
               .setInputSpec("src/test/resources/petstore.json") // sample OpenAPI file
               .addAdditionalProperty("dateLibrary", "java8")
-              .addAdditionalProperty("library", "jersey2-experimental")
+              .addAdditionalProperty("library", "jersey2")
               // .setInputSpec("https://raw.githubusercontent.com/openapitools/openapi-generator/master/modules/openapi-generator/src/test/resources/2_0/petstore.yaml") // or from the server
               .setOutputDir("out/open-banking-codegen"); // output directory
 

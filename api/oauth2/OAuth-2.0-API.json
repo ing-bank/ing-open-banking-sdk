@@ -2,7 +2,7 @@
   "swagger" : "2.0",
   "info" : {
     "description" : "The OAuth 2.0 API exposes the resources for third parties to connect to ING APIs using the [OAuth 2.0](https://tools.ietf.org/html/rfc6749) protocol for authentication and authorization. This API supports the \"client credentials\", \"authorization code\" and \"refresh token\" grant types. Subscription to this API is only required when the Authorization Grant code flow is required for your application. The other supported OAuth 2.0 flows can be used without subscription.",
-    "version" : "2.3.0",
+    "version" : "2.3.1",
     "title" : "OAuth 2.0 API",
     "contact" : {
       "name" : "ING Developer Portal",
@@ -24,7 +24,7 @@
         "parameters" : [ {
           "name" : "Authorization",
           "in" : "header",
-          "description" : "For the 'client_credentials' grant type we require the Authorization header with the signature authentication scheme as defined in https://tools.ietf.org/html/draft-cavage-http-signatures-10. ING requires the headers '(request-target) date digest', the client ID is used as keyID, and the algorithm is 'rsa-sha256'\nFor the 'authorization_code' and 'refresh_token' grant type the bearer authentication scheme with the application access token is required.",
+          "description" : "For the 'client_credentials' grant type we require the Authorization header with the signature authentication scheme as defined in https://tools.ietf.org/html/draft-cavage-http-signatures-10. ING requires the headers '(request-target) date digest', the client ID is used as keyID, and the algorithm is 'rsa-sha256' or 'ecdsa-sha256', 'ecdsa-sha384', 'ecdsa-sha512'\nFor the 'authorization_code' and 'refresh_token' grant type the bearer authentication scheme with the application access token is required.",
           "required" : true,
           "type" : "string"
         }, {
@@ -119,7 +119,7 @@
         }, {
           "name" : "Signature",
           "in" : "header",
-          "description" : "Signature header as defined in https://tools.ietf.org/html/draft-cavage-http-signatures-10. ING requires the headers '(request-target) date digest', and the algorithm is 'rsa-sha256'",
+          "description" : "Signature header as defined in https://tools.ietf.org/html/draft-cavage-http-signatures-10. ING requires the headers '(request-target) date digest', and the algorithm is 'rsa-sha256' or 'ecdsa-sha256', 'ecdsa-sha384', 'ecdsa-sha512'.",
           "required" : true,
           "type" : "string"
         }, {
@@ -191,7 +191,7 @@
         }, {
           "name" : "Signature",
           "in" : "header",
-          "description" : "Signature header as defined in https://tools.ietf.org/html/draft-cavage-http-signatures-10. ING requires the headers '(request-target) date digest', and the algorithm is 'rsa-sha256'",
+          "description" : "Signature header as defined in https://tools.ietf.org/html/draft-cavage-http-signatures-10. ING requires the headers '(request-target) date digest', and the algorithm is 'rsa-sha256' or 'ecdsa-sha256', 'ecdsa-sha384', 'ecdsa-sha512'.",
           "required" : true,
           "type" : "string"
         }, {

@@ -9,15 +9,14 @@ import com.ing.developer.app.apis.payment.initiation.model.InstructedAmount;
 import com.ing.developer.app.apis.payment.initiation.model.PaymentInitiation;
 import com.ing.developer.app.apis.payment.request.PaymentRequestAdapter;
 import com.ing.developer.common.exceptions.http.OpenBankingHttpNotFoundException;
+import com.ing.developer.common.exceptions.http.OpenBankingHttpUnauthorizedException;
 import com.ing.developer.payment.request.client.model.DailyReceivableLimit;
 import com.ing.developer.payment.request.client.model.RegistrationRequest;
-
+import java.math.BigDecimal;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.math.BigDecimal;
 
 @SpringBootTest
 class OpenBankingDemoApplicationTestIntegration {
@@ -78,6 +77,6 @@ class OpenBankingDemoApplicationTestIntegration {
 
     @Test
     void getGreeting() {
-        Assertions.assertThrows(OpenBankingHttpNotFoundException.class, () -> greetingsAdapter.getGreeting());
+        Assertions.assertThrows(OpenBankingHttpUnauthorizedException.class, () -> greetingsAdapter.getGreeting());
     }
 }

@@ -85,6 +85,11 @@
             <artifactId>tomitribe-http-signatures</artifactId>
             <version>${tomitribe-http-signatures.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.scribejava</groupId>
+            <artifactId>scribejava-apis</artifactId>
+            <version>${scribejava-apis.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

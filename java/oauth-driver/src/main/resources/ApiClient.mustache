@@ -82,9 +82,11 @@ import {{invokerPackage}}.auth.OAuth;
 
 {{>generatedAnnotation}}
 public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
+  public final static String BASE_URL = "BASE_URL";
   protected Map<String, String> defaultHeaderMap = new HashMap<String, String>();
   protected Map<String, String> defaultCookieMap = new HashMap<String, String>();
-  protected String basePath = Optional.ofNullable(System.getenv("BASE_URL")).orElse("{{{basePath}}}");
+  protected String basePath = Optional.ofNullable(Optional.ofNullable(System.getProperty(BASE_URL))
+    .orElse(System.getenv(BASE_URL))).orElse("{{{basePath}}}");
   protected String userAgent;
   private static final Logger log = Logger.getLogger(ApiClient.class.getName());
 

@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.3.RELEASE</version>
+        <version>2.7.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -19,7 +19,6 @@
     <properties>
         <java.version>1.8</java.version>
         <open-banking-sdk.version>0.0.2-SNAPSHOT</open-banking-sdk.version>
-        <jackson.version>2.11.2</jackson.version>
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
@@ -60,13 +59,11 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <scope>runtime</scope>
-            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <scope>runtime</scope>
-            <version>${httpclient.version}</version>
         </dependency>
 
         <dependency>

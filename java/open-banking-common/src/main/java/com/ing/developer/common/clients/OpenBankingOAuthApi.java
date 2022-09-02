@@ -98,6 +98,7 @@ public class OpenBankingOAuthApi {
     private Map<String, String> getMandatoryHeaders(String digest, String date) {
         return Collections.unmodifiableMap(new HashMap<String, String>() {{
             put("Accept", "application/json");
+            put("User-Agent", "openbanking-sdk/0.0.3-SNAPSHOT java");
             put("Digest", digest);
             put("Date", date);
         }});

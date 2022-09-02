@@ -1019,6 +1019,7 @@ public class ApiClient {
 
     final Map<String, String> mandatoryHeaders = new HashMap<String, String>();
     mandatoryHeaders.put("Accept", "application/json");
+    mandatoryHeaders.put("User-Agent", "openbanking-sdk/0.0.3-SNAPSHOT java");
     mandatoryHeaders.put("Digest", digest(body == null ? "" : body.toString()));
     mandatoryHeaders.put("Date", ZonedDateTime.now(ZoneId.of("GMT")).format(FORMATTER));
 
@@ -1203,6 +1204,7 @@ public class ApiClient {
 
       final Map<String, String> mandatoryHeaders = new HashMap<String, String>();
       mandatoryHeaders.put("Accept", "application/json");
+      mandatoryHeaders.put("User-Agent", "openbanking-sdk/0.0.3-SNAPSHOT java");
       mandatoryHeaders.put("Digest", digest(payload));
       mandatoryHeaders.put("Date", ZonedDateTime.now(ZoneId.of("GMT")).format(FORMATTER));
 

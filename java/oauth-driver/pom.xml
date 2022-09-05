@@ -4,14 +4,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>oauth-driver</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.3-SNAPSHOT</version>
     <name>ING OAuth Driver</name>
     <description>ING OAuth Driver for developers</description>
 
     <parent>
         <groupId>com.ing.developer</groupId>
         <artifactId>ing-open-banking-java-sdk</artifactId>
-        <version>0.0.2-SNAPSHOT</version>
+        <version>0.0.3-SNAPSHOT</version>
     </parent>
 
     <properties>

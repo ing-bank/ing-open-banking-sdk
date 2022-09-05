@@ -6,7 +6,7 @@
     <artifactId>open-banking-driver-generator</artifactId>
     <packaging>jar</packaging>
     <name>Open Banking Driver Generator</name>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.3-SNAPSHOT</version>
 
     <properties>
         <java.version>11</java.version>

@@ -1,7 +1,7 @@
 package com.ing.developer.common;
 
 import org.tomitribe.auth.signatures.Signature;
-import org.tomitribe.auth.signatures.Signer;
+
 
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -43,11 +43,11 @@ public class Signing {
         }
     }
 
-    public static Signer getNewSigner(String configuredClientId, PrivateKey signatureKey) {
-        return new Signer(signatureKey, getSignature(configuredClientId));
+    public static OBSigner getNewSigner(String configuredClientId, PrivateKey signatureKey) {
+        return new OBSigner(signatureKey, getSignature(configuredClientId));
     }
 
-    public static Signature sign(Signer signer, String method, String uri, Map<String, String> headers) {
+    public static Signature sign(OBSigner signer, String method, String uri, Map<String, String> headers) {
         try {
             return signer.sign(method, uri, headers);
         } catch (IOException e) {

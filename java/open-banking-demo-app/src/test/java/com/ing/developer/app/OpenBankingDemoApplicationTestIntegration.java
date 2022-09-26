@@ -77,6 +77,19 @@ class OpenBankingDemoApplicationTestIntegration {
 
     @Test
     void getGreeting() {
-        Assertions.assertThrows(OpenBankingHttpUnauthorizedException.class, () -> greetingsAdapter.getGreeting());
+        String greetings = greetingsAdapter.getGreeting();
+        Assertions.assertEquals("Welcome to ING!", greetings);
+    }
+
+    @Test
+    void getGreetingMtlsPinning() {
+        String greetings = greetingsAdapter.getGreetingMtlsPinning();
+        Assertions.assertEquals("Welcome to ING!", greetings);
+    }
+
+    @Test
+    void getGreetingJWS() {
+        String greetings = greetingsAdapter.getGreetingJWS();
+        Assertions.assertEquals("Welcome to ING!", greetings);
     }
 }

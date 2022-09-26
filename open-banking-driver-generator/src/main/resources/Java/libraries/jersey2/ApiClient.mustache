@@ -6,11 +6,14 @@ import java.util.Locale;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.time.ZonedDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import org.tomitribe.auth.signatures.Signature;
 import org.tomitribe.auth.signatures.Signer;
+import com.ing.developer.common.OBSigner;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -22,6 +25,17 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import java.nio.charset.StandardCharsets;
+import org.apache.commons.codec.binary.Hex;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Base64;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.digest.DigestUtils;
 
 {{#hasOAuthMethods}}
 import com.github.scribejava.core.model.OAuth2AccessToken;
@@ -98,8 +112,9 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
   private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US);
 
   private final PrivateKey signatureKey;
-  private final Signer techSigner;
-  private Signer featSigner;
+  private final Certificate certificate;
+  private final OBSigner techSigner;
+  private OBSigner featSigner;
   private Token token;
 
   protected Map<String, String> defaultHeaderMap = new HashMap<String, String>();
@@ -178,6 +193,8 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
   protected Map<String, Integer> operationServerIndex = new HashMap<String, Integer>();
   protected Map<String, Map<String, String>> operationServerVariables = new HashMap<String, Map<String, String>>();
   protected boolean debugging = false;
+  protected boolean mTLSPinning = false;
+  protected boolean jwsSigning = false;
   protected ClientConfig clientConfig;
   protected int connectionTimeout = 0;
   private int readTimeout = 0;
@@ -190,6 +207,7 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
   protected Map<String, String> authenticationLookup;
 
   protected DateFormat dateFormat;
+  protected String configuredClientId;
 
   public ApiClient(String configuredClientId,
     PrivateKey signatureKey,
@@ -197,17 +215,27 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
     this(configuredClientId, signatureKey, clientBuilder, null);
   }
 
+  public ApiClient(String configuredClientId,
+    PrivateKey signatureKey,
+    ClientBuilder clientBuilder,
+    Map<String, Authentication> authMap) {
+    this(configuredClientId, signatureKey, clientBuilder, authMap, null);
+  }
+
   /**
    * Constructs a new ApiClient with the specified authentication parameters.
    *
    * @param authMap A hash map containing authentication parameters.
    */
-  private ApiClient(String configuredClientId,
+  public ApiClient(String configuredClientId,
     PrivateKey signatureKey,
     ClientBuilder clientBuilder,
-    Map<String, Authentication> authMap) {
+    Map<String, Authentication> authMap,
+    Certificate certificate) {
+    this.configuredClientId = configuredClientId;
+    this.certificate = certificate;
     this.signatureKey = signatureKey;
-    this.techSigner = new Signer(signatureKey, getSignature(configuredClientId));
+    this.techSigner = new OBSigner(signatureKey, getSignature(configuredClientId));
 
     json = new JSON();
     httpClient = clientBuilder.withConfig(updateClientConfig((ClientConfig) clientBuilder.getConfiguration())).build();
@@ -315,6 +343,18 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
   public ApiClient setServers(List<ServerConfiguration> servers) {
     this.servers = servers;
     updateBasePath();
+    return this;
+  }
+
+  public ApiClient setMTLSPinning(boolean mTLSPinning) {
+    this.token = null;
+    this.mTLSPinning = mTLSPinning;
+    return this;
+  }
+
+
+  public ApiClient setJwsSigning(boolean jwsSigning) {
+    this.jwsSigning = jwsSigning;
     return this;
   }
 
@@ -1147,7 +1187,7 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
     }
 
     token = getApplicationAccessToken();
-    Signer signer = getFeatSigner(token.client_id, signatureKey);
+    OBSigner signer = getFeatSigner(token.client_id, signatureKey);
     String applicationAccessToken = token.access_token;
 
     final Map<String, String> mandatoryHeaders = new HashMap<String, String>();
@@ -1159,7 +1199,43 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
     String signature = sign(signer, method.toLowerCase(), path, mandatoryHeaders).toString();
 
     if (!headerParams.containsKey("Authorization")) mandatoryHeaders.put("Authorization", "Bearer " + applicationAccessToken);
-    mandatoryHeaders.put("Signature", signature.substring("Signature ".length()));
+    if (!this.mTLSPinning) {
+      mandatoryHeaders.put("Signature", signature.substring("Signature ".length()));
+    }
+
+    if(this.jwsSigning) {
+      try {
+        String fingerprint = DigestUtils.sha256Hex(this.certificate.getEncoded());
+        byte[] decodedHex = Hex.decodeHex(fingerprint.toCharArray());
+        String encodedHexB64 = Base64.getEncoder().encodeToString(decodedHex);
+
+        Date date = Calendar.getInstance().getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String sigT = sdf.format(date);
+
+        String jwsHeader="{\"b64\":false,\"x5t#S256\":\"" + encodedHexB64 + "\",\"crit\":[ \"sigT\", \"sigD\", \"b64\"],\"sigT\":\"" + sigT + "\",\"sigD\":{ \"pars\":[ \"(request-target)\", \"content-type\", \"digest\" ], \"mId\":\"http://uri.etsi.org/19182/HttpHeaders\"},\"alg\":\"RS256\"}";
+
+        String jwsHeaderBase64URL = Base64.getUrlEncoder()
+                .withoutPadding()
+                .encodeToString(jwsHeader.getBytes(StandardCharsets.UTF_8));
+        String digest = digest("");
+        String signingString = "(request-target): get /signed/greetings\ncontent-type: application/json\ndigest: " + digest + "\n";
+
+        String jwsSignatureValue = sign(signer, jwsHeaderBase64URL + "." + signingString).getSignature();
+        String jwsSignature = jwsHeaderBase64URL + ".." + jwsSignatureValue;
+        mandatoryHeaders.put("X-JWS-Signature",jwsSignature);
+        mandatoryHeaders.put("Digest", digest);
+        mandatoryHeaders.put("Date", ZonedDateTime.now(ZoneId.of("GMT")).format(FORMATTER));
+        mandatoryHeaders.put("Content-Type", "application/json");
+      }
+      catch (CertificateEncodingException e) {
+        throw new ApiException("Certificate Encoding Exception");
+      }
+      catch(DecoderException e) {
+        throw new ApiException("Decoder Exception");
+      }
+    }
 
     Entity<?> entity = serialize(body, formParams, contentType, isBodyNullable);
 
@@ -1395,6 +1471,9 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
       }
       String path = "/oauth2/token";
       String payload = "grant_type=client_credentials";
+      if (this.mTLSPinning) {
+        payload = payload + "&client_id=" + this.configuredClientId;
+      }
 
       Invocation.Builder request = httpClient
               .target(this.basePath)
@@ -1404,12 +1483,13 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
       final Map<String, String> mandatoryHeaders = new HashMap<String, String>();
       mandatoryHeaders.put("Accept", "application/json");
       mandatoryHeaders.put("User-Agent", "openbanking-sdk/0.0.3-SNAPSHOT java");
-      mandatoryHeaders.put("Digest", digest(payload));
       mandatoryHeaders.put("Date", ZonedDateTime.now(ZoneId.of("GMT")).format(FORMATTER));
 
-      String signature = sign(techSigner, "post", path, mandatoryHeaders).toString();
-
-      mandatoryHeaders.put("Authorization", signature);
+      if (!this.mTLSPinning) {
+        mandatoryHeaders.put("Digest", digest(payload));
+        String signature = sign(techSigner, "post", path, mandatoryHeaders).toString();
+        mandatoryHeaders.put("Authorization", signature);
+      }
 
       mandatoryHeaders.forEach(request::header);
 
@@ -1435,16 +1515,24 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
       return new Signature(keyId, "rsa-sha256", null, "(request-target)", "date", "digest");
   }
 
-  private Signer getFeatSigner(String keyId, PrivateKey privateKey) {
+  private OBSigner getFeatSigner(String keyId, PrivateKey privateKey) {
       if (featSigner == null) {
-          featSigner = new Signer(privateKey, getSignature(keyId));
+          featSigner = new OBSigner(privateKey, getSignature(keyId));
       }
       return featSigner;
   }
 
-  private Signature sign(Signer signer, String method, String uri, Map<String, String> headers) {
+  private Signature sign(OBSigner signer, String method, String uri, Map<String, String> headers) {
       try {
           return signer.sign(method, uri, headers);
+      } catch (IOException e) {
+          throw new RuntimeException(e);
+      }
+  }
+
+  private Signature sign(OBSigner signer, String signingString) {
+      try {
+          return signer.sign(signingString);
       } catch (IOException e) {
           throw new RuntimeException(e);
       }

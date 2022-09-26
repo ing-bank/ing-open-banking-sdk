@@ -1,5 +1,7 @@
 package com.ing.developer.common.clients;
 
+import com.ing.developer.common.OBSigner;
+import org.tomitribe.auth.signatures.Signer;
 import com.ing.developer.common.Signing;
 import com.ing.developer.common.Utils;
 import org.openapitools.client.ApiClient;
@@ -7,7 +9,6 @@ import org.openapitools.client.ApiException;
 import org.openapitools.client.api.DefaultApi;
 import org.openapitools.client.model.AuthorizationURLResponse;
 import org.openapitools.client.model.TokenResponse;
-import org.tomitribe.auth.signatures.Signer;
 
 import javax.ws.rs.client.Client;
 import java.io.UnsupportedEncodingException;
@@ -26,9 +27,9 @@ public class OpenBankingOAuthApi {
     private final DefaultApi client;
     private final String tpPSignatureCertificate;
     private final PrivateKey privateKey;
-    private final Signer signer;
+    private final OBSigner signer;
 
-    private Signer featSigner;
+    private OBSigner featSigner;
     private Utils.Pair<TokenResponse, Long> tokenTimeStampPair;
 
     public OpenBankingOAuthApi(String clientId, Utils.Pair<Certificate, PrivateKey> trustMaterial, Client client) {
@@ -112,7 +113,7 @@ public class OpenBankingOAuthApi {
         }
     }
 
-    private Signer getFeatSigner(String clientId) {
+    private OBSigner getFeatSigner(String clientId) {
         if (featSigner == null) {
             featSigner = Signing.getNewSigner(clientId, privateKey);
         }

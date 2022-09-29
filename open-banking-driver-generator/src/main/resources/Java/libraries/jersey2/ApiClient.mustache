@@ -1207,7 +1207,7 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
       try {
         String fingerprint = DigestUtils.sha256Hex(this.certificate.getEncoded());
         byte[] decodedHex = Hex.decodeHex(fingerprint.toCharArray());
-        String encodedHexB64 = Base64.getEncoder().encodeToString(decodedHex);
+        String encodedHexB64 = Base64.getEncoder().encodeToString(decodedHex).replace("=", "").replace("\n", "").replace("+", "-").replace("\\/", "_");
 
         Date date = Calendar.getInstance().getTime();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");

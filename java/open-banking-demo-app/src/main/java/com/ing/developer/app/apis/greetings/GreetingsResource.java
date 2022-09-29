@@ -14,9 +14,21 @@ public class GreetingsResource {
     this.greetingsAdapter = greetingsAdapter;
   }
 
-  @SuppressWarnings("unused")
   @GetMapping
+  @RequestMapping("/single")
   public String single() {
     return greetingsAdapter.getGreeting();
   }
+
+  @RequestMapping("/mtls")
+  public String mtls() {
+    return greetingsAdapter.getGreeting();
+  }
+
+  @RequestMapping("/jws")
+  public String jws() {
+    return greetingsAdapter.getGreeting();
+  }
+
+
 }

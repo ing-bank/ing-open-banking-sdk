@@ -22,7 +22,7 @@ With this SDK we provide the means to generate drivers to interact with ING's Op
 * Run `./keygen-psd2.sh` and set `secret2` as password.
 * Run  `mvn clean install`
 * Run `./run-java.sh`
-* Go to `http://localhost:8080/account/authorize`
+* Go to `http://localhost:8080`
 * Click the link you get back and is displayed.
 * Select the top profile and click next.
 * You are redirected back to `localhost` and see the customer token displayed.
@@ -426,6 +426,156 @@ public class PremiumRegisterMerchant {
     }
 }
 ```
+
+#### Call Showcase API using signature:
+The GreetingsApi is used to test a connection with a sandbox or production API's.
+The classes required to create the request can be imported as seen below.
+
+```java
+import com.ing.developer.common.Utils;
+import com.ing.developer.common.clients.Companion;
+import com.ing.developer.showcase.client.api.GreetingsApi;
+```
+
+The GreetingsApi requires an clientAPI, which in turn requires a clientId and trustMaterial.
+In the example below Production parameters needs to be used.
+Use your own clientId and certificates from the developer portal. Make sure your app is subscribed to the showcase API.  
+Make sure to set the BASE_URL to https://api.ing.com, and use your keystore password.
+The code below will initialize the GreetingsApi object that we will use to call the Showcase API.
+
+```java
+static String clientId = "e77d776b-90af-4684-bebc-521e5b2614dd";
+static String keyStoreFileName = "keystore-premium.jks";
+static char[] keyStorePassword = "secret".toCharArray();
+
+Utils.Pair<PrivateKey, ClientBuilder> trustMaterial = Companion.Utils.createOpenBankingClient(keyStoreFileName, keyStorePassword, false, null, null, false, false);
+ApiClient clientAPI = new ApiClient(clientId, trustMaterial.getFirst(), trustMaterial.getSecond());
+GreetingsApi greetingsApi = new GreetingsApi(clientAPI);
+```
+
+To call the production Showcase API the greetingsSingleGet function is used.
+```java
+String greeting = greetingsApi.greetingsSingleGet(null).getMessage();
+```
+
+A successful call will respond with:
+```
+Welcome to ING!
+```
+
+Full Example:
+```java
+import com.ing.developer.common.Utils;
+import com.ing.developer.common.clients.Companion;
+import com.ing.developer.showcase.client.ApiException;
+import com.ing.developer.showcase.client.api.GreetingsApi;
+
+import javax.ws.rs.client.ClientBuilder;
+import java.security.PrivateKey;
+
+public class ProductionShowcaseAPI {
+    public static void callShowcaseAPI() throws ApiException {
+        static String clientId = "e77d776b-90af-4684-bebc-521e5b2614dd";
+        static String keyStoreFileName = "keystore-premium.jks";
+        static char[] keyStorePassword = "secret".toCharArray();
+
+        Utils.Pair<PrivateKey, ClientBuilder> trustMaterial = Companion.Utils.createOpenBankingClient(keyStoreFileName, keyStorePassword, false, null, null, false, false);
+        ApiClient clientAPI = new ApiClient(clientId, trustMaterial.getFirst(), trustMaterial.getSecond());
+        GreetingsApi greetingsApi = new GreetingsApi(clientAPI);
+        String greeting = greetingsApi.greetingsSingleGet(null).getMessage();
+        System.out.println(greeting);
+    }
+}
+```
+
+#### Call Showcase API using mTLS Pinning:
+The Greeting endpoint can be called using mTLS Pinning. This does not require the signature headers. 
+
+To set the request the use mTLS Pinning, call the setMTLSPinning as seen below. This will enable mTLS only connections.
+```java
+ApiClient clientAPI = new ApiClient(clientId, trustMaterial.getFirst(), trustMaterial.getSecond()).setMTLSPinning(true);
+```
+
+Use the mtlsOnlyGreetingsGet function to call the mtls only endpoint.
+```java
+String greeting = greetingsApi.mtlsOnlyGreetingsGet(null).getMessage();
+```
+
+A successful call will respond with:
+```
+Welcome to ING!
+```
+
+Full Example:
+```java
+import com.ing.developer.common.Utils;
+import com.ing.developer.common.clients.Companion;
+import com.ing.developer.showcase.client.ApiException;
+import com.ing.developer.showcase.client.api.GreetingsApi;
+
+import javax.ws.rs.client.ClientBuilder;
+import java.security.PrivateKey;
+
+public class ProductionShowcaseAPI {
+    public static void callShowcaseAPI() throws ApiException {
+        static String clientId = "e77d776b-90af-4684-bebc-521e5b2614dd";
+        static String keyStoreFileName = "keystore-premium.jks";
+        static char[] keyStorePassword = "secret".toCharArray();
+
+        Utils.Pair<PrivateKey, ClientBuilder> trustMaterial = Companion.Utils.createOpenBankingClient(keyStoreFileName, keyStorePassword, false, null, null, false, false);
+        ApiClient clientAPI = new ApiClient(clientId, trustMaterial.getFirst(), trustMaterial.getSecond()).setMTLSPinning(true);
+        GreetingsApi greetingsApi = new GreetingsApi(clientAPI);
+        String greeting = greetingsApi.mtlsOnlyGreetingsGet(null).getMessage();
+        System.out.println(greeting);
+    }
+}
+```
+
+#### Call Showcase API using JWS:
+The Greeting endpoint can be called using JWS.
+
+To set the request the use JWS signing, call the setJwsSigning and setMTLSPinning as seen below. This will enable JWS with mTLS only connections. The Certificate will also need to be passed to the ApiClient object.
+```java
+Utils.Pair<Certificate, PrivateKey> trustMaterial = Companion.Utils.getTrustMaterial(keyStoreFileName, keyStorePassword);
+Utils.Pair<PrivateKey, ClientBuilder> openBankingClient = Companion.Utils.createOpenBankingClient(keyStoreFileName, keyStorePassword, false, null, null, false, false);
+ApiClient clientAPI = new ApiClient(clientId, trustMaterial.getSecond(), openBankingClient.getSecond(), null, trustMaterial.getFirst()).setMTLSPinning(true).setJwsSigning(true);
+```
+Use the signedGreetingsGet function to call the mtls only endpoint.
+```java
+String greeting = greetingsApi.signedGreetingsGet(null).getMessage();
+```
+
+A successful call will respond with:
+```
+Welcome to ING!
+```
+
+Full Example:
+```java
+import com.ing.developer.common.Utils;
+import com.ing.developer.common.clients.Companion;
+import com.ing.developer.showcase.client.ApiException;
+import com.ing.developer.showcase.client.api.GreetingsApi;
+
+import javax.ws.rs.client.ClientBuilder;
+import java.security.PrivateKey;
+
+public class ProductionShowcaseAPI {
+    public static void callShowcaseAPI() throws ApiException {
+        static String clientId = "e77d776b-90af-4684-bebc-521e5b2614dd";
+        static String keyStoreFileName = "keystore-premium.jks";
+        static char[] keyStorePassword = "secret".toCharArray();
+
+        Utils.Pair<Certificate, PrivateKey> trustMaterial = Companion.Utils.getTrustMaterial(keyStoreFileName, keyStorePassword);
+        Utils.Pair<PrivateKey, ClientBuilder> openBankingClient = Companion.Utils.createOpenBankingClient(keyStoreFileName, keyStorePassword, false, null, null, false, false);
+        ApiClient clientAPI = new ApiClient(clientId, trustMaterial.getSecond(), openBankingClient.getSecond(), null, trustMaterial.getFirst()).setMTLSPinning(true).setJwsSigning(true);
+        GreetingsApi greetingsApi = new GreetingsApi(clientAPI);
+        String greeting = greetingsApi.signedGreetingsGet(null,null).getMessage();
+        System.out.println(greeting);
+    }
+}
+```
+
 ### Using ING Open Banking Drivers for Production API's
 #### Call Showcase API in production:
 

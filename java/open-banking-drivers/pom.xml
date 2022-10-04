@@ -102,6 +102,16 @@
             <artifactId>scribejava-apis</artifactId>
             <version>${scribejava-apis.version}</version>
         </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.9</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ing.developer</groupId>
+            <artifactId>open-banking-common</artifactId>
+            <version>${open-banking-sdk.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

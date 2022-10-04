@@ -9,6 +9,7 @@ import org.springframework.core.env.Environment;
 
 import javax.ws.rs.client.ClientBuilder;
 import java.security.PrivateKey;
+import java.security.cert.Certificate;
 import java.util.Arrays;
 
 public class GreetingsConfiguration {
@@ -37,9 +38,10 @@ public class GreetingsConfiguration {
     }
 
     private ApiClient buildClient() {
+        Utils.Pair<Certificate, PrivateKey> trustMaterial = Companion.Utils.getTrustMaterial(keyStoreFileName, keyStorePassword);
         Utils.Pair<PrivateKey, ClientBuilder> pair = Companion.Utils.createOpenBankingClient(keyStoreFileName, keyStorePassword, useProxy, proxyHost, proxyPort, false, logging);
         Arrays.fill(keyStorePassword, '0');
-        return new ApiClient(clientId, pair.getFirst(), pair.getSecond());
+        return new ApiClient(clientId, trustMaterial.getSecond(), pair.getSecond(), null, trustMaterial.getFirst());
     }
 
 }

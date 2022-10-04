@@ -34,6 +34,8 @@ public class JavaOpenBankingCodegen extends JavaClientCodegen {
                 .collect(Collectors.toList());
             includedParams.stream().filter(p -> "Authorization".equals(p.getName()))
                 .forEach(p -> p.required(false));
+            includedParams.stream().filter(p -> "X-JWS-Signature".equals(p.getName()))
+                .forEach(p -> p.required(false));
             operation.setParameters(includedParams);
           }
         }

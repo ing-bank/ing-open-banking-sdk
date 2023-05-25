@@ -276,8 +276,7 @@
         "security" : [ {
           "ING-Access-Code-Security" : [ "payment-accounts:balances:view", "payment-accounts:transactions:view" ]
         } ]
-      },
-      "parameters" : [ ]
+      }
     },
     "/v3/accounts/{account-id}/transactions" : {
       "get" : {
@@ -601,8 +600,7 @@
         "security" : [ {
           "ING-Access-Code-Security" : [ "payment-accounts:balances:view", "payment-accounts:transactions:view" ]
         } ]
-      },
-      "parameters" : [ ]
+      }
     },
     "/v3/accounts/{account-id}/balances" : {
       "get" : {
@@ -789,8 +787,7 @@
         "security" : [ {
           "ING-Access-Code-Security" : [ "payment-accounts:balances:view", "payment-accounts:transactions:view" ]
         } ]
-      },
-      "parameters" : [ ]
+      }
     },
     "/v3/accounts" : {
       "get" : {
@@ -945,8 +942,7 @@
         "security" : [ {
           "ING-Access-Code-Security" : [ "payment-accounts:balances:view", "payment-accounts:transactions:view" ]
         } ]
-      },
-      "parameters" : [ ]
+      }
     }
   },
   "securityDefinitions" : {

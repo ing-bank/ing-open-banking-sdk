@@ -7,7 +7,7 @@
     "contact" : {
       "name" : "ING Developer Portal",
       "url" : "https://developer.ing.com",
-      "email" : "developerportal@ing.com"
+      "email" : "apis@ing.com"
     }
   },
   "host" : "api.ing.com",
@@ -100,8 +100,7 @@
             "description" : "Internal Server Error - The server encountered an unexpected internal error."
           }
         }
-      },
-      "parameters" : [ ]
+      }
     },
     "/oauth2/authorization-server-url" : {
       "get" : {
@@ -173,8 +172,7 @@
         "security" : [ {
           "ING-Application-Security" : [ "granting" ]
         } ]
-      },
-      "parameters" : [ ]
+      }
     },
     "/oauth2/token/revoke" : {
       "post" : {
@@ -234,8 +232,7 @@
             "description" : "Internal Server Error - The server encountered an unexpected internal error."
           }
         }
-      },
-      "parameters" : [ ]
+      }
     }
   },
   "securityDefinitions" : {

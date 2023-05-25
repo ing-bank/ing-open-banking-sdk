@@ -7,7 +7,7 @@
     "contact" : {
       "name" : "ING Developer Portal",
       "url" : "https://developer.ing.com",
-      "email" : "developerportal@ing.com"
+      "email" : "apis@ing.com"
     }
   },
   "host" : "api.ing.com",
@@ -37,15 +37,36 @@
           "required" : true,
           "type" : "string"
         }, {
-          "$ref" : "#/parameters/AuthorizationBearerInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Contains Application Access Token with auth-scheme Bearer.",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the third party on application level. See \"Get Started\" for more information on how to generate.",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "SHA256 of the body.",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard http header element for date and time",
+          "required" : true,
+          "type" : "string",
+          "format" : "date-time"
         }, {
-          "$ref" : "#/parameters/XINGReqID"
+          "name" : "X-ING-ReqID",
+          "in" : "header",
+          "description" : "Request ID, can be a UUID",
+          "required" : true,
+          "type" : "string"
         } ],
         "responses" : {
           "200" : {
@@ -57,33 +78,32 @@
           "401" : {
             "description" : "Unauthorized",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           },
           "403" : {
             "description" : "Forbidden",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           },
           "404" : {
             "description" : "Not Found",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           },
           "500" : {
             "description" : "Internal Server Error",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           }
         },
         "security" : [ {
           "ING-Application-Security" : [ "payment-requests:view" ]
         } ]
-      },
-      "parameters" : [ ]
+      }
     },
     "/payment-requests" : {
       "post" : {
@@ -99,15 +119,36 @@
             "$ref" : "#/definitions/CreatePaymentRequest"
           }
         }, {
-          "$ref" : "#/parameters/AuthorizationBearerInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Contains Application Access Token with auth-scheme Bearer.",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the third party on application level. See \"Get Started\" for more information on how to generate.",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "SHA256 of the body.",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard http header element for date and time",
+          "required" : true,
+          "type" : "string",
+          "format" : "date-time"
         }, {
-          "$ref" : "#/parameters/XINGReqID"
+          "name" : "X-ING-ReqID",
+          "in" : "header",
+          "description" : "Request ID, can be a UUID",
+          "required" : true,
+          "type" : "string"
         } ],
         "responses" : {
           "201" : {
@@ -127,33 +168,32 @@
           "400" : {
             "description" : "Bad Request",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           },
           "401" : {
             "description" : "Unauthorized",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           },
           "403" : {
             "description" : "Forbidden",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           },
           "500" : {
             "description" : "Internal Server Error",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           }
         },
         "security" : [ {
           "ING-Application-Security" : [ "payment-requests:create" ]
         } ]
-      },
-      "parameters" : [ ]
+      }
     },
     "/payment-requests/{id}/close" : {
       "post" : {
@@ -167,15 +207,36 @@
           "required" : true,
           "type" : "string"
         }, {
-          "$ref" : "#/parameters/AuthorizationBearerInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Contains Application Access Token with auth-scheme Bearer.",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the third party on application level. See \"Get Started\" for more information on how to generate.",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "SHA256 of the body.",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard http header element for date and time",
+          "required" : true,
+          "type" : "string",
+          "format" : "date-time"
         }, {
-          "$ref" : "#/parameters/XINGReqID"
+          "name" : "X-ING-ReqID",
+          "in" : "header",
+          "description" : "Request ID, can be a UUID",
+          "required" : true,
+          "type" : "string"
         } ],
         "responses" : {
           "204" : {
@@ -184,39 +245,38 @@
           "401" : {
             "description" : "Unauthorized",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           },
           "403" : {
             "description" : "Forbidden",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           },
           "404" : {
             "description" : "Not Found",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           },
           "409" : {
             "description" : "Conflict",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           },
           "500" : {
             "description" : "Internal Server Error",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           }
         },
         "security" : [ {
           "ING-Application-Security" : [ "payment-requests:close" ]
         } ]
-      },
-      "parameters" : [ ]
+      }
     },
     "/payment-requests/registrations" : {
       "get" : {
@@ -224,15 +284,36 @@
         "summary" : "Get registration details",
         "description" : "Get details of an existing merchant registration",
         "parameters" : [ {
-          "$ref" : "#/parameters/AuthorizationBearerInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Contains Application Access Token with auth-scheme Bearer.",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the third party on application level. See \"Get Started\" for more information on how to generate.",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "SHA256 of the body.",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard http header element for date and time",
+          "required" : true,
+          "type" : "string",
+          "format" : "date-time"
         }, {
-          "$ref" : "#/parameters/XINGReqID"
+          "name" : "X-ING-ReqID",
+          "in" : "header",
+          "description" : "Request ID, can be a UUID",
+          "required" : true,
+          "type" : "string"
         } ],
         "responses" : {
           "200" : {
@@ -244,25 +325,25 @@
           "401" : {
             "description" : "Unauthorized",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           },
           "403" : {
             "description" : "Forbidden",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           },
           "404" : {
             "description" : "Not Found",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           },
           "500" : {
             "description" : "Internal Server Error",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           }
         },
@@ -284,15 +365,36 @@
             "$ref" : "#/definitions/RegistrationRequest"
           }
         }, {
-          "$ref" : "#/parameters/AuthorizationBearerInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Contains Application Access Token with auth-scheme Bearer.",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the third party on application level. See \"Get Started\" for more information on how to generate.",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "SHA256 of the body.",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard http header element for date and time",
+          "required" : true,
+          "type" : "string",
+          "format" : "date-time"
         }, {
-          "$ref" : "#/parameters/XINGReqID"
+          "name" : "X-ING-ReqID",
+          "in" : "header",
+          "description" : "Request ID, can be a UUID",
+          "required" : true,
+          "type" : "string"
         } ],
         "responses" : {
           "202" : {
@@ -304,25 +406,25 @@
           "400" : {
             "description" : "Bad Request",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           },
           "401" : {
             "description" : "Unauthorized",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           },
           "403" : {
             "description" : "Forbidden",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           },
           "500" : {
             "description" : "Internal Server Error",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           }
         },
@@ -343,15 +445,36 @@
             "$ref" : "#/definitions/UpdateRegistrationRequest"
           }
         }, {
-          "$ref" : "#/parameters/AuthorizationBearerInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Contains Application Access Token with auth-scheme Bearer.",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the third party on application level. See \"Get Started\" for more information on how to generate.",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "SHA256 of the body.",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard http header element for date and time",
+          "required" : true,
+          "type" : "string",
+          "format" : "date-time"
         }, {
-          "$ref" : "#/parameters/XINGReqID"
+          "name" : "X-ING-ReqID",
+          "in" : "header",
+          "description" : "Request ID, can be a UUID",
+          "required" : true,
+          "type" : "string"
         } ],
         "responses" : {
           "204" : {
@@ -360,33 +483,32 @@
           "400" : {
             "description" : "Bad Request",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           },
           "401" : {
             "description" : "Unauthorized",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           },
           "403" : {
             "description" : "Forbidden",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           },
           "500" : {
             "description" : "Internal Server Error",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           }
         },
         "security" : [ {
           "ING-Application-Security" : [ "payment-requests:register" ]
         } ]
-      },
-      "parameters" : [ ]
+      }
     },
     "/payment-requests/{id}/payments" : {
       "get" : {
@@ -400,15 +522,36 @@
           "required" : true,
           "type" : "string"
         }, {
-          "$ref" : "#/parameters/AuthorizationBearerInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Contains Application Access Token with auth-scheme Bearer.",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the third party on application level. See \"Get Started\" for more information on how to generate.",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "SHA256 of the body.",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard http header element for date and time",
+          "required" : true,
+          "type" : "string",
+          "format" : "date-time"
         }, {
-          "$ref" : "#/parameters/XINGReqID"
+          "name" : "X-ING-ReqID",
+          "in" : "header",
+          "description" : "Request ID, can be a UUID",
+          "required" : true,
+          "type" : "string"
         } ],
         "responses" : {
           "200" : {
@@ -420,33 +563,32 @@
           "401" : {
             "description" : "Unauthorized",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           },
           "403" : {
             "description" : "Forbidden",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           },
           "404" : {
             "description" : "Not Found",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           },
           "500" : {
             "description" : "Internal Server Error",
             "schema" : {
-              "$ref" : "https://api.developer.ing.com/schemas/error/1.0"
+              "$ref" : "#/definitions/error_1.0"
             }
           }
         },
         "security" : [ {
           "ING-Application-Security" : [ "payment-requests:view" ]
         } ]
-      },
-      "parameters" : [ ]
+      }
     }
   },
   "securityDefinitions" : {
@@ -865,7 +1007,7 @@
           "example" : 99.95,
           "description" : "Value of the fixed amount.",
           "minimum" : 0.01,
-          "maximum" : 9.99999999999E9,
+          "maximum" : 9999999999.99,
           "x-ing-type" : "number"
         },
         "currency" : {
@@ -887,7 +1029,7 @@
           "example" : 100.0,
           "description" : "Value of the maximum receivable amount.",
           "minimum" : 0.01,
-          "maximum" : 9.99999999999E9,
+          "maximum" : 9999999999.99,
           "x-ing-type" : "number"
         },
         "currency" : {
@@ -931,7 +1073,7 @@
           "example" : 90.0,
           "description" : "Minimum value that can be paid per transaction for this payment request.",
           "minimum" : 0.01,
-          "maximum" : 9.99999999999E9,
+          "maximum" : 9999999999.99,
           "x-ing-type" : "number"
         },
         "maximumValue" : {
@@ -939,7 +1081,7 @@
           "example" : 100.0,
           "description" : "Maximum value that can be paid per transaction for this payment request.",
           "minimum" : 0.01,
-          "maximum" : 9.99999999999E9,
+          "maximum" : 9999999999.99,
           "x-ing-type" : "number"
         },
         "suggestedValue" : {
@@ -947,7 +1089,7 @@
           "example" : 99.95,
           "description" : "The suggested value of the variable amount.",
           "minimum" : 0,
-          "maximum" : 9.99999999999E9,
+          "maximum" : 9999999999.99,
           "x-ing-type" : "number"
         },
         "currency" : {
@@ -959,6 +1101,88 @@
         }
       },
       "description" : "Variable amount to be paid for this payment request. The payer can choose to pay an amount between the minimum and maximum, with the default set at the suggested amount. Values should be formatted with either zero or two decimal places."
+    },
+    "error_1.0" : {
+      "type" : "object",
+      "properties" : {
+        "error" : {
+          "type" : "object",
+          "description" : "Error message",
+          "properties" : {
+            "severity" : {
+              "type" : "string",
+              "enum" : [ "critical", "error", "warning", "info" ],
+              "x-ing-type" : "string"
+            },
+            "code" : {
+              "type" : "string",
+              "example" : "errParseFailed",
+              "description" : "Service-specific error code/keyword",
+              "x-ing-type" : "string"
+            },
+            "message" : {
+              "type" : "string",
+              "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+              "description" : "A descriptive error message for the consumer",
+              "x-ing-type" : "string"
+            },
+            "source" : {
+              "type" : "string",
+              "example" : "system76",
+              "description" : "Optional source descriptor for this error",
+              "x-ing-type" : "string"
+            },
+            "target" : {
+              "type" : "string",
+              "description" : "Key/value pair indicating which input property caused the error",
+              "x-ing-type" : "string"
+            },
+            "innerErrors" : {
+              "type" : "array",
+              "items" : {
+                "type" : "object",
+                "description" : "Upstream error messages and detailed information on error state",
+                "properties" : {
+                  "severity" : {
+                    "type" : "string",
+                    "enum" : [ "critical", "error", "warning", "info" ],
+                    "x-ing-type" : "string"
+                  },
+                  "code" : {
+                    "type" : "string",
+                    "example" : "errParseFailed",
+                    "description" : "Service-specific error code/keyword",
+                    "x-ing-type" : "string"
+                  },
+                  "message" : {
+                    "type" : "string",
+                    "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                    "description" : "A descriptive error message for the consumer",
+                    "x-ing-type" : "string"
+                  },
+                  "source" : {
+                    "type" : "string",
+                    "example" : "system76",
+                    "description" : "Optional source descriptor for this error",
+                    "x-ing-type" : "string"
+                  },
+                  "target" : {
+                    "type" : "string",
+                    "description" : "Key/value pair indicating which input property caused the error",
+                    "x-ing-type" : "string"
+                  }
+                },
+                "required" : [ "code", "message", "severity" ],
+                "x-ing-type" : "object"
+              },
+              "x-ing-type" : "array"
+            }
+          },
+          "required" : [ "code", "message", "severity" ],
+          "x-ing-type" : "object"
+        }
+      },
+      "title" : "error_1.0"
     }
   },
   "parameters" : {

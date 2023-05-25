@@ -5,4 +5,3 @@
 ./getLatestSwaggerVersion.sh 6aa25087-d05d-428e-b7c6-d9131cb46498 payment/initiation
 ./getLatestSwaggerVersion.sh 01199464-4247-4770-8ab8-c3371052e9e5 payment/request
 ./getLatestSwaggerVersion.sh 5f5106c4-3413-4b3c-890a-bb4cfa165dba showcase
-

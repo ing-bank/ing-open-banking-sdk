@@ -2,12 +2,12 @@
   "swagger" : "2.0",
   "info" : {
     "description" : "Create payment initiation applications that offer great added value to your customers and users. INGs Payment Initiation Service will enable secure access to all European ING online accessible payments accounts.",
-    "version" : "1.5.0",
+    "version" : "1.5.3",
     "title" : "Payment Initiation API",
     "contact" : {
       "name" : "ING Developer Portal",
       "url" : "https://developer.ing.com",
-      "email" : "developerportal@ing.com"
+      "email" : "apis@ing.com"
     },
     "license" : {
       "name" : "Copyright (c) ING Bank N.V. All Rights Reserved.",
@@ -1122,7 +1122,7 @@
               }
             },
             "schema" : {
-              "$ref" : "#/definitions/PaymentInitiationResponse"
+              "$ref" : "#/definitions/BulkPaymentInitiationResponse"
             }
           },
           "400" : {
@@ -1407,10 +1407,12 @@
       "type" : "string"
     },
     "SinglePaymentStatusXML" : {
-      "type" : "string"
+      "type" : "string",
+      "example" : "?xml version=\"1.0\" encoding=\"UTF-8\"?\nDocument xmlns=\"urn:iso:std:iso:20022:tech:xsd:pain.002.001.03\"\n.CstmrPmtStsRpt\n...GrpHdr\n.....!-- other properties removed for brevity --\n.../GrpHdr\n...OrgnlGrpInfAndSts\n.....!-- other properties removed for brevity --\n.../OrgnlGrpInfAndSts\n...OrgnlPmtInfAndSts\n.....!-- other properties removed for brevity --\n.....PmtInfSts\n.......ACCP\n...../PmtInfSts\n.....StsRsnInf\n.......AddtlInf\n.........fundsAvailable: true  !-- can be true|false|unknown --\n......./AddtlInf\n.......AddtlInf\n.........fundsAvailableTimestamp: 1676041197  !-- epoch in seconds --\n......./AddtlInf\n...../StsRsnInf\n.../OrgnlPmtInfAndSts\n./CstmrPmtStsRpt\n/Document\n"
     },
     "SinglePaymentStatusXML_V2" : {
-      "type" : "string"
+      "type" : "string",
+      "example" : "?xml version=\"1.0\" encoding=\"UTF-8\"?\nDocument xmlns=\"urn:iso:std:iso:20022:tech:xsd:pain.002.001.11\"\n.CstmrPmtStsRpt\n...GrpHdr\n.....!-- other properties removed for brevity --\n.../GrpHdr\n...OrgnlGrpInfAndSts\n.....!-- other properties removed for brevity --\n.../OrgnlGrpInfAndSts\n...OrgnlPmtInfAndSts\n.....!-- other properties removed for brevity --\n.....PmtInfSts\n.......ACCP\n...../PmtInfSts\n.....StsRsnInf\n.......AddtlInf\n.........fundsAvailable: true  !-- can be true|false|unknown --\n......./AddtlInf\n.......AddtlInf\n.........fundsAvailableTimestamp: 1676041197  !-- epoch in seconds --\n......./AddtlInf\n...../StsRsnInf\n.../OrgnlPmtInfAndSts\n./CstmrPmtStsRpt\n/Document\n"
     },
     "PaymentInstruction" : {
       "type" : "object",
@@ -1684,7 +1686,7 @@
         },
         "bban" : {
           "type" : "string",
-          "example" : "1.23456789E8",
+          "example" : "0123456789",
           "description" : "This data elements is used for payment accounts which have no IBAN.",
           "minLength" : 1,
           "maxLength" : 34,
@@ -1968,7 +1970,8 @@
         },
         "addtlInf" : {
           "type" : "array",
-          "description" : "Additional Information - further details on the status reason",
+          "example" : [ "fundsAvailable: true", "fundsAvailableTimestamp: 1674550348" ],
+          "description" : "Additional Information - further details on the status reason.\n  - fundsAvailable - \n    - 'true'    - There was sufficient balance in the account to cover the amount in payment request at the time when it is checked.\n    - 'false'   - There was not enough balance in the account to cover the amount in payment request at the time when it is checked.\n    - 'unknown' - Either balance check did not happen or balance check failed.\n  - fundsAvailableTimestamp -\n      Date and time of funds availability check in epoch time (seconds)",
           "items" : {
             "type" : "string",
             "minLength" : 1,
@@ -2026,7 +2029,7 @@
           "type" : "string",
           "format" : "uri",
           "example" : "https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL",
-          "description" : "'ING is transmitting the link to which to redirect the PSU browser.'",
+          "description" : "'ING is transmitting the link to which to redirect the PSU browser.'  \nIf payment request is eligible for 1xSCA, link will contain externalSource and externalReference query parameters:  \n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL?externalSource=PIS&externalReference=7744b93c-f02d-4eb6-b467-afb78a962d4f  \notherwise:  \n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL\n",
           "x-ing-type" : "string"
         },
         "self" : {
@@ -2060,7 +2063,7 @@
           "type" : "string",
           "format" : "uri",
           "example" : "https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL",
-          "description" : "'ING is transmitting the link to which to redirect the PSU browser.'",
+          "description" : "'ING is transmitting the link to which to redirect the PSU browser.'  \nIf payment request is eligible for 1xSCA, link will contain externalSource and externalReference query parameters:  \n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL?externalSource=PIS&externalReference=7744b93c-f02d-4eb6-b467-afb78a962d4f  \notherwise:  \n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL\n",
           "x-ing-type" : "string"
         },
         "self" : {
@@ -2093,8 +2096,8 @@
         "scaRedirect" : {
           "type" : "string",
           "format" : "uri",
-          "example" : "https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL",
-          "description" : "'ING is transmitting the link to which to redirect the PSU browser.'",
+          "example" : "https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL?type=bulk",
+          "description" : "'ING is transmitting the link to which to redirect the PSU browser.'  \nIf payment request is eligible for 1xSCA, link will contain externalSource and externalReference query parameters:  \n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL?type=bulk&externalSource=PIS&externalReference=7744b93c-f02d-4eb6-b467-afb78a962d4f  \notherwise:  \n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL?type=bulk\n",
           "x-ing-type" : "string"
         },
         "self" : {

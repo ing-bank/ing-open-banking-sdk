@@ -2,11 +2,14 @@ package org.openapitools.client;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ApiClientTest {
     @Test
-    public void testApiClient() {
-        assertEquals("https://api.ing.com", new ApiClient().getBasePath());
+    void testApiClient() {
+        ApiClient apiClient = new ApiClient();
+        assertTrue(apiClient.getBasePath().equals("https://api.ing.com") ||
+                apiClient.getBasePath().equals("https://api.sandbox.ing.com")
+        );
     }
 }

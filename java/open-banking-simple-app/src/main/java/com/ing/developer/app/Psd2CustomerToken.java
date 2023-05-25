@@ -11,7 +11,7 @@ import java.security.cert.Certificate;
 
 public class Psd2CustomerToken {
     public static TokenResponse getCustomerToken() {
-        String keyId = "SN=5E4299BE";
+        String keyId = "SN=546212FB";
         String keyStoreFileName = "keystore-psd2.jks";
         char[] keyStorePassword = "secret2".toCharArray();
 

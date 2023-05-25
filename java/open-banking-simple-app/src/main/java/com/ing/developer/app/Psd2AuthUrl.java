@@ -10,7 +10,7 @@ import java.security.cert.Certificate;
 
 public class Psd2AuthUrl {
     public static void getAuthUrl() {
-        String keyId = "SN=5E4299BE";
+        String keyId = "SN=546212FB";
         String keyStoreFileName = "keystore-psd2.jks";
         char[] keyStorePassword = "secret2".toCharArray();
 

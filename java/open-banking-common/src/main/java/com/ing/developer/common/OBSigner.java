@@ -1,7 +1,6 @@
 package com.ing.developer.common;
 
 
-
 import org.tomitribe.auth.signatures.Algorithm;
 import org.tomitribe.auth.signatures.Base64;
 import org.tomitribe.auth.signatures.Signature;
@@ -17,6 +16,7 @@ import java.security.Provider;
 import java.time.Clock;
 import java.util.Map;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -79,7 +79,7 @@ public class OBSigner {
 
         } catch (final RuntimeException e) {
 
-            throw (RuntimeException) e;
+            throw e;
 
         } catch (final Exception e) {
 
@@ -131,11 +131,9 @@ public class OBSigner {
             expires += created;
         }
 
-        final byte[] binarySignature = sign.sign(signingString.getBytes("UTF-8"));
+        final byte[] binarySignature = sign.sign(signingString.getBytes(UTF_8));
 
-        final byte[] encoded = Base64.encodeBase64(binarySignature);
-
-        final String signedAndEncodedString = new String(encoded, "UTF-8");
+        final String signedAndEncodedString = java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(binarySignature);
 
         return new Signature(signature.getKeyId(), signature.getSigningAlgorithm(),
                 signature.getAlgorithm(), signature.getParameterSpec(),

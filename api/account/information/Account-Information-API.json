@@ -2,12 +2,12 @@
   "swagger" : "2.0",
   "info" : {
     "description" : "Create Account Information Services consuming applications that offer great added value to your customers and users. Our Account Information Service will enable secure access to all European ING online accessible payment accounts.",
-    "version" : "3.0.1",
+    "version" : "3.1.4",
     "title" : "Account Information API",
     "contact" : {
       "name" : "ING Developer Portal",
       "url" : "https://developer.ing.com",
-      "email" : "developerportal@ing.com"
+      "email" : "apis@ing.com"
     },
     "license" : {
       "name" : "Copyright (c) ING Bank NV. All Rights Reserved.",
@@ -42,513 +42,6 @@
   "schemes" : [ "https" ],
   "produces" : [ "application/json" ],
   "paths" : {
-    "/v3/accounts" : {
-      "get" : {
-        "tags" : [ "Account Details" ],
-        "summary" : "Account Details endpoint",
-        "description" : "Provides all granted accounts and will provide account details for the list of accounts. If there are no granted accounts at all, then it will return a 404.",
-        "parameters" : [ {
-          "name" : "X-Request-ID",
-          "in" : "header",
-          "description" : "ID of the individual request determined by the initiating party (TPP) as UUID",
-          "required" : true,
-          "type" : "string",
-          "format" : "uuid"
-        }, {
-          "name" : "Authorization",
-          "in" : "header",
-          "description" : "Bearer Token. Represents Customer Access Token. The process to obtain the Customer Access Access Token can be found under Documentation tab. Refer to Authentication section of the Documentation page.",
-          "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "Signature",
-          "in" : "header",
-          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
-          "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "Digest",
-          "in" : "header",
-          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
-          "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "Date",
-          "in" : "header",
-          "description" : "Standard http header element for date and time. HTTP headers are represented as RFC 7231 Full Dates.",
-          "required" : true,
-          "type" : "string",
-          "format" : "date-time"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "examples" : {
-              "application/json" : {
-                "accounts" : [ {
-                  "resourceId" : "7de0041d-4f25-4b6c-a885-0bbeb1eab220",
-                  "iban" : "NL69INGB0123456789",
-                  "name" : "A. Van Dijk",
-                  "product" : "Current Account",
-                  "currency" : "EUR",
-                  "_links" : {
-                    "balances" : {
-                      "href" : "/v2/accounts/7de0041d-4f25-4b6c-a885-0bbeb1eab220/balances"
-                    },
-                    "transactions" : {
-                      "href" : "/v2/accounts/7de0041d-4f25-4b6c-a885-0bbeb1eab220/transactions"
-                    }
-                  }
-                } ]
-              }
-            },
-            "headers" : {
-              "X-Request-ID" : {
-                "type" : "string",
-                "description" : "ID of the individual request determined by the initiating party",
-                "x-ing-type" : "string"
-              }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/AccountsResponse"
-            }
-          },
-          "400" : {
-            "description" : "Bad Request",
-            "headers" : {
-              "X-Request-ID" : {
-                "type" : "string",
-                "description" : "ID of the individual request determined by the initiating party",
-                "x-ing-type" : "string"
-              }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/TPPMessages"
-            }
-          },
-          "401" : {
-            "description" : "Unauthorised",
-            "headers" : {
-              "X-Request-ID" : {
-                "type" : "string",
-                "description" : "ID of the individual request determined by the initiating party",
-                "x-ing-type" : "string"
-              }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/TPPMessages"
-            }
-          },
-          "404" : {
-            "description" : "Not Found or Unauthorised",
-            "headers" : {
-              "X-Request-ID" : {
-                "type" : "string",
-                "description" : "ID of the individual request determined by the initiating party",
-                "x-ing-type" : "string"
-              }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/TPPMessages"
-            }
-          },
-          "500" : {
-            "description" : "Internal Server Error",
-            "headers" : {
-              "X-Request-ID" : {
-                "type" : "string",
-                "description" : "ID of the individual request determined by the initiating party",
-                "x-ing-type" : "string"
-              }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/TPPMessages"
-            }
-          }
-        },
-        "security" : [ {
-          "ING-Access-Code-Security" : [ "payment-accounts:balances:view", "payment-accounts:transactions:view" ]
-        } ]
-      },
-      "parameters" : [ ]
-    },
-    "/v3/accounts/{account-id}/balances" : {
-      "get" : {
-        "tags" : [ "Account Balance" ],
-        "summary" : "Account Balance endpoint",
-        "description" : "Provides balance information for a given account.",
-        "parameters" : [ {
-          "name" : "account-id",
-          "in" : "path",
-          "description" : "Account ID represented by an UUID",
-          "required" : true,
-          "type" : "string",
-          "format" : "uuid"
-        }, {
-          "name" : "X-Request-ID",
-          "in" : "header",
-          "description" : "ID of the individual request determined by the initiating party (TPP) as UUID",
-          "required" : true,
-          "type" : "string",
-          "format" : "uuid"
-        }, {
-          "name" : "Authorization",
-          "in" : "header",
-          "description" : "Bearer Token. Represents Customer Access Token. The process to obtain the Customer Access Access Token can be found under Documentation tab. Refer to Authentication section of the Documentation page.",
-          "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "Signature",
-          "in" : "header",
-          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
-          "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "Digest",
-          "in" : "header",
-          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
-          "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "Date",
-          "in" : "header",
-          "description" : "Standard http header element for date and time. HTTP headers are represented as RFC 7231 Full Dates.",
-          "required" : true,
-          "type" : "string",
-          "format" : "date-time"
-        }, {
-          "name" : "balanceTypes",
-          "in" : "query",
-          "description" : "A comma separated list of ISO20022 balance type(s)",
-          "required" : false,
-          "type" : "array",
-          "items" : {
-            "type" : "string",
-            "x-ing-type" : "string"
-          },
-          "collectionFormat" : "csv"
-        }, {
-          "name" : "currency",
-          "in" : "query",
-          "description" : "3 Letter ISO Currency Code (ISO 4217) for which transactions are requested. Required in case transactions are requested for a multi-currency account.",
-          "required" : false,
-          "type" : "string",
-          "pattern" : "[A-Z]{3,3}"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "headers" : {
-              "X-Request-ID" : {
-                "type" : "string",
-                "description" : "ID of the individual request determined by the initiating party",
-                "x-ing-type" : "string"
-              }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/BalancesResponse"
-            }
-          },
-          "400" : {
-            "description" : "Bad Request",
-            "headers" : {
-              "X-Request-ID" : {
-                "type" : "string",
-                "description" : "ID of the individual request determined by the initiating party",
-                "x-ing-type" : "string"
-              }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/TPPMessages"
-            }
-          },
-          "401" : {
-            "description" : "Unauthorised",
-            "headers" : {
-              "X-Request-ID" : {
-                "type" : "string",
-                "description" : "ID of the individual request determined by the initiating party",
-                "x-ing-type" : "string"
-              }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/TPPMessages"
-            }
-          },
-          "403" : {
-            "description" : "Forbidden",
-            "headers" : {
-              "X-Request-ID" : {
-                "type" : "string",
-                "description" : "ID of the individual request determined by the initiating party",
-                "x-ing-type" : "string"
-              }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/TPPMessages"
-            }
-          },
-          "404" : {
-            "description" : "Not Found or Unauthorised",
-            "headers" : {
-              "X-Request-ID" : {
-                "type" : "string",
-                "description" : "ID of the individual request determined by the initiating party",
-                "x-ing-type" : "string"
-              }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/TPPMessages"
-            }
-          },
-          "500" : {
-            "description" : "Internal Server Error",
-            "headers" : {
-              "X-Request-ID" : {
-                "type" : "string",
-                "description" : "ID of the individual request determined by the initiating party",
-                "x-ing-type" : "string"
-              }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/TPPMessages"
-            }
-          }
-        },
-        "security" : [ {
-          "ING-Access-Code-Security" : [ "payment-accounts:balances:view", "payment-accounts:transactions:view" ]
-        } ]
-      },
-      "parameters" : [ ]
-    },
-    "/v2/accounts/{account-id}/transactions" : {
-      "get" : {
-        "tags" : [ "Account Transactions" ],
-        "summary" : "Account Transactions endpoint",
-        "description" : "Provides transaction information for a given account.",
-        "parameters" : [ {
-          "name" : "account-id",
-          "in" : "path",
-          "description" : "Account ID represented by an UUID",
-          "required" : true,
-          "type" : "string",
-          "format" : "uuid"
-        }, {
-          "name" : "X-Request-ID",
-          "in" : "header",
-          "description" : "ID of the individual request determined by the initiating party (TPP) as UUID",
-          "required" : true,
-          "type" : "string",
-          "format" : "uuid"
-        }, {
-          "name" : "Authorization",
-          "in" : "header",
-          "description" : "Bearer Token. Represents Customer Access Token. The process to obtain the Customer Access Access Token can be found under Documentation tab. Refer to Authentication section of the Documentation page.",
-          "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "Signature",
-          "in" : "header",
-          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
-          "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "Digest",
-          "in" : "header",
-          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
-          "required" : true,
-          "type" : "string"
-        }, {
-          "name" : "Date",
-          "in" : "header",
-          "description" : "Standard http header element for date and time. HTTP headers are represented as RFC 7231 Full Dates.",
-          "required" : true,
-          "type" : "string",
-          "format" : "date-time"
-        }, {
-          "name" : "dateFrom",
-          "in" : "query",
-          "description" : "Transactions will be returned that have been executed since this date and (optionally) time. The date-time must be provided in UTC ISO 8601 Date Time format: YYYY-MM-DDThh:mm:ss.sTZD and always in UTC timezone. This must be made explicit by providing value Z (for Zulu) as time zone designator. If not provided, a default date and time will be applied which is determined as follows:\n * If dateFrom and dateTo are both not provided, dateFrom is defaulted to today’s date + 00:00:00 in the UTC timezone\n * If dateFrom is not provided and dateTo is provided with a date in the past, dateFrom is defaulted to the date provided in dateTo + 00:00:00 in the UTC timezone\n * If dateFrom is not provided and dateTo is provided with a date equal to or after today’s date, dateFrom is defaulted to today’s date provided in dateTo + 00:00:00 in the UTC timezone\n * If dateFrom is provided with a date but without a time, the time is defaulted to 00:00:00 in the UTC timezone\n * If dateFrom is provided with a date time in the future, the request is rejected\n\nExample: 2018-06-01T09:00:00Z",
-          "required" : false,
-          "type" : "string",
-          "format" : "date-time"
-        }, {
-          "name" : "dateTo",
-          "in" : "query",
-          "description" : "Transactions will be returned that have been executed until this date and (optionally) time. The date-time must be provided in UTC ISO 8601 Date Time format: YYYY-MM-DDThh:mm:ss.sTZD and always in UTC timezone. This must be made explicit by providing value Z (for Zulu) as time zone designator. If not provided, a default date and time will be applied which is determined as follows:\n * If dateTo and dateFrom are both not provided, dateTo is defaulted to today’s date time + current time in the UTC timezone\n * If dateTo is not provided and dateFrom is provided with a date in the past, dateTo is defaulted to the date provided in dateFrom + 23:59:59 in the UTC timezone\n * If dateTo is not provided and dateFrom is provided with today’s date, dateTo is defaulted to today’s date + current time in the UTC timezone\n * If dateTo is provided with a date in the past, the time is defaulted to 23:59:59 in the UTC timezone\n * If dateTo is provided with a date equal to or after today’s date, the time is defaulted to current time in the UTC timezone\n\nExample: 2018-06-30T18:00:00Z",
-          "required" : false,
-          "type" : "string",
-          "format" : "date-time"
-        }, {
-          "name" : "currency",
-          "in" : "query",
-          "description" : "3 Letter ISO Currency Code (ISO 4217) for which transactions are requested. Required in case transactions are requested for a multi-currency account.",
-          "required" : false,
-          "type" : "string",
-          "pattern" : "[A-Z]{3,3}"
-        }, {
-          "name" : "limit",
-          "in" : "query",
-          "description" : "Optional parameter to request the maximum number of transactions on the page, the next page of results can be requested via the next link",
-          "required" : false,
-          "type" : "integer"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "examples" : {
-              "application/json" : {
-                "transactions" : {
-                  "booked" : [ {
-                    "transactionId" : "trx123456789",
-                    "endToEndId" : "EndToEndID1234567890",
-                    "bookingDate" : "2017-11-21",
-                    "valueDate" : "2017-11-21",
-                    "executionDateTime" : "2017-11-21T09:16:54.991Z",
-                    "amount" : {
-                      "currency" : "EUR",
-                      "content" : 100.12
-                    },
-                    "debtorName" : "Debtor Name",
-                    "debtorAccount" : {
-                      "iban" : "NL69INGB0123456789",
-                      "bban" : 123456789,
-                      "bic" : "INGBNL2A"
-                    },
-                    "transactionType" : "Sepa Credit Transfer",
-                    "remittanceInformationUnstructured" : "Unstructured remittance information example",
-                    "remittanceInformationStructured" : {
-                      "type" : "SCOR",
-                      "issuer" : "ISO",
-                      "reference" : "RF18539007547034"
-                    }
-                  } ],
-                  "pending" : [ {
-                    "transactionId" : "trx987654321",
-                    "endToEndId" : "EndToEndID1234567890",
-                    "bookingDate" : "2017-11-21",
-                    "valueDate" : "2017-11-21",
-                    "executionDateTime" : "2017-11-21T09:16:54.991Z",
-                    "amount" : {
-                      "currency" : "EUR",
-                      "content" : -100.12
-                    },
-                    "creditorName" : "Creditor Name",
-                    "creditorAccount" : {
-                      "iban" : "NL69INGB0123456789",
-                      "bban" : 123456789,
-                      "bic" : "INGBNL2A"
-                    },
-                    "transactionType" : "Sepa Credit Transfer",
-                    "remittanceInformationUnstructured" : "Unstructured remittance information example",
-                    "remittanceInformationStructured" : {
-                      "type" : "SCOR",
-                      "issuer" : "ISO",
-                      "reference" : "RF18539007547034"
-                    }
-                  } ],
-                  "_links" : {
-                    "next" : {
-                      "href" : "/v2/accounts/7de0041d-4f25-4b6c-a885-0bbeb1eab220/transactions?next=CQR23TABC"
-                    }
-                  }
-                }
-              }
-            },
-            "headers" : {
-              "X-Request-ID" : {
-                "type" : "string",
-                "description" : "ID of the individual request determined by the initiating party",
-                "x-ing-type" : "string"
-              },
-              "X-ING-AIS-TRANSACTION-VALIDITY-PERIOD" : {
-                "type" : "string",
-                "description" : "For the countries where there is transaction history period is defined, this header value holds such defined transaction history period. For countries where there is no transaction history period defined, this header is not returned. Check the Documentation tab for country-specific transaction history period.",
-                "x-ing-type" : "string"
-              },
-              "X-ING-AIS-ADJUSTED-DATEFROM" : {
-                "type" : "string",
-                "format" : "date-time",
-                "description" : "For the countries where transaction history period is defined and where the from date (dateFrom) is before the transaction history period, this header holds the value of the adjusted from date which was used to fetch the transaction result. If the from date (dateFrom) is after the transaction history period, this header will not be returned.",
-                "x-ing-type" : "string"
-              }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/TransactionsResponse"
-            }
-          },
-          "400" : {
-            "description" : "Bad Request",
-            "headers" : {
-              "X-Request-ID" : {
-                "type" : "string",
-                "description" : "ID of the individual request determined by the initiating party",
-                "x-ing-type" : "string"
-              }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/TPPMessages"
-            }
-          },
-          "401" : {
-            "description" : "Unauthorised",
-            "headers" : {
-              "X-Request-ID" : {
-                "type" : "string",
-                "description" : "ID of the individual request determined by the initiating party",
-                "x-ing-type" : "string"
-              }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/TPPMessages"
-            }
-          },
-          "403" : {
-            "description" : "Forbidden",
-            "headers" : {
-              "X-Request-ID" : {
-                "type" : "string",
-                "description" : "ID of the individual request determined by the initiating party",
-                "x-ing-type" : "string"
-              }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/TPPMessages"
-            }
-          },
-          "404" : {
-            "description" : "Not Found or Unauthorised",
-            "headers" : {
-              "X-Request-ID" : {
-                "type" : "string",
-                "description" : "ID of the individual request determined by the initiating party",
-                "x-ing-type" : "string"
-              }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/TPPMessages"
-            }
-          },
-          "500" : {
-            "description" : "Internal Server Error",
-            "headers" : {
-              "X-Request-ID" : {
-                "type" : "string",
-                "description" : "ID of the individual request determined by the initiating party",
-                "x-ing-type" : "string"
-              }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/TPPMessages"
-            }
-          }
-        },
-        "security" : [ {
-          "ING-Access-Code-Security" : [ "payment-accounts:balances:view", "payment-accounts:transactions:view" ]
-        } ]
-      },
-      "parameters" : [ ]
-    },
     "/v1/card-accounts/{account-id}/transactions" : {
       "get" : {
         "tags" : [ "Card Account Transactions" ],
@@ -577,7 +70,7 @@
         }, {
           "name" : "Signature",
           "in" : "header",
-          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. Additional requirements from ING:\n  - The allowed algorithms are RSA-SHA256 and the ecdsa-sha256, ecdsa-sha512, ecdsa-sha384 algorithms are supported for Elliptic Curve Digital Signature\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
           "required" : true,
           "type" : "string"
         }, {
@@ -727,8 +220,47 @@
               "$ref" : "#/definitions/TPPMessages"
             }
           },
+          "405" : {
+            "description" : "Not Allowed",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "406" : {
+            "description" : "Not Acceptable",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
           "500" : {
             "description" : "Internal Server Error",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "503" : {
+            "description" : "Planned Service Unavailability",
             "headers" : {
               "X-Request-ID" : {
                 "type" : "string",
@@ -744,8 +276,7 @@
         "security" : [ {
           "ING-Access-Code-Security" : [ "payment-accounts:balances:view", "payment-accounts:transactions:view" ]
         } ]
-      },
-      "parameters" : [ ]
+      }
     },
     "/v3/accounts/{account-id}/transactions" : {
       "get" : {
@@ -753,6 +284,45 @@
         "summary" : "Account Transactions endpoint",
         "description" : "Provides transaction information for a given account.",
         "parameters" : [ {
+          "name" : "account-id",
+          "in" : "path",
+          "description" : "Account ID represented by an UUID",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
+        }, {
+          "name" : "X-Request-ID",
+          "in" : "header",
+          "description" : "ID of the individual request determined by the initiating party (TPP) as UUID",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
+        }, {
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Bearer Token. Represents Customer Access Token. The process to obtain the Customer Access Access Token can be found under Documentation tab. Refer to Authentication section of the Documentation page.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. Additional requirements from ING:\n  - The allowed algorithms are RSA-SHA256 and the ecdsa-sha256, ecdsa-sha512, ecdsa-sha384 algorithms are supported for Elliptic Curve Digital Signature\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard http header element for date and time. HTTP headers are represented as RFC 7231 Full Dates.",
+          "required" : true,
+          "type" : "string",
+          "format" : "date-time"
+        }, {
           "name" : "dateFrom",
           "in" : "query",
           "description" : "Transactions will be returned that have been executed since this date and (optionally) time. The date-time must be provided in UTC ISO 8601 Date Time format: YYYY-MM-DDThh:mm:ss.sTZD and always in UTC timezone. This must be made explicit by providing value Z (for Zulu) as time zone designator. If not provided, a default date and time will be applied which is determined as follows:\n * If dateFrom and dateTo are both not provided, dateFrom is defaulted to today’s date + 00:00:00 in the UTC timezone\n * If dateFrom is not provided and dateTo is provided with a date in the past, dateFrom is defaulted to the date provided in dateTo + 00:00:00 in the UTC timezone\n * If dateFrom is not provided and dateTo is provided with a date equal to or after today’s date, dateFrom is defaulted to today’s date provided in dateTo + 00:00:00 in the UTC timezone\n * If dateFrom is provided with a date but without a time, the time is defaulted to 00:00:00 in the UTC timezone\n * If dateFrom is provided with a date time in the future, the request is rejected\n\nExample: 2018-06-01T09:00:00Z",
@@ -779,6 +349,18 @@
           "description" : "Optional parameter to request the maximum number of transactions on the page, the next page of results can be requested via the next link",
           "required" : false,
           "type" : "integer"
+        }, {
+          "name" : "fieldsToOmit",
+          "in" : "query",
+          "description" : "Comma-separated list of fields to omit from the response. Supported values include debtorName, creditorName, debtorAccount, creditorAccount, remittanceInformationStructured, remittanceInformationUnstructured It is applicable to book, pending and info transactions and not applicable to standing order agreements",
+          "required" : false,
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "enum" : [ "debtorName", "creditorName", "debtorAccount", "creditorAccount", "remittanceInformationStructured", "remittanceInformationUnstructured" ],
+            "x-ing-type" : "string"
+          },
+          "collectionFormat" : "csv"
         } ],
         "responses" : {
           "200" : {
@@ -907,7 +489,7 @@
               }
             },
             "schema" : {
-              "$ref" : "#/definitions/TransactionsResponseV3"
+              "$ref" : "#/definitions/TransactionsResponse"
             }
           },
           "400" : {
@@ -962,6 +544,387 @@
               "$ref" : "#/definitions/TPPMessages"
             }
           },
+          "405" : {
+            "description" : "Not Allowed",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "406" : {
+            "description" : "Not Acceptable",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "503" : {
+            "description" : "Planned Service Unavailability",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          }
+        },
+        "security" : [ {
+          "ING-Access-Code-Security" : [ "payment-accounts:balances:view", "payment-accounts:transactions:view" ]
+        } ]
+      }
+    },
+    "/v3/accounts/{account-id}/balances" : {
+      "get" : {
+        "tags" : [ "Account Balance" ],
+        "summary" : "Account Balance endpoint",
+        "description" : "Provides balance information for a given account.",
+        "parameters" : [ {
+          "name" : "account-id",
+          "in" : "path",
+          "description" : "Account ID represented by an UUID",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
+        }, {
+          "name" : "X-Request-ID",
+          "in" : "header",
+          "description" : "ID of the individual request determined by the initiating party (TPP) as UUID",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
+        }, {
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Bearer Token. Represents Customer Access Token. The process to obtain the Customer Access Access Token can be found under Documentation tab. Refer to Authentication section of the Documentation page.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. Additional requirements from ING:\n  - The allowed algorithms are RSA-SHA256 and the ecdsa-sha256, ecdsa-sha512, ecdsa-sha384 algorithms are supported for Elliptic Curve Digital Signature\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard http header element for date and time. HTTP headers are represented as RFC 7231 Full Dates.",
+          "required" : true,
+          "type" : "string",
+          "format" : "date-time"
+        }, {
+          "name" : "balanceTypes",
+          "in" : "query",
+          "description" : "A comma separated list of ISO20022 balance type(s)",
+          "required" : false,
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "x-ing-type" : "string"
+          },
+          "collectionFormat" : "csv"
+        }, {
+          "name" : "currency",
+          "in" : "query",
+          "description" : "3 Letter ISO Currency Code (ISO 4217) for which transactions are requested. Required in case transactions are requested for a multi-currency account.",
+          "required" : false,
+          "type" : "string",
+          "pattern" : "[A-Z]{3,3}"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/BalancesResponse"
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "401" : {
+            "description" : "Unauthorised",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "404" : {
+            "description" : "Not Found or Unauthorised",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "405" : {
+            "description" : "Not Allowed",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "406" : {
+            "description" : "Not Acceptable",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "503" : {
+            "description" : "Planned Service Unavailability",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          }
+        },
+        "security" : [ {
+          "ING-Access-Code-Security" : [ "payment-accounts:balances:view", "payment-accounts:transactions:view" ]
+        } ]
+      }
+    },
+    "/v3/accounts" : {
+      "get" : {
+        "tags" : [ "Account Details" ],
+        "summary" : "Account Details endpoint",
+        "description" : "Provides all granted accounts and will provide account details for the list of accounts. If there are no granted accounts at all, then it will return a 404.",
+        "parameters" : [ {
+          "name" : "X-Request-ID",
+          "in" : "header",
+          "description" : "ID of the individual request determined by the initiating party (TPP) as UUID",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
+        }, {
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Bearer Token. Represents Customer Access Token. The process to obtain the Customer Access Access Token can be found under Documentation tab. Refer to Authentication section of the Documentation page.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. Additional requirements from ING:\n  - The allowed algorithms are RSA-SHA256 and the ecdsa-sha256, ecdsa-sha512, ecdsa-sha384 algorithms are supported for Elliptic Curve Digital Signature\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard http header element for date and time. HTTP headers are represented as RFC 7231 Full Dates.",
+          "required" : true,
+          "type" : "string",
+          "format" : "date-time"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "examples" : {
+              "application/json" : {
+                "accounts" : [ {
+                  "resourceId" : "7de0041d-4f25-4b6c-a885-0bbeb1eab220",
+                  "iban" : "NL69INGB0123456789",
+                  "name" : "A. Van Dijk",
+                  "product" : "Current Account",
+                  "currency" : "EUR",
+                  "_links" : {
+                    "balances" : {
+                      "href" : "/v2/accounts/7de0041d-4f25-4b6c-a885-0bbeb1eab220/balances"
+                    },
+                    "transactions" : {
+                      "href" : "/v2/accounts/7de0041d-4f25-4b6c-a885-0bbeb1eab220/transactions"
+                    }
+                  }
+                } ]
+              }
+            },
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/AccountsResponse"
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "401" : {
+            "description" : "Unauthorised",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "404" : {
+            "description" : "Not Found or Unauthorised",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "405" : {
+            "description" : "Not Allowed",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "406" : {
+            "description" : "Not Acceptable",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
           "500" : {
             "description" : "Internal Server Error",
             "headers" : {
@@ -979,47 +942,7 @@
         "security" : [ {
           "ING-Access-Code-Security" : [ "payment-accounts:balances:view", "payment-accounts:transactions:view" ]
         } ]
-      },
-      "parameters" : [ {
-        "name" : "account-id",
-        "in" : "path",
-        "description" : "Account ID represented by an UUID",
-        "required" : true,
-        "type" : "string",
-        "format" : "uuid"
-      }, {
-        "name" : "X-Request-ID",
-        "in" : "header",
-        "description" : "ID of the individual request determined by the initiating party (TPP) as UUID",
-        "required" : true,
-        "type" : "string",
-        "format" : "uuid"
-      }, {
-        "name" : "Authorization",
-        "in" : "header",
-        "description" : "Bearer Token. Represents Customer Access Token. The process to obtain the Customer Access Access Token can be found under Documentation tab. Refer to Authentication section of the Documentation page.",
-        "required" : true,
-        "type" : "string"
-      }, {
-        "name" : "Signature",
-        "in" : "header",
-        "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
-        "required" : true,
-        "type" : "string"
-      }, {
-        "name" : "Digest",
-        "in" : "header",
-        "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
-        "required" : true,
-        "type" : "string"
-      }, {
-        "name" : "Date",
-        "in" : "header",
-        "description" : "Standard http header element for date and time. HTTP headers are represented as RFC 7231 Full Dates.",
-        "required" : true,
-        "type" : "string",
-        "format" : "date-time"
-      } ]
+      }
     }
   },
   "securityDefinitions" : {
@@ -1178,9 +1101,144 @@
         }
       }
     },
+    "Amount" : {
+      "type" : "object",
+      "required" : [ "amount", "currency" ],
+      "properties" : {
+        "currency" : {
+          "type" : "string",
+          "example" : "EUR",
+          "description" : "3 Letter ISO Currency Code: ISO 4217 code",
+          "pattern" : "[A-Z]{3,3}",
+          "x-ing-type" : "string"
+        },
+        "amount" : {
+          "type" : "number",
+          "format" : "double",
+          "example" : 100.12,
+          "description" : "'The amount given with fractional digits, where fractions must be\n compliant to the currency definition. The decimal separator is a dot.\n The number of fractional digits (or minor unit of currency) must\n comply with ISO 4217. totalDigits 18 fractionDigits 5.\n This can include a \"-\" in case of a debit amount.'",
+          "x-ing-type" : "number"
+        }
+      },
+      "title" : "amount"
+    },
+    "StandingOrderAgreements" : {
+      "type" : "object",
+      "properties" : {
+        "transactionAmount" : {
+          "$ref" : "#/definitions/Amount"
+        },
+        "creditorAccount" : {
+          "$ref" : "#/definitions/CounterpartyAccount"
+        },
+        "creditorName" : {
+          "type" : "string",
+          "example" : "Creditor Name",
+          "description" : "Name of the creditor if a Debited transaction",
+          "x-ing-type" : "string"
+        },
+        "transactionType" : {
+          "type" : "string",
+          "example" : "Sepa Credit Transfer",
+          "description" : "Transaction type of the transaction",
+          "x-ing-type" : "string"
+        },
+        "remittanceInformationUnstructured" : {
+          "type" : "string",
+          "example" : "Unstructured remittance information example",
+          "description" : "Unstructured remittance information",
+          "x-ing-type" : "string"
+        },
+        "additionalInformationStructured" : {
+          "$ref" : "#/definitions/AdditionalInformationStructured"
+        }
+      }
+    },
+    "TPPMessage" : {
+      "type" : "object",
+      "required" : [ "category", "code" ],
+      "properties" : {
+        "code" : {
+          "type" : "string",
+          "description" : "One of a server-defined set of error codes",
+          "enum" : [ "FORMAT_ERROR", "ING_ERROR", "INVALID_HEADER", "NOT_FOUND", "PERIOD_INVALID", "RESOURCE_UNKNOWN", "REQUESTED_BALANCES_INVALID", "REQUESTED_CURRENCY_INVALID", "SERVICE_BLOCKED", "SERVICE_UNAVAILABLE", "FIELDS_TO_OMIT_INVALID" ],
+          "x-ing-type" : "string"
+        },
+        "text" : {
+          "type" : "string",
+          "description" : "Additional explaining text",
+          "maxLength" : 512,
+          "x-ing-type" : "string"
+        },
+        "category" : {
+          "$ref" : "#/definitions/Category"
+        },
+        "path" : {
+          "type" : "string",
+          "description" : "The path of the element of the request message which provoked this error message",
+          "x-ing-type" : "string"
+        }
+      },
+      "description" : "TPP Messages - In case of any error.",
+      "example" : {
+        "code" : "ING_ERROR",
+        "text" : "Some descriptive error message",
+        "category" : "ERROR"
+      }
+    },
+    "CardTransaction" : {
+      "type" : "object",
+      "required" : [ "transactionAmount" ],
+      "properties" : {
+        "cardTransactionId" : {
+          "type" : "string",
+          "example" : "trx123456789",
+          "description" : "The unique identifier submitted by ING to the transaction",
+          "x-ing-type" : "string"
+        },
+        "transactionDate" : {
+          "type" : "string",
+          "format" : "date",
+          "example" : "2017-11-21T00:00:00.000+0000",
+          "x-ing-type" : "string"
+        },
+        "bookingDate" : {
+          "type" : "string",
+          "format" : "date",
+          "example" : "2017-11-21T00:00:00.000+0000",
+          "x-ing-type" : "string"
+        },
+        "transactionAmount" : {
+          "$ref" : "#/definitions/Amount"
+        },
+        "maskedPan" : {
+          "type" : "string",
+          "example" : "1234*****6789",
+          "description" : "Masked Primary Account Number",
+          "x-ing-type" : "string"
+        },
+        "transactionDetails" : {
+          "type" : "string",
+          "x-ing-type" : "string"
+        }
+      }
+    },
+    "TPPMessages" : {
+      "type" : "object",
+      "required" : [ "tppMessages" ],
+      "properties" : {
+        "tppMessages" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/TPPMessage"
+          },
+          "x-ing-type" : "array"
+        }
+      }
+    },
     "Transactions" : {
       "type" : "object",
-      "required" : [ "booked", "info", "pending" ],
+      "required" : [ "booked", "info", "pending", "standingOrderAgreementInformation" ],
       "properties" : {
         "booked" : {
           "type" : "array",
@@ -1202,6 +1260,14 @@
           "type" : "array",
           "items" : {
             "$ref" : "#/definitions/Transaction"
+          },
+          "minItems" : 0,
+          "x-ing-type" : "array"
+        },
+        "standingOrderAgreementInformation" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/StandingOrderAgreements"
           },
           "minItems" : 0,
           "x-ing-type" : "array"
@@ -1252,7 +1318,7 @@
         "creditorName" : {
           "type" : "string",
           "example" : "Creditor Name",
-          "description" : "Name of the creditor if a “Debited” transaction",
+          "description" : "Name of the creditor if a Debited transaction",
           "x-ing-type" : "string"
         },
         "creditorAccount" : {
@@ -1261,7 +1327,7 @@
         "debtorName" : {
           "type" : "string",
           "example" : "Debtor Name",
-          "description" : "Name of the debtor if a “Credited” transaction",
+          "description" : "Name of the debtor if a Credited transaction",
           "x-ing-type" : "string"
         },
         "debtorAccount" : {
@@ -1306,6 +1372,15 @@
         }
       }
     },
+    "AdditionalInformationStructured" : {
+      "type" : "object",
+      "properties" : {
+        "StandingOrderDetails" : {
+          "$ref" : "#/definitions/StandingOrderDetail"
+        }
+      },
+      "description" : "Additional information in a structured way"
+    },
     "CardTransactionsResponse" : {
       "type" : "object",
       "required" : [ "cardAccount", "cardTransactions" ],
@@ -1342,6 +1417,36 @@
         }
       },
       "description" : "Reference to an account by either the Primary Account Number (PAN) or the IBAN."
+    },
+    "StandingOrderDetail" : {
+      "type" : "object",
+      "required" : [ "dayOfExecution", "frequency", "startDate" ],
+      "properties" : {
+        "startDate" : {
+          "type" : "string",
+          "format" : "date",
+          "description" : "CCYY-MM-DD",
+          "x-ing-type" : "string"
+        },
+        "endDate" : {
+          "type" : "string",
+          "format" : "date",
+          "description" : "CCYY-MM-DD",
+          "x-ing-type" : "string"
+        },
+        "frequency" : {
+          "type" : "string",
+          "example" : "DAIL, WEEK, TOWK, MNTH, TOMN, FOMN, QUTR, SEMI, YEAR",
+          "description" : "DAIL: Daily,WEEK: Weekly,TOWK: EveryTwoWeeks,MNTH: Monthly,TOMN: EveryTwoMonths,FOMN: EveryFourMonths,QUTR: Quarterly,SEMI: SemiAnnual,YEAR: Annual",
+          "x-ing-type" : "string"
+        },
+        "dayOfExecution" : {
+          "type" : "number",
+          "example" : "01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31",
+          "description" : "Day of execution as string in the format DD. This string value cannot exceed the two characters limit. 31 is ultimo of the month.",
+          "x-ing-type" : "number"
+        }
+      }
     },
     "BalancesResponse" : {
       "type" : "object",
@@ -1419,415 +1524,6 @@
           "x-ing-type" : "string"
         }
       }
-    },
-    "Amount" : {
-      "type" : "object",
-      "required" : [ "amount", "currency" ],
-      "properties" : {
-        "currency" : {
-          "type" : "string",
-          "example" : "EUR",
-          "description" : "3 Letter ISO Currency Code: ISO 4217 code",
-          "pattern" : "[A-Z]{3,3}",
-          "x-ing-type" : "string"
-        },
-        "amount" : {
-          "type" : "number",
-          "format" : "double",
-          "example" : 100.12,
-          "description" : "'The amount given with fractional digits, where fractions must be\n compliant to the currency definition. The decimal separator is a dot.\n The number of fractional digits (or minor unit of currency) must\n comply with ISO 4217. totalDigits 18 fractionDigits 5.\n This can include a \"-\" in case of a debit amount.'",
-          "x-ing-type" : "number"
-        }
-      },
-      "title" : "amount"
-    },
-    "TPPMessage" : {
-      "type" : "object",
-      "required" : [ "category", "code" ],
-      "properties" : {
-        "code" : {
-          "type" : "string",
-          "description" : "One of a server-defined set of error codes",
-          "enum" : [ "FORMAT_ERROR", "ING_ERROR", "INVALID_HEADER", "NOT_FOUND", "PERIOD_INVALID", "RESOURCE_UNKNOWN", "REQUESTED_BALANCES_INVALID", "REQUESTED_CURRENCY_INVALID", "SERVICE_BLOCKED" ],
-          "x-ing-type" : "string"
-        },
-        "text" : {
-          "type" : "string",
-          "description" : "Additional explaining text",
-          "maxLength" : 512,
-          "x-ing-type" : "string"
-        },
-        "category" : {
-          "$ref" : "#/definitions/Category"
-        },
-        "path" : {
-          "type" : "string",
-          "description" : "The path of the element of the request message which provoked this error message",
-          "x-ing-type" : "string"
-        }
-      },
-      "description" : "TPP Messages - In case of any error.",
-      "example" : {
-        "code" : "ING_ERROR",
-        "text" : "Some descriptive error message",
-        "category" : "ERROR"
-      }
-    },
-    "CardTransaction" : {
-      "type" : "object",
-      "required" : [ "transactionAmount" ],
-      "properties" : {
-        "cardTransactionId" : {
-          "type" : "string",
-          "example" : "trx123456789",
-          "description" : "The unique identifier submitted by ING to the transaction",
-          "x-ing-type" : "string"
-        },
-        "transactionDate" : {
-          "type" : "string",
-          "format" : "date",
-          "example" : "2017-11-21T00:00:00.000+0000",
-          "x-ing-type" : "string"
-        },
-        "bookingDate" : {
-          "type" : "string",
-          "format" : "date",
-          "example" : "2017-11-21T00:00:00.000+0000",
-          "x-ing-type" : "string"
-        },
-        "transactionAmount" : {
-          "$ref" : "#/definitions/Amount"
-        },
-        "maskedPan" : {
-          "type" : "string",
-          "example" : "1234*****6789",
-          "description" : "Masked Primary Account Number",
-          "x-ing-type" : "string"
-        },
-        "transactionDetails" : {
-          "type" : "string",
-          "x-ing-type" : "string"
-        }
-      }
-    },
-    "TPPMessages" : {
-      "type" : "object",
-      "required" : [ "tppMessages" ],
-      "properties" : {
-        "tppMessages" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/TPPMessage"
-          },
-          "x-ing-type" : "array"
-        }
-      }
-    },
-    "TransactionsResponseV3" : {
-      "type" : "object",
-      "required" : [ "transactions" ],
-      "properties" : {
-        "account" : {
-          "$ref" : "#/definitions/AccountReferenceIban"
-        },
-        "transactions" : {
-          "$ref" : "#/definitions/TransactionsV3"
-        }
-      }
-    },
-    "TransactionsV3" : {
-      "type" : "object",
-      "required" : [ "booked", "info", "pending", "standingOrderAgreementInformation" ],
-      "properties" : {
-        "booked" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/TransactionV3"
-          },
-          "minItems" : 0,
-          "x-ing-type" : "array"
-        },
-        "pending" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/TransactionV3"
-          },
-          "minItems" : 0,
-          "x-ing-type" : "array"
-        },
-        "info" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/TransactionV3"
-          },
-          "minItems" : 0,
-          "x-ing-type" : "array"
-        },
-        "standingOrderAgreementInformation" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/StandingOrderAgreementsV3"
-          },
-          "minItems" : 0,
-          "x-ing-type" : "array"
-        },
-        "_links" : {
-          "$ref" : "#/definitions/LinksNextV3"
-        }
-      }
-    },
-    "TransactionV3" : {
-      "type" : "object",
-      "required" : [ "endToEndId", "executionDateTime", "transactionAmount", "transactionId" ],
-      "properties" : {
-        "transactionId" : {
-          "type" : "string",
-          "example" : "trx123456789",
-          "description" : "The unique identifier submitted by ING to the entry (transaction)",
-          "x-ing-type" : "string"
-        },
-        "endToEndId" : {
-          "type" : "string",
-          "example" : "EndToEndID1234567890",
-          "description" : "Unique transaction reference given by the initiator of the transaction which can be followed throughout the payment chain. If this information is not available, this will be defaulted to \"Not Provided\".",
-          "x-ing-type" : "string"
-        },
-        "bookingDate" : {
-          "type" : "string",
-          "format" : "date",
-          "example" : "2017-11-21",
-          "x-ing-type" : "string"
-        },
-        "valueDate" : {
-          "type" : "string",
-          "format" : "date",
-          "example" : "2017-11-21",
-          "x-ing-type" : "string"
-        },
-        "executionDateTime" : {
-          "type" : "string",
-          "format" : "date-time",
-          "example" : "2018-07-01T09:16:54.991Z",
-          "description" : "Date and time at which the transaction was executed. The date-time is in UTC ISO 8601 Date Time format: YYYY-MM-DDThh:mm:ss.sTZD and in the UTC timezone. This is made explicit by value Z (for Zulu) being returned as time zone designator.",
-          "x-ing-type" : "string"
-        },
-        "transactionAmount" : {
-          "$ref" : "#/definitions/AmountV3"
-        },
-        "creditorName" : {
-          "type" : "string",
-          "example" : "Creditor Name",
-          "description" : "Name of the creditor if a Debited transaction",
-          "x-ing-type" : "string"
-        },
-        "creditorAccount" : {
-          "$ref" : "#/definitions/CounterpartyAccount"
-        },
-        "debtorName" : {
-          "type" : "string",
-          "example" : "Debtor Name",
-          "description" : "Name of the debtor if a Credited transaction",
-          "x-ing-type" : "string"
-        },
-        "debtorAccount" : {
-          "$ref" : "#/definitions/CounterpartyAccount"
-        },
-        "transactionType" : {
-          "type" : "string",
-          "example" : "Sepa Credit Transfer",
-          "description" : "Transaction type of the transaction",
-          "x-ing-type" : "string"
-        },
-        "remittanceInformationUnstructured" : {
-          "type" : "string",
-          "example" : "Unstructured remittance information example",
-          "description" : "Unstructured remittance information",
-          "x-ing-type" : "string"
-        },
-        "remittanceInformationStructured" : {
-          "type" : "object",
-          "description" : "Remittance information in a structured way",
-          "properties" : {
-            "referenceType" : {
-              "type" : "string",
-              "example" : "SCOR",
-              "description" : "Type of structured remittance information",
-              "x-ing-type" : "string"
-            },
-            "referenceIssuer" : {
-              "type" : "string",
-              "example" : "ISO",
-              "description" : "Identification of the issuer of the reference document type.",
-              "x-ing-type" : "string"
-            },
-            "reference" : {
-              "type" : "string",
-              "example" : "RF18539007547034",
-              "description" : "The actual structured remittance information",
-              "x-ing-type" : "string"
-            }
-          },
-          "x-ing-type" : "object"
-        }
-      }
-    },
-    "StandingOrderAgreementsV3" : {
-      "type" : "object",
-      "properties" : {
-        "transactionAmount" : {
-          "$ref" : "#/definitions/AmountV3"
-        },
-        "creditorAccount" : {
-          "$ref" : "#/definitions/CounterpartyAccount"
-        },
-        "creditorName" : {
-          "type" : "string",
-          "example" : "Creditor Name",
-          "description" : "Name of the creditor if a Debited transaction",
-          "x-ing-type" : "string"
-        },
-        "transactionType" : {
-          "type" : "string",
-          "example" : "Sepa Credit Transfer",
-          "description" : "Transaction type of the transaction",
-          "x-ing-type" : "string"
-        },
-        "remittanceInformationUnstructured" : {
-          "type" : "string",
-          "example" : "Unstructured remittance information example",
-          "description" : "Unstructured remittance information",
-          "x-ing-type" : "string"
-        },
-        "additionalInformationStructured" : {
-          "type" : "object",
-          "description" : "Additional information in a structured way",
-          "properties" : {
-            "StandingOrderDetails" : {
-              "$ref" : "#/definitions/StandingOrderDetail"
-            }
-          },
-          "x-ing-type" : "object"
-        }
-      }
-    },
-    "StandingOrderDetail" : {
-      "type" : "object",
-      "required" : [ "dayOfExecution", "frequency", "startDate" ],
-      "properties" : {
-        "startDate" : {
-          "type" : "string",
-          "format" : "date",
-          "description" : "CCYY-MM-DD",
-          "x-ing-type" : "string"
-        },
-        "endDate" : {
-          "type" : "string",
-          "format" : "date",
-          "description" : "CCYY-MM-DD",
-          "x-ing-type" : "string"
-        },
-        "frequency" : {
-          "type" : "string",
-          "example" : "DAIL, WEEK, TOWK, MNTH, TOMN, FOMN, QUTR, SEMI, YEAR",
-          "description" : "DAIL: Daily,WEEK: Weekly,TOWK: EveryTwoWeeks,MNTH: Monthly,TOMN: EveryTwoMonths,FOMN: EveryFourMonths,QUTR: Quarterly,SEMI: SemiAnnual,YEAR: Annual",
-          "x-ing-type" : "string"
-        },
-        "dayOfExecution" : {
-          "type" : "number",
-          "example" : "01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31",
-          "description" : "Day of execution as string in the format DD. This string value cannot exceed the two characters limit. 31 is ultimo of the month.",
-          "x-ing-type" : "number"
-        }
-      }
-    },
-    "LinksNextV3" : {
-      "type" : "object",
-      "required" : [ "next" ],
-      "properties" : {
-        "next" : {
-          "$ref" : "#/definitions/HrefType"
-        }
-      },
-      "description" : "Link to the next set of transactions."
-    },
-    "AccountV3" : {
-      "type" : "object",
-      "required" : [ "_links", "currency", "name", "product", "resourceId" ],
-      "properties" : {
-        "resourceId" : {
-          "type" : "string",
-          "format" : "uuid",
-          "example" : "7de0041d-4f25-4b6c-a885-0bbeb1eab220",
-          "description" : "This is the data element to be used in the path when retrieving data from a dedicated account.",
-          "x-ing-type" : "string"
-        },
-        "iban" : {
-          "type" : "string",
-          "example" : "NL69INGB0123456789",
-          "description" : "This is the IBAN of the account belonging to the id",
-          "x-ing-type" : "string"
-        },
-        "maskedPan" : {
-          "type" : "string",
-          "example" : "123456******6789",
-          "description" : "This is the masked credit card number",
-          "x-ing-type" : "string"
-        },
-        "name" : {
-          "type" : "string",
-          "example" : "A. Van Dijk",
-          "description" : "Name of the account holder as registered at ING",
-          "x-ing-type" : "string"
-        },
-        "currency" : {
-          "type" : "string",
-          "example" : "EUR",
-          "description" : "3 Letter ISO Currency Code: ISO 4217 code",
-          "pattern" : "[A-Z]{3,3}",
-          "x-ing-type" : "string"
-        },
-        "product" : {
-          "type" : "string",
-          "example" : "Current Account",
-          "description" : "Product name for the account",
-          "x-ing-type" : "string"
-        },
-        "_links" : {
-          "$ref" : "#/definitions/AccountLinksV3"
-        }
-      }
-    },
-    "AccountLinksV3" : {
-      "type" : "object",
-      "properties" : {
-        "balances" : {
-          "$ref" : "#/definitions/HrefType"
-        },
-        "transactions" : {
-          "$ref" : "#/definitions/HrefType"
-        }
-      }
-    },
-    "AmountV3" : {
-      "type" : "object",
-      "required" : [ "amount", "currency" ],
-      "properties" : {
-        "currency" : {
-          "type" : "string",
-          "example" : "EUR",
-          "description" : "3 Letter ISO Currency Code: ISO 4217 code",
-          "pattern" : "[A-Z]{3,3}",
-          "x-ing-type" : "string"
-        },
-        "amount" : {
-          "type" : "number",
-          "format" : "double",
-          "example" : 100.12,
-          "description" : "'The amount given with fractional digits, where fractions must be\n compliant to the currency definition. The decimal separator is a dot.\n The number of fractional digits (or minor unit of currency) must\n comply with ISO 4217. totalDigits 18 fractionDigits 5.\n This can include a \"-\" in case of a debit amount.'",
-          "x-ing-type" : "number"
-        }
-      },
-      "title" : "amount"
     }
   }
 }

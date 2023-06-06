@@ -7,7 +7,7 @@
     "contact" : {
       "name" : "ING Developer Portal",
       "url" : "https://developer.ing.com",
-      "email" : "developerportal@ing.com"
+      "email" : "apis@ing.com"
     }
   },
   "host" : "api.ing.com",
@@ -54,22 +54,25 @@
         "responses" : {
           "200" : {
             "description" : "OK",
-            "schema" : {
-              "$ref" : "#/definitions/Greeting"
-            },
             "headers" : {
               "X-ING-ReqID" : {
                 "type" : "string",
-                "description" : "Request ID, can be a UUID"
+                "description" : "Request ID, can be a UUID",
+                "x-ing-type" : "string"
               },
               "X-ING-Response-ID" : {
                 "type" : "string",
-                "description" : "Response UUID, if X-ING-ReqID supplied in the request"
+                "description" : "Response UUID, if X-ING-ReqID supplied in the request",
+                "x-ing-type" : "string"
               },
               "Signature" : {
                 "type" : "string",
-                "description" : "A signature of the response based on X-ING-ReqID and X-ING-Response-ID. This header is deprecated"
+                "description" : "A signature of the response based on X-ING-ReqID and X-ING-Response-ID. This header is deprecated",
+                "x-ing-type" : "string"
               }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/Greeting"
             }
           },
           "400" : {
@@ -126,22 +129,25 @@
         "responses" : {
           "200" : {
             "description" : "OK",
-            "schema" : {
-              "$ref" : "#/definitions/Greeting"
-            },
             "headers" : {
               "X-ING-ReqID" : {
                 "type" : "string",
-                "description" : "Request ID, can be a UUID"
+                "description" : "Request ID, can be a UUID",
+                "x-ing-type" : "string"
               },
               "X-ING-Response-ID" : {
                 "type" : "string",
-                "description" : "Response UUID, if X-ING-ReqID supplied in the request"
+                "description" : "Response UUID, if X-ING-ReqID supplied in the request",
+                "x-ing-type" : "string"
               },
               "Signature" : {
                 "type" : "string",
-                "description" : "A signature of the response based on X-ING-ReqID and X-ING-Response-ID. This header is deprecated"
+                "description" : "A signature of the response based on X-ING-ReqID and X-ING-Response-ID. This header is deprecated",
+                "x-ing-type" : "string"
               }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/Greeting"
             }
           },
           "400" : {
@@ -217,22 +223,25 @@
         "responses" : {
           "200" : {
             "description" : "OK",
-            "schema" : {
-              "$ref" : "#/definitions/Greeting"
-            },
             "headers" : {
               "X-ING-ReqID" : {
                 "type" : "string",
-                "description" : "Request ID, can be a UUID"
+                "description" : "Request ID, can be a UUID",
+                "x-ing-type" : "string"
               },
               "X-ING-Response-ID" : {
                 "type" : "string",
-                "description" : "Response UUID, if X-ING-ReqID supplied in the request"
+                "description" : "Response UUID, if X-ING-ReqID supplied in the request",
+                "x-ing-type" : "string"
               },
               "Signature" : {
                 "type" : "string",
-                "description" : "A signature of the response based on X-ING-ReqID and X-ING-Response-ID. This header is deprecated"
+                "description" : "A signature of the response based on X-ING-ReqID and X-ING-Response-ID. This header is deprecated",
+                "x-ing-type" : "string"
               }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/Greeting"
             }
           },
           "400" : {
@@ -287,20 +296,23 @@
       "type" : "object",
       "required" : [ "id", "message", "messageTimestamp" ],
       "properties" : {
+        "messageTimestamp" : {
+          "type" : "string",
+          "example" : "2018-07-30 15:42:17 GMT",
+          "description" : "The current time (GMT)",
+          "x-ing-type" : "string"
+        },
         "message" : {
           "type" : "string",
           "example" : "Welcome to ING!",
-          "description" : "A greeting message"
+          "description" : "A greeting message",
+          "x-ing-type" : "string"
         },
         "id" : {
           "type" : "string",
           "example" : "aba4b176-8834-467d-9c2a-ee6acfc8fceb",
-          "description" : "A generated uuid"
-        },
-        "messageTimestamp" : {
-          "type" : "string",
-          "example" : "2018-07-30 15:42:17 GMT",
-          "description" : "The current time (GMT)"
+          "description" : "A generated uuid",
+          "x-ing-type" : "string"
         }
       }
     },
@@ -317,34 +329,40 @@
       "type" : "object",
       "required" : [ "code", "message", "severity" ],
       "properties" : {
-        "message" : {
-          "type" : "string",
-          "example" : "Unexpected end of file (missing a terminator/close bracket?)",
-          "description" : "A descriptive error message for the consumer"
-        },
-        "target" : {
-          "type" : "string",
-          "description" : "Key/value pair indicating which input property caused the error"
-        },
-        "source" : {
-          "type" : "string",
-          "example" : "system76",
-          "description" : "Optional source descriptor for this error"
-        },
-        "severity" : {
-          "type" : "string",
-          "enum" : [ "critical", "error", "warning", "info" ]
-        },
         "innerErrors" : {
           "type" : "array",
           "items" : {
             "$ref" : "#/definitions/InnerErrors"
-          }
+          },
+          "x-ing-type" : "array"
+        },
+        "message" : {
+          "type" : "string",
+          "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+          "description" : "A descriptive error message for the consumer",
+          "x-ing-type" : "string"
+        },
+        "target" : {
+          "type" : "string",
+          "description" : "Key/value pair indicating which input property caused the error",
+          "x-ing-type" : "string"
         },
         "code" : {
           "type" : "string",
           "example" : "errParseFailed",
-          "description" : "Service-specific error code/keyword"
+          "description" : "Service-specific error code/keyword",
+          "x-ing-type" : "string"
+        },
+        "source" : {
+          "type" : "string",
+          "example" : "system76",
+          "description" : "Optional source descriptor for this error",
+          "x-ing-type" : "string"
+        },
+        "severity" : {
+          "type" : "string",
+          "enum" : [ "critical", "error", "warning", "info" ],
+          "x-ing-type" : "string"
         }
       },
       "description" : "Error message"
@@ -356,25 +374,30 @@
         "message" : {
           "type" : "string",
           "example" : "Unexpected end of file (missing a terminator/close bracket?)",
-          "description" : "A descriptive error message for the consumer"
+          "description" : "A descriptive error message for the consumer",
+          "x-ing-type" : "string"
         },
         "target" : {
           "type" : "string",
-          "description" : "Key/value pair indicating which input property caused the error"
-        },
-        "source" : {
-          "type" : "string",
-          "example" : "system76",
-          "description" : "Optional source descriptor for this error"
-        },
-        "severity" : {
-          "type" : "string",
-          "enum" : [ "critical", "error", "warning", "info" ]
+          "description" : "Key/value pair indicating which input property caused the error",
+          "x-ing-type" : "string"
         },
         "code" : {
           "type" : "string",
           "example" : "errParseFailed",
-          "description" : "Service-specific error code/keyword"
+          "description" : "Service-specific error code/keyword",
+          "x-ing-type" : "string"
+        },
+        "source" : {
+          "type" : "string",
+          "example" : "system76",
+          "description" : "Optional source descriptor for this error",
+          "x-ing-type" : "string"
+        },
+        "severity" : {
+          "type" : "string",
+          "enum" : [ "critical", "error", "warning", "info" ],
+          "x-ing-type" : "string"
         }
       },
       "description" : "Upstream error messages and detailed information on error state"

@@ -2,12 +2,12 @@
   "swagger" : "2.0",
   "info" : {
     "description" : "Create payment initiation applications that offer great added value to your customers and users. INGs Payment Initiation Service will enable secure access to all European ING online accessible payments accounts.",
-    "version" : "1.5.0",
+    "version" : "1.5.3",
     "title" : "Payment Initiation API",
     "contact" : {
       "name" : "ING Developer Portal",
       "url" : "https://developer.ing.com",
-      "email" : "developerportal@ing.com"
+      "email" : "apis@ing.com"
     },
     "license" : {
       "name" : "Copyright (c) ING Bank N.V. All Rights Reserved.",
@@ -44,21 +44,60 @@
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "$ref" : "#/parameters/payment-product"
+          "name" : "payment-product",
+          "in" : "path",
+          "description" : "The addressed payment product endpoint. The list of products supported is - sepa-credit-transfers - cross-border-credit-transfers - domestic-credit-transfers In due course, ING can communicate additional supported payment products.",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "sepa-credit-transfers", "cross-border-credit-transfers", "domestic-credit-transfers" ]
         }, {
-          "$ref" : "#/parameters/X-Request-ID"
+          "name" : "X-Request-ID",
+          "in" : "header",
+          "description" : "ID of the request, unique to the call, as determined by the initiating party (TPP).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/AuthorizationInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Bearer Token. Represents TPP Application Access Token. The process to obtain the Application Access Token is described in Client Credentials \"Authentication Flow\": https://developer.ing.com/openbanking/get-started",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./_,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. For more details refer to: https://developer.ing.com/openbanking/get-started Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers required for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./\"_=,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,='+ -]+$"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard HTTP header element for date and time. HTTP headers are represented as RFC 7231, chapter 7.1.1.1.  Date/Time Formats. Format: EEE, dd MMM yyyy HH:mm:ss 'GMT'",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/TPP-Redirect-URI"
+          "name" : "TPP-Redirect-URI",
+          "in" : "header",
+          "description" : "URI of the TPP, where the transaction flow shall be redirected to after a Redirect",
+          "required" : true,
+          "type" : "string",
+          "format" : "uri"
         }, {
-          "$ref" : "#/parameters/PSU-IP-Address_mandatory"
+          "name" : "PSU-IP-Address",
+          "in" : "header",
+          "description" : "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP.",
+          "required" : true,
+          "type" : "string",
+          "format" : "ipv4,ipv6"
         }, {
           "in" : "body",
           "name" : "body",
@@ -100,32 +139,52 @@
             }
           },
           "400" : {
-            "$ref" : "#/responses/400BadRequest"
+            "description" : "Bad Request.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "401" : {
-            "$ref" : "#/responses/401Unauthorised"
+            "description" : "Unauthorised.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "403" : {
-            "$ref" : "#/responses/403Forbidden"
+            "description" : "Forbidden.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "404" : {
-            "$ref" : "#/responses/404NotFound"
+            "description" : "Not Found.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "422" : {
-            "$ref" : "#/responses/422UnProcessableEntity"
+            "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "500" : {
-            "$ref" : "#/responses/500TechnicalError"
+            "description" : "Internal Server Error.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "503" : {
-            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+            "description" : "SERVICE UNAVAILABLE.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           }
         },
         "security" : [ {
           "ING-Application-Security" : [ "payment-accounts:orders:create" ]
         } ]
-      },
-      "parameters" : [ ]
+      }
     },
     "/v1/payments/{payment-product}/{paymentId}" : {
       "get" : {
@@ -134,21 +193,60 @@
         "description" : "This operation will return the payment initiation details based on the unique identifier of the payment (paymentId), as provided by ING as part of the response of the payment initiation request.",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "$ref" : "#/parameters/payment-product"
+          "name" : "payment-product",
+          "in" : "path",
+          "description" : "The addressed payment product endpoint. The list of products supported is - sepa-credit-transfers - cross-border-credit-transfers - domestic-credit-transfers In due course, ING can communicate additional supported payment products.",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "sepa-credit-transfers", "cross-border-credit-transfers", "domestic-credit-transfers" ]
         }, {
-          "$ref" : "#/parameters/paymentId"
+          "name" : "paymentId",
+          "in" : "path",
+          "description" : "Identification of payment instruction in ING (resource identification of the generated payment initiation resource).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/X-Request-ID"
+          "name" : "X-Request-ID",
+          "in" : "header",
+          "description" : "ID of the request, unique to the call, as determined by the initiating party (TPP).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/AuthorizationInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Bearer Token. Represents TPP Application Access Token. The process to obtain the Application Access Token is described in Client Credentials \"Authentication Flow\": https://developer.ing.com/openbanking/get-started",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./_,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. For more details refer to: https://developer.ing.com/openbanking/get-started Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers required for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./\"_=,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,='+ -]+$"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard HTTP header element for date and time. HTTP headers are represented as RFC 7231, chapter 7.1.1.1.  Date/Time Formats. Format: EEE, dd MMM yyyy HH:mm:ss 'GMT'",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/PSU-IP-Address_optional"
+          "name" : "PSU-IP-Address",
+          "in" : "header",
+          "description" : "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP.",
+          "required" : false,
+          "type" : "string",
+          "format" : "ipv4,ipv6"
         } ],
         "responses" : {
           "200" : {
@@ -170,25 +268,46 @@
             }
           },
           "400" : {
-            "$ref" : "#/responses/400BadRequest"
+            "description" : "Bad Request.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "401" : {
-            "$ref" : "#/responses/401Unauthorised"
+            "description" : "Unauthorised.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "403" : {
-            "$ref" : "#/responses/403Forbidden"
+            "description" : "Forbidden.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "404" : {
-            "$ref" : "#/responses/404NotFound"
+            "description" : "Not Found.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "422" : {
-            "$ref" : "#/responses/422UnProcessableEntity"
+            "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "500" : {
-            "$ref" : "#/responses/500TechnicalError"
+            "description" : "Internal Server Error.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "503" : {
-            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+            "description" : "SERVICE UNAVAILABLE.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           }
         }
       },
@@ -198,21 +317,60 @@
         "description" : "This operation will cancel the initiated payment based on the unique identifier of the payment (paymentId), as provided by ING as part of the response of the payment initiation request. The response to this request will inform the requester whether the request was * successful (204) or, * rejected (4xx).",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "$ref" : "#/parameters/payment-product"
+          "name" : "payment-product",
+          "in" : "path",
+          "description" : "The addressed payment product endpoint. The list of products supported is - sepa-credit-transfers - cross-border-credit-transfers - domestic-credit-transfers In due course, ING can communicate additional supported payment products.",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "sepa-credit-transfers", "cross-border-credit-transfers", "domestic-credit-transfers" ]
         }, {
-          "$ref" : "#/parameters/paymentId"
+          "name" : "paymentId",
+          "in" : "path",
+          "description" : "Identification of payment instruction in ING (resource identification of the generated payment initiation resource).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/X-Request-ID"
+          "name" : "X-Request-ID",
+          "in" : "header",
+          "description" : "ID of the request, unique to the call, as determined by the initiating party (TPP).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/AuthorizationInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Bearer Token. Represents TPP Application Access Token. The process to obtain the Application Access Token is described in Client Credentials \"Authentication Flow\": https://developer.ing.com/openbanking/get-started",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./_,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. For more details refer to: https://developer.ing.com/openbanking/get-started Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers required for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./\"_=,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,='+ -]+$"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard HTTP header element for date and time. HTTP headers are represented as RFC 7231, chapter 7.1.1.1.  Date/Time Formats. Format: EEE, dd MMM yyyy HH:mm:ss 'GMT'",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/PSU-IP-Address_optional"
+          "name" : "PSU-IP-Address",
+          "in" : "header",
+          "description" : "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP.",
+          "required" : false,
+          "type" : "string",
+          "format" : "ipv4,ipv6"
         } ],
         "responses" : {
           "204" : {
@@ -231,29 +389,49 @@
             }
           },
           "400" : {
-            "$ref" : "#/responses/400BadRequest"
+            "description" : "Bad Request.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "401" : {
-            "$ref" : "#/responses/401Unauthorised"
+            "description" : "Unauthorised.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "403" : {
-            "$ref" : "#/responses/403Forbidden"
+            "description" : "Forbidden.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "404" : {
-            "$ref" : "#/responses/404NotFound"
+            "description" : "Not Found.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "422" : {
-            "$ref" : "#/responses/422UnProcessableEntity"
+            "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "500" : {
-            "$ref" : "#/responses/500TechnicalError"
+            "description" : "Internal Server Error.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "503" : {
-            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+            "description" : "SERVICE UNAVAILABLE.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           }
         }
-      },
-      "parameters" : [ ]
+      }
     },
     "/v1/payments/{payment-product}/{paymentId}/status" : {
       "get" : {
@@ -262,21 +440,60 @@
         "description" : "This operation will return the status of the payment based on the unique identifier of the payment (paymentId), as provided by ING as part of the response of the payment initiation request.",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "$ref" : "#/parameters/payment-product"
+          "name" : "payment-product",
+          "in" : "path",
+          "description" : "The addressed payment product endpoint. The list of products supported is - sepa-credit-transfers - cross-border-credit-transfers - domestic-credit-transfers In due course, ING can communicate additional supported payment products.",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "sepa-credit-transfers", "cross-border-credit-transfers", "domestic-credit-transfers" ]
         }, {
-          "$ref" : "#/parameters/paymentId"
+          "name" : "paymentId",
+          "in" : "path",
+          "description" : "Identification of payment instruction in ING (resource identification of the generated payment initiation resource).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/X-Request-ID"
+          "name" : "X-Request-ID",
+          "in" : "header",
+          "description" : "ID of the request, unique to the call, as determined by the initiating party (TPP).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/AuthorizationInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Bearer Token. Represents TPP Application Access Token. The process to obtain the Application Access Token is described in Client Credentials \"Authentication Flow\": https://developer.ing.com/openbanking/get-started",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./_,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. For more details refer to: https://developer.ing.com/openbanking/get-started Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers required for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./\"_=,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,='+ -]+$"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard HTTP header element for date and time. HTTP headers are represented as RFC 7231, chapter 7.1.1.1.  Date/Time Formats. Format: EEE, dd MMM yyyy HH:mm:ss 'GMT'",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/PSU-IP-Address_optional"
+          "name" : "PSU-IP-Address",
+          "in" : "header",
+          "description" : "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP.",
+          "required" : false,
+          "type" : "string",
+          "format" : "ipv4,ipv6"
         } ],
         "responses" : {
           "200" : {
@@ -298,29 +515,49 @@
             }
           },
           "400" : {
-            "$ref" : "#/responses/400BadRequest"
+            "description" : "Bad Request.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "401" : {
-            "$ref" : "#/responses/401Unauthorised"
+            "description" : "Unauthorised.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "403" : {
-            "$ref" : "#/responses/403Forbidden"
+            "description" : "Forbidden.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "404" : {
-            "$ref" : "#/responses/404NotFound"
+            "description" : "Not Found.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "422" : {
-            "$ref" : "#/responses/422UnProcessableEntity"
+            "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "500" : {
-            "$ref" : "#/responses/500TechnicalError"
+            "description" : "Internal Server Error.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "503" : {
-            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+            "description" : "SERVICE UNAVAILABLE.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           }
         }
-      },
-      "parameters" : [ ]
+      }
     },
     "/v1/payments/pain.001-{payment-product}" : {
       "post" : {
@@ -330,21 +567,60 @@
         "consumes" : [ "application/xml" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "$ref" : "#/parameters/payment-product"
+          "name" : "payment-product",
+          "in" : "path",
+          "description" : "The addressed payment product endpoint. The list of products supported is - sepa-credit-transfers - cross-border-credit-transfers - domestic-credit-transfers In due course, ING can communicate additional supported payment products.",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "sepa-credit-transfers", "cross-border-credit-transfers", "domestic-credit-transfers" ]
         }, {
-          "$ref" : "#/parameters/X-Request-ID"
+          "name" : "X-Request-ID",
+          "in" : "header",
+          "description" : "ID of the request, unique to the call, as determined by the initiating party (TPP).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/AuthorizationInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Bearer Token. Represents TPP Application Access Token. The process to obtain the Application Access Token is described in Client Credentials \"Authentication Flow\": https://developer.ing.com/openbanking/get-started",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./_,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. For more details refer to: https://developer.ing.com/openbanking/get-started Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers required for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./\"_=,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,='+ -]+$"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard HTTP header element for date and time. HTTP headers are represented as RFC 7231, chapter 7.1.1.1.  Date/Time Formats. Format: EEE, dd MMM yyyy HH:mm:ss 'GMT'",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/TPP-Redirect-URI"
+          "name" : "TPP-Redirect-URI",
+          "in" : "header",
+          "description" : "URI of the TPP, where the transaction flow shall be redirected to after a Redirect",
+          "required" : true,
+          "type" : "string",
+          "format" : "uri"
         }, {
-          "$ref" : "#/parameters/PSU-IP-Address_mandatory"
+          "name" : "PSU-IP-Address",
+          "in" : "header",
+          "description" : "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP.",
+          "required" : true,
+          "type" : "string",
+          "format" : "ipv4,ipv6"
         }, {
           "in" : "body",
           "name" : "body",
@@ -386,32 +662,52 @@
             }
           },
           "400" : {
-            "$ref" : "#/responses/400BadRequest"
+            "description" : "Bad Request.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "401" : {
-            "$ref" : "#/responses/401Unauthorised"
+            "description" : "Unauthorised.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "403" : {
-            "$ref" : "#/responses/403Forbidden"
+            "description" : "Forbidden.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "404" : {
-            "$ref" : "#/responses/404NotFound"
+            "description" : "Not Found.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "422" : {
-            "$ref" : "#/responses/422UnProcessableEntity"
+            "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "500" : {
-            "$ref" : "#/responses/500TechnicalError"
+            "description" : "Internal Server Error.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "503" : {
-            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+            "description" : "SERVICE UNAVAILABLE.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           }
         },
         "security" : [ {
           "ING-Application-Security" : [ "payment-accounts:orders:create" ]
         } ]
-      },
-      "parameters" : [ ]
+      }
     },
     "/v1/payments/pain.001-{payment-product}/{paymentId}" : {
       "get" : {
@@ -420,21 +716,60 @@
         "description" : "This operation will return the payment initiation details based on the unique identifier of the payment (paymentId), as provided by ING as part of the response of payment initiation request in pain.001 XML encoding.",
         "produces" : [ "application/xml" ],
         "parameters" : [ {
-          "$ref" : "#/parameters/payment-product"
+          "name" : "payment-product",
+          "in" : "path",
+          "description" : "The addressed payment product endpoint. The list of products supported is - sepa-credit-transfers - cross-border-credit-transfers - domestic-credit-transfers In due course, ING can communicate additional supported payment products.",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "sepa-credit-transfers", "cross-border-credit-transfers", "domestic-credit-transfers" ]
         }, {
-          "$ref" : "#/parameters/paymentId"
+          "name" : "paymentId",
+          "in" : "path",
+          "description" : "Identification of payment instruction in ING (resource identification of the generated payment initiation resource).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/X-Request-ID"
+          "name" : "X-Request-ID",
+          "in" : "header",
+          "description" : "ID of the request, unique to the call, as determined by the initiating party (TPP).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/AuthorizationInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Bearer Token. Represents TPP Application Access Token. The process to obtain the Application Access Token is described in Client Credentials \"Authentication Flow\": https://developer.ing.com/openbanking/get-started",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./_,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. For more details refer to: https://developer.ing.com/openbanking/get-started Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers required for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./\"_=,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,='+ -]+$"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard HTTP header element for date and time. HTTP headers are represented as RFC 7231, chapter 7.1.1.1.  Date/Time Formats. Format: EEE, dd MMM yyyy HH:mm:ss 'GMT'",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/PSU-IP-Address_optional"
+          "name" : "PSU-IP-Address",
+          "in" : "header",
+          "description" : "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP.",
+          "required" : false,
+          "type" : "string",
+          "format" : "ipv4,ipv6"
         } ],
         "responses" : {
           "200" : {
@@ -456,29 +791,49 @@
             }
           },
           "400" : {
-            "$ref" : "#/responses/400BadRequest"
+            "description" : "Bad Request.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "401" : {
-            "$ref" : "#/responses/401Unauthorised"
+            "description" : "Unauthorised.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "403" : {
-            "$ref" : "#/responses/403Forbidden"
+            "description" : "Forbidden.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "404" : {
-            "$ref" : "#/responses/404NotFound"
+            "description" : "Not Found.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "422" : {
-            "$ref" : "#/responses/422UnProcessableEntity"
+            "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "500" : {
-            "$ref" : "#/responses/500TechnicalError"
+            "description" : "Internal Server Error.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "503" : {
-            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+            "description" : "SERVICE UNAVAILABLE.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           }
         }
-      },
-      "parameters" : [ ]
+      }
     },
     "/v1/payments/pain.001-{payment-product}/{paymentId}/status" : {
       "get" : {
@@ -487,21 +842,60 @@
         "description" : "This operation will return the status of the payment based on the unique identifier of the payment (paymentId), as provided by ING as part of the response of the payment initiation request in pain.001 XML encoding. The response is in ISO 20022 pain.002.001.03 xml formatting.",
         "produces" : [ "application/xml" ],
         "parameters" : [ {
-          "$ref" : "#/parameters/payment-product"
+          "name" : "payment-product",
+          "in" : "path",
+          "description" : "The addressed payment product endpoint. The list of products supported is - sepa-credit-transfers - cross-border-credit-transfers - domestic-credit-transfers In due course, ING can communicate additional supported payment products.",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "sepa-credit-transfers", "cross-border-credit-transfers", "domestic-credit-transfers" ]
         }, {
-          "$ref" : "#/parameters/paymentId"
+          "name" : "paymentId",
+          "in" : "path",
+          "description" : "Identification of payment instruction in ING (resource identification of the generated payment initiation resource).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/X-Request-ID"
+          "name" : "X-Request-ID",
+          "in" : "header",
+          "description" : "ID of the request, unique to the call, as determined by the initiating party (TPP).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/AuthorizationInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Bearer Token. Represents TPP Application Access Token. The process to obtain the Application Access Token is described in Client Credentials \"Authentication Flow\": https://developer.ing.com/openbanking/get-started",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./_,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. For more details refer to: https://developer.ing.com/openbanking/get-started Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers required for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./\"_=,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,='+ -]+$"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard HTTP header element for date and time. HTTP headers are represented as RFC 7231, chapter 7.1.1.1.  Date/Time Formats. Format: EEE, dd MMM yyyy HH:mm:ss 'GMT'",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/PSU-IP-Address_optional"
+          "name" : "PSU-IP-Address",
+          "in" : "header",
+          "description" : "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP.",
+          "required" : false,
+          "type" : "string",
+          "format" : "ipv4,ipv6"
         } ],
         "responses" : {
           "200" : {
@@ -523,29 +917,49 @@
             }
           },
           "400" : {
-            "$ref" : "#/responses/400BadRequest"
+            "description" : "Bad Request.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "401" : {
-            "$ref" : "#/responses/401Unauthorised"
+            "description" : "Unauthorised.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "403" : {
-            "$ref" : "#/responses/403Forbidden"
+            "description" : "Forbidden.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "404" : {
-            "$ref" : "#/responses/404NotFound"
+            "description" : "Not Found.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "422" : {
-            "$ref" : "#/responses/422UnProcessableEntity"
+            "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "500" : {
-            "$ref" : "#/responses/500TechnicalError"
+            "description" : "Internal Server Error.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "503" : {
-            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+            "description" : "SERVICE UNAVAILABLE.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           }
         }
-      },
-      "parameters" : [ ]
+      }
     },
     "/v2/payments/pain.001-{payment-product}/{paymentId}/status" : {
       "get" : {
@@ -554,21 +968,60 @@
         "description" : "This operation will return the status of the payment based on the unique identifier of the payment (paymentId), as provided by ING as part of the response of the payment initiation request in pain.001 XML encoding. The response is in ISO 20022 pain.002.001.11 xml formatting. This format is required in order to receive advanced transactionStatus like CANC and PATC, in addition to the transactionStatus’ supported in ISO versions preceding pain.002.001.08.",
         "produces" : [ "application/xml" ],
         "parameters" : [ {
-          "$ref" : "#/parameters/payment-product"
+          "name" : "payment-product",
+          "in" : "path",
+          "description" : "The addressed payment product endpoint. The list of products supported is - sepa-credit-transfers - cross-border-credit-transfers - domestic-credit-transfers In due course, ING can communicate additional supported payment products.",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "sepa-credit-transfers", "cross-border-credit-transfers", "domestic-credit-transfers" ]
         }, {
-          "$ref" : "#/parameters/paymentId"
+          "name" : "paymentId",
+          "in" : "path",
+          "description" : "Identification of payment instruction in ING (resource identification of the generated payment initiation resource).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/X-Request-ID"
+          "name" : "X-Request-ID",
+          "in" : "header",
+          "description" : "ID of the request, unique to the call, as determined by the initiating party (TPP).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/AuthorizationInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Bearer Token. Represents TPP Application Access Token. The process to obtain the Application Access Token is described in Client Credentials \"Authentication Flow\": https://developer.ing.com/openbanking/get-started",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./_,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. For more details refer to: https://developer.ing.com/openbanking/get-started Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers required for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./\"_=,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,='+ -]+$"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard HTTP header element for date and time. HTTP headers are represented as RFC 7231, chapter 7.1.1.1.  Date/Time Formats. Format: EEE, dd MMM yyyy HH:mm:ss 'GMT'",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/PSU-IP-Address_optional"
+          "name" : "PSU-IP-Address",
+          "in" : "header",
+          "description" : "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP.",
+          "required" : false,
+          "type" : "string",
+          "format" : "ipv4,ipv6"
         } ],
         "responses" : {
           "200" : {
@@ -590,29 +1043,49 @@
             }
           },
           "400" : {
-            "$ref" : "#/responses/400BadRequest"
+            "description" : "Bad Request.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "401" : {
-            "$ref" : "#/responses/401Unauthorised"
+            "description" : "Unauthorised.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "403" : {
-            "$ref" : "#/responses/403Forbidden"
+            "description" : "Forbidden.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "404" : {
-            "$ref" : "#/responses/404NotFound"
+            "description" : "Not Found.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "422" : {
-            "$ref" : "#/responses/422UnProcessableEntity"
+            "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "500" : {
-            "$ref" : "#/responses/500TechnicalError"
+            "description" : "Internal Server Error.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "503" : {
-            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+            "description" : "SERVICE UNAVAILABLE.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           }
         }
-      },
-      "parameters" : [ ]
+      }
     },
     "/v1/periodic-payments/{payment-product}" : {
       "post" : {
@@ -623,21 +1096,60 @@
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "$ref" : "#/parameters/payment-product"
+          "name" : "payment-product",
+          "in" : "path",
+          "description" : "The addressed payment product endpoint. The list of products supported is - sepa-credit-transfers - cross-border-credit-transfers - domestic-credit-transfers In due course, ING can communicate additional supported payment products.",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "sepa-credit-transfers", "cross-border-credit-transfers", "domestic-credit-transfers" ]
         }, {
-          "$ref" : "#/parameters/X-Request-ID"
+          "name" : "X-Request-ID",
+          "in" : "header",
+          "description" : "ID of the request, unique to the call, as determined by the initiating party (TPP).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/AuthorizationInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Bearer Token. Represents TPP Application Access Token. The process to obtain the Application Access Token is described in Client Credentials \"Authentication Flow\": https://developer.ing.com/openbanking/get-started",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./_,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. For more details refer to: https://developer.ing.com/openbanking/get-started Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers required for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./\"_=,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,='+ -]+$"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard HTTP header element for date and time. HTTP headers are represented as RFC 7231, chapter 7.1.1.1.  Date/Time Formats. Format: EEE, dd MMM yyyy HH:mm:ss 'GMT'",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/TPP-Redirect-URI"
+          "name" : "TPP-Redirect-URI",
+          "in" : "header",
+          "description" : "URI of the TPP, where the transaction flow shall be redirected to after a Redirect",
+          "required" : true,
+          "type" : "string",
+          "format" : "uri"
         }, {
-          "$ref" : "#/parameters/PSU-IP-Address_mandatory"
+          "name" : "PSU-IP-Address",
+          "in" : "header",
+          "description" : "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP.",
+          "required" : true,
+          "type" : "string",
+          "format" : "ipv4,ipv6"
         }, {
           "in" : "body",
           "name" : "body",
@@ -672,32 +1184,52 @@
             }
           },
           "400" : {
-            "$ref" : "#/responses/400BadRequest"
+            "description" : "Bad Request.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "401" : {
-            "$ref" : "#/responses/401Unauthorised"
+            "description" : "Unauthorised.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "403" : {
-            "$ref" : "#/responses/403Forbidden"
+            "description" : "Forbidden.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "404" : {
-            "$ref" : "#/responses/404NotFound"
+            "description" : "Not Found.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "422" : {
-            "$ref" : "#/responses/422UnProcessableEntity"
+            "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "500" : {
-            "$ref" : "#/responses/500TechnicalError"
+            "description" : "Internal Server Error.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "503" : {
-            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+            "description" : "SERVICE UNAVAILABLE.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           }
         },
         "security" : [ {
           "ING-Application-Security" : [ "payment-accounts:orders:create" ]
         } ]
-      },
-      "parameters" : [ ]
+      }
     },
     "/v1/periodic-payments/{payment-product}/{paymentId}" : {
       "get" : {
@@ -706,21 +1238,60 @@
         "description" : "This operation will return the periodic payment initiation details based on the unique identifier of the periodic payment (paymentId), as provided by ING as part of the response of the periodic payment initiation request.",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "$ref" : "#/parameters/payment-product"
+          "name" : "payment-product",
+          "in" : "path",
+          "description" : "The addressed payment product endpoint. The list of products supported is - sepa-credit-transfers - cross-border-credit-transfers - domestic-credit-transfers In due course, ING can communicate additional supported payment products.",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "sepa-credit-transfers", "cross-border-credit-transfers", "domestic-credit-transfers" ]
         }, {
-          "$ref" : "#/parameters/paymentId"
+          "name" : "paymentId",
+          "in" : "path",
+          "description" : "Identification of payment instruction in ING (resource identification of the generated payment initiation resource).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/X-Request-ID"
+          "name" : "X-Request-ID",
+          "in" : "header",
+          "description" : "ID of the request, unique to the call, as determined by the initiating party (TPP).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/AuthorizationInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Bearer Token. Represents TPP Application Access Token. The process to obtain the Application Access Token is described in Client Credentials \"Authentication Flow\": https://developer.ing.com/openbanking/get-started",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./_,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. For more details refer to: https://developer.ing.com/openbanking/get-started Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers required for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./\"_=,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,='+ -]+$"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard HTTP header element for date and time. HTTP headers are represented as RFC 7231, chapter 7.1.1.1.  Date/Time Formats. Format: EEE, dd MMM yyyy HH:mm:ss 'GMT'",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/PSU-IP-Address_optional"
+          "name" : "PSU-IP-Address",
+          "in" : "header",
+          "description" : "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP.",
+          "required" : false,
+          "type" : "string",
+          "format" : "ipv4,ipv6"
         } ],
         "responses" : {
           "200" : {
@@ -742,25 +1313,46 @@
             }
           },
           "400" : {
-            "$ref" : "#/responses/400BadRequest"
+            "description" : "Bad Request.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "401" : {
-            "$ref" : "#/responses/401Unauthorised"
+            "description" : "Unauthorised.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "403" : {
-            "$ref" : "#/responses/403Forbidden"
+            "description" : "Forbidden.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "404" : {
-            "$ref" : "#/responses/404NotFound"
+            "description" : "Not Found.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "422" : {
-            "$ref" : "#/responses/422UnProcessableEntity"
+            "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "500" : {
-            "$ref" : "#/responses/500TechnicalError"
+            "description" : "Internal Server Error.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "503" : {
-            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+            "description" : "SERVICE UNAVAILABLE.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           }
         }
       },
@@ -770,21 +1362,60 @@
         "description" : "This operation will cancel the initiated periodic payment based on the unique identifier of the payment (paymentId), as provided by ING as part of the response of the periodic payment initiation request. The response to this request will inform the requester whether the request was * successful (204) or, * rejected (4xx).",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "$ref" : "#/parameters/payment-product"
+          "name" : "payment-product",
+          "in" : "path",
+          "description" : "The addressed payment product endpoint. The list of products supported is - sepa-credit-transfers - cross-border-credit-transfers - domestic-credit-transfers In due course, ING can communicate additional supported payment products.",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "sepa-credit-transfers", "cross-border-credit-transfers", "domestic-credit-transfers" ]
         }, {
-          "$ref" : "#/parameters/paymentId"
+          "name" : "paymentId",
+          "in" : "path",
+          "description" : "Identification of payment instruction in ING (resource identification of the generated payment initiation resource).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/X-Request-ID"
+          "name" : "X-Request-ID",
+          "in" : "header",
+          "description" : "ID of the request, unique to the call, as determined by the initiating party (TPP).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/AuthorizationInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Bearer Token. Represents TPP Application Access Token. The process to obtain the Application Access Token is described in Client Credentials \"Authentication Flow\": https://developer.ing.com/openbanking/get-started",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./_,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. For more details refer to: https://developer.ing.com/openbanking/get-started Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers required for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./\"_=,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,='+ -]+$"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard HTTP header element for date and time. HTTP headers are represented as RFC 7231, chapter 7.1.1.1.  Date/Time Formats. Format: EEE, dd MMM yyyy HH:mm:ss 'GMT'",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/PSU-IP-Address_optional"
+          "name" : "PSU-IP-Address",
+          "in" : "header",
+          "description" : "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP.",
+          "required" : false,
+          "type" : "string",
+          "format" : "ipv4,ipv6"
         } ],
         "responses" : {
           "204" : {
@@ -803,23 +1434,37 @@
             }
           },
           "400" : {
-            "$ref" : "#/responses/400BadRequest"
+            "description" : "Bad Request.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "401" : {
-            "$ref" : "#/responses/401Unauthorised"
+            "description" : "Unauthorised.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "403" : {
-            "$ref" : "#/responses/403Forbidden"
+            "description" : "Forbidden.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "404" : {
-            "$ref" : "#/responses/404NotFound"
+            "description" : "Not Found.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "500" : {
-            "$ref" : "#/responses/500TechnicalError"
+            "description" : "Internal Server Error.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           }
         }
-      },
-      "parameters" : [ ]
+      }
     },
     "/v1/periodic-payments/{payment-product}/{paymentId}/status" : {
       "get" : {
@@ -828,21 +1473,60 @@
         "description" : "This operation will return the status of the periodic payment based on the unique identifier of the payment (paymentId), as provided by ING as part of the response of the payment initiation request.",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "$ref" : "#/parameters/payment-product"
+          "name" : "payment-product",
+          "in" : "path",
+          "description" : "The addressed payment product endpoint. The list of products supported is - sepa-credit-transfers - cross-border-credit-transfers - domestic-credit-transfers In due course, ING can communicate additional supported payment products.",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "sepa-credit-transfers", "cross-border-credit-transfers", "domestic-credit-transfers" ]
         }, {
-          "$ref" : "#/parameters/paymentId"
+          "name" : "paymentId",
+          "in" : "path",
+          "description" : "Identification of payment instruction in ING (resource identification of the generated payment initiation resource).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/X-Request-ID"
+          "name" : "X-Request-ID",
+          "in" : "header",
+          "description" : "ID of the request, unique to the call, as determined by the initiating party (TPP).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/AuthorizationInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Bearer Token. Represents TPP Application Access Token. The process to obtain the Application Access Token is described in Client Credentials \"Authentication Flow\": https://developer.ing.com/openbanking/get-started",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./_,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. For more details refer to: https://developer.ing.com/openbanking/get-started Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers required for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./\"_=,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,='+ -]+$"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard HTTP header element for date and time. HTTP headers are represented as RFC 7231, chapter 7.1.1.1.  Date/Time Formats. Format: EEE, dd MMM yyyy HH:mm:ss 'GMT'",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/PSU-IP-Address_optional"
+          "name" : "PSU-IP-Address",
+          "in" : "header",
+          "description" : "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP.",
+          "required" : false,
+          "type" : "string",
+          "format" : "ipv4,ipv6"
         } ],
         "responses" : {
           "200" : {
@@ -864,23 +1548,37 @@
             }
           },
           "400" : {
-            "$ref" : "#/responses/400BadRequest"
+            "description" : "Bad Request.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "401" : {
-            "$ref" : "#/responses/401Unauthorised"
+            "description" : "Unauthorised.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "403" : {
-            "$ref" : "#/responses/403Forbidden"
+            "description" : "Forbidden.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "404" : {
-            "$ref" : "#/responses/404NotFound"
+            "description" : "Not Found.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "500" : {
-            "$ref" : "#/responses/500TechnicalError"
+            "description" : "Internal Server Error.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           }
         }
-      },
-      "parameters" : [ ]
+      }
     },
     "/v1/periodic-payments/pain.001-{payment-product}" : {
       "post" : {
@@ -891,21 +1589,60 @@
         "consumes" : [ "multipart/form-data" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "$ref" : "#/parameters/payment-product"
+          "name" : "payment-product",
+          "in" : "path",
+          "description" : "The addressed payment product endpoint. The list of products supported is - sepa-credit-transfers - cross-border-credit-transfers - domestic-credit-transfers In due course, ING can communicate additional supported payment products.",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "sepa-credit-transfers", "cross-border-credit-transfers", "domestic-credit-transfers" ]
         }, {
-          "$ref" : "#/parameters/X-Request-ID"
+          "name" : "X-Request-ID",
+          "in" : "header",
+          "description" : "ID of the request, unique to the call, as determined by the initiating party (TPP).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/AuthorizationInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Bearer Token. Represents TPP Application Access Token. The process to obtain the Application Access Token is described in Client Credentials \"Authentication Flow\": https://developer.ing.com/openbanking/get-started",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./_,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. For more details refer to: https://developer.ing.com/openbanking/get-started Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers required for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./\"_=,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,='+ -]+$"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard HTTP header element for date and time. HTTP headers are represented as RFC 7231, chapter 7.1.1.1.  Date/Time Formats. Format: EEE, dd MMM yyyy HH:mm:ss 'GMT'",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/TPP-Redirect-URI"
+          "name" : "TPP-Redirect-URI",
+          "in" : "header",
+          "description" : "URI of the TPP, where the transaction flow shall be redirected to after a Redirect",
+          "required" : true,
+          "type" : "string",
+          "format" : "uri"
         }, {
-          "$ref" : "#/parameters/PSU-IP-Address_mandatory"
+          "name" : "PSU-IP-Address",
+          "in" : "header",
+          "description" : "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP.",
+          "required" : true,
+          "type" : "string",
+          "format" : "ipv4,ipv6"
         }, {
           "name" : "xml_sct",
           "in" : "formData",
@@ -966,32 +1703,52 @@
             }
           },
           "400" : {
-            "$ref" : "#/responses/400BadRequest"
+            "description" : "Bad Request.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "401" : {
-            "$ref" : "#/responses/401Unauthorised"
+            "description" : "Unauthorised.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "403" : {
-            "$ref" : "#/responses/403Forbidden"
+            "description" : "Forbidden.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "404" : {
-            "$ref" : "#/responses/404NotFound"
+            "description" : "Not Found.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "422" : {
-            "$ref" : "#/responses/422UnProcessableEntity"
+            "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "500" : {
-            "$ref" : "#/responses/500TechnicalError"
+            "description" : "Internal Server Error.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "503" : {
-            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+            "description" : "SERVICE UNAVAILABLE.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           }
         },
         "security" : [ {
           "ING-Application-Security" : [ "payment-accounts:orders:create" ]
         } ]
-      },
-      "parameters" : [ ]
+      }
     },
     "/v1/periodic-payments/pain.001-{payment-product}/{paymentId}" : {
       "get" : {
@@ -1000,21 +1757,60 @@
         "description" : "This operation will return the periodic payment initiation details based on the unique identifier of the periodic payment (paymentId), as provided by ING as part of the response of the periodic payment initiation request.",
         "produces" : [ "multipart/form-data" ],
         "parameters" : [ {
-          "$ref" : "#/parameters/payment-product"
+          "name" : "payment-product",
+          "in" : "path",
+          "description" : "The addressed payment product endpoint. The list of products supported is - sepa-credit-transfers - cross-border-credit-transfers - domestic-credit-transfers In due course, ING can communicate additional supported payment products.",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "sepa-credit-transfers", "cross-border-credit-transfers", "domestic-credit-transfers" ]
         }, {
-          "$ref" : "#/parameters/paymentId"
+          "name" : "paymentId",
+          "in" : "path",
+          "description" : "Identification of payment instruction in ING (resource identification of the generated payment initiation resource).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/X-Request-ID"
+          "name" : "X-Request-ID",
+          "in" : "header",
+          "description" : "ID of the request, unique to the call, as determined by the initiating party (TPP).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/AuthorizationInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Bearer Token. Represents TPP Application Access Token. The process to obtain the Application Access Token is described in Client Credentials \"Authentication Flow\": https://developer.ing.com/openbanking/get-started",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./_,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. For more details refer to: https://developer.ing.com/openbanking/get-started Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers required for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./\"_=,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,='+ -]+$"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard HTTP header element for date and time. HTTP headers are represented as RFC 7231, chapter 7.1.1.1.  Date/Time Formats. Format: EEE, dd MMM yyyy HH:mm:ss 'GMT'",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/PSU-IP-Address_optional"
+          "name" : "PSU-IP-Address",
+          "in" : "header",
+          "description" : "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP.",
+          "required" : false,
+          "type" : "string",
+          "format" : "ipv4,ipv6"
         } ],
         "responses" : {
           "200" : {
@@ -1037,29 +1833,49 @@
             }
           },
           "400" : {
-            "$ref" : "#/responses/400BadRequest"
+            "description" : "Bad Request.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "401" : {
-            "$ref" : "#/responses/401Unauthorised"
+            "description" : "Unauthorised.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "403" : {
-            "$ref" : "#/responses/403Forbidden"
+            "description" : "Forbidden.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "404" : {
-            "$ref" : "#/responses/404NotFound"
+            "description" : "Not Found.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "422" : {
-            "$ref" : "#/responses/422UnProcessableEntity"
+            "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "500" : {
-            "$ref" : "#/responses/500TechnicalError"
+            "description" : "Internal Server Error.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "503" : {
-            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+            "description" : "SERVICE UNAVAILABLE.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           }
         }
-      },
-      "parameters" : [ ]
+      }
     },
     "/v1/bulk-payments/{payment-product}" : {
       "post" : {
@@ -1070,21 +1886,60 @@
         "consumes" : [ "application/json" ],
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "$ref" : "#/parameters/payment-product"
+          "name" : "payment-product",
+          "in" : "path",
+          "description" : "The addressed payment product endpoint. The list of products supported is - sepa-credit-transfers - cross-border-credit-transfers - domestic-credit-transfers In due course, ING can communicate additional supported payment products.",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "sepa-credit-transfers", "cross-border-credit-transfers", "domestic-credit-transfers" ]
         }, {
-          "$ref" : "#/parameters/X-Request-ID"
+          "name" : "X-Request-ID",
+          "in" : "header",
+          "description" : "ID of the request, unique to the call, as determined by the initiating party (TPP).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/AuthorizationInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Bearer Token. Represents TPP Application Access Token. The process to obtain the Application Access Token is described in Client Credentials \"Authentication Flow\": https://developer.ing.com/openbanking/get-started",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./_,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. For more details refer to: https://developer.ing.com/openbanking/get-started Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers required for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./\"_=,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,='+ -]+$"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard HTTP header element for date and time. HTTP headers are represented as RFC 7231, chapter 7.1.1.1.  Date/Time Formats. Format: EEE, dd MMM yyyy HH:mm:ss 'GMT'",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/TPP-Redirect-URI"
+          "name" : "TPP-Redirect-URI",
+          "in" : "header",
+          "description" : "URI of the TPP, where the transaction flow shall be redirected to after a Redirect",
+          "required" : true,
+          "type" : "string",
+          "format" : "uri"
         }, {
-          "$ref" : "#/parameters/PSU-IP-Address_mandatory"
+          "name" : "PSU-IP-Address",
+          "in" : "header",
+          "description" : "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP.",
+          "required" : true,
+          "type" : "string",
+          "format" : "ipv4,ipv6"
         }, {
           "in" : "body",
           "name" : "body",
@@ -1122,36 +1977,56 @@
               }
             },
             "schema" : {
-              "$ref" : "#/definitions/PaymentInitiationResponse"
+              "$ref" : "#/definitions/BulkPaymentInitiationResponse"
             }
           },
           "400" : {
-            "$ref" : "#/responses/400BadRequest"
+            "description" : "Bad Request.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "401" : {
-            "$ref" : "#/responses/401Unauthorised"
+            "description" : "Unauthorised.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "403" : {
-            "$ref" : "#/responses/403Forbidden"
+            "description" : "Forbidden.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "404" : {
-            "$ref" : "#/responses/404NotFound"
+            "description" : "Not Found.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "422" : {
-            "$ref" : "#/responses/422UnProcessableEntity"
+            "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "500" : {
-            "$ref" : "#/responses/500TechnicalError"
+            "description" : "Internal Server Error.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "503" : {
-            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+            "description" : "SERVICE UNAVAILABLE.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           }
         },
         "security" : [ {
           "ING-Application-Security" : [ "payment-accounts:orders:create" ]
         } ]
-      },
-      "parameters" : [ ]
+      }
     },
     "/v1/bulk-payments/{payment-product}/{paymentId}" : {
       "get" : {
@@ -1160,21 +2035,60 @@
         "description" : "This operation will return the bulk payment initiation details based on the unique identifier of the payment (paymentId), as provided by ING as part of the response of the bulk payment initiation request.",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "$ref" : "#/parameters/payment-product"
+          "name" : "payment-product",
+          "in" : "path",
+          "description" : "The addressed payment product endpoint. The list of products supported is - sepa-credit-transfers - cross-border-credit-transfers - domestic-credit-transfers In due course, ING can communicate additional supported payment products.",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "sepa-credit-transfers", "cross-border-credit-transfers", "domestic-credit-transfers" ]
         }, {
-          "$ref" : "#/parameters/paymentId"
+          "name" : "paymentId",
+          "in" : "path",
+          "description" : "Identification of payment instruction in ING (resource identification of the generated payment initiation resource).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/X-Request-ID"
+          "name" : "X-Request-ID",
+          "in" : "header",
+          "description" : "ID of the request, unique to the call, as determined by the initiating party (TPP).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/AuthorizationInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Bearer Token. Represents TPP Application Access Token. The process to obtain the Application Access Token is described in Client Credentials \"Authentication Flow\": https://developer.ing.com/openbanking/get-started",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./_,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. For more details refer to: https://developer.ing.com/openbanking/get-started Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers required for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./\"_=,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,='+ -]+$"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard HTTP header element for date and time. HTTP headers are represented as RFC 7231, chapter 7.1.1.1.  Date/Time Formats. Format: EEE, dd MMM yyyy HH:mm:ss 'GMT'",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/PSU-IP-Address_optional"
+          "name" : "PSU-IP-Address",
+          "in" : "header",
+          "description" : "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP.",
+          "required" : false,
+          "type" : "string",
+          "format" : "ipv4,ipv6"
         } ],
         "responses" : {
           "200" : {
@@ -1196,25 +2110,46 @@
             }
           },
           "400" : {
-            "$ref" : "#/responses/400BadRequest"
+            "description" : "Bad Request.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "401" : {
-            "$ref" : "#/responses/401Unauthorised"
+            "description" : "Unauthorised.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "403" : {
-            "$ref" : "#/responses/403Forbidden"
+            "description" : "Forbidden.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "404" : {
-            "$ref" : "#/responses/404NotFound"
+            "description" : "Not Found.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "422" : {
-            "$ref" : "#/responses/422UnProcessableEntity"
+            "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "500" : {
-            "$ref" : "#/responses/500TechnicalError"
+            "description" : "Internal Server Error.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "503" : {
-            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+            "description" : "SERVICE UNAVAILABLE.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           }
         }
       },
@@ -1224,21 +2159,60 @@
         "description" : "This operation will cancel the initiated bulk payment based on the unique identifier of the payment (paymentId), as provided by ING as part of the response of the bulk payment initiation request. The response to this request will inform the requester whether the cancellation of the bulk payment was * successful (204) or, * not successful (4xx).",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "$ref" : "#/parameters/payment-product"
+          "name" : "payment-product",
+          "in" : "path",
+          "description" : "The addressed payment product endpoint. The list of products supported is - sepa-credit-transfers - cross-border-credit-transfers - domestic-credit-transfers In due course, ING can communicate additional supported payment products.",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "sepa-credit-transfers", "cross-border-credit-transfers", "domestic-credit-transfers" ]
         }, {
-          "$ref" : "#/parameters/paymentId"
+          "name" : "paymentId",
+          "in" : "path",
+          "description" : "Identification of payment instruction in ING (resource identification of the generated payment initiation resource).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/X-Request-ID"
+          "name" : "X-Request-ID",
+          "in" : "header",
+          "description" : "ID of the request, unique to the call, as determined by the initiating party (TPP).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/AuthorizationInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Bearer Token. Represents TPP Application Access Token. The process to obtain the Application Access Token is described in Client Credentials \"Authentication Flow\": https://developer.ing.com/openbanking/get-started",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./_,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. For more details refer to: https://developer.ing.com/openbanking/get-started Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers required for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./\"_=,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,='+ -]+$"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard HTTP header element for date and time. HTTP headers are represented as RFC 7231, chapter 7.1.1.1.  Date/Time Formats. Format: EEE, dd MMM yyyy HH:mm:ss 'GMT'",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/PSU-IP-Address_optional"
+          "name" : "PSU-IP-Address",
+          "in" : "header",
+          "description" : "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP.",
+          "required" : false,
+          "type" : "string",
+          "format" : "ipv4,ipv6"
         } ],
         "responses" : {
           "204" : {
@@ -1257,29 +2231,49 @@
             }
           },
           "400" : {
-            "$ref" : "#/responses/400BadRequest"
+            "description" : "Bad Request.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "401" : {
-            "$ref" : "#/responses/401Unauthorised"
+            "description" : "Unauthorised.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "403" : {
-            "$ref" : "#/responses/403Forbidden"
+            "description" : "Forbidden.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "404" : {
-            "$ref" : "#/responses/404NotFound"
+            "description" : "Not Found.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "422" : {
-            "$ref" : "#/responses/422UnProcessableEntity"
+            "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "500" : {
-            "$ref" : "#/responses/500TechnicalError"
+            "description" : "Internal Server Error.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "503" : {
-            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+            "description" : "SERVICE UNAVAILABLE.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           }
         }
-      },
-      "parameters" : [ ]
+      }
     },
     "/v1/bulk-payments/{payment-product}/{paymentId}/status" : {
       "get" : {
@@ -1288,21 +2282,60 @@
         "description" : "This operation will return the status of the bulk payment based on the unique identifier of the bulk payment (paymentId), as provided by ING as part of the response of the bulk payment initiation request.",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "$ref" : "#/parameters/payment-product"
+          "name" : "payment-product",
+          "in" : "path",
+          "description" : "The addressed payment product endpoint. The list of products supported is - sepa-credit-transfers - cross-border-credit-transfers - domestic-credit-transfers In due course, ING can communicate additional supported payment products.",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "sepa-credit-transfers", "cross-border-credit-transfers", "domestic-credit-transfers" ]
         }, {
-          "$ref" : "#/parameters/paymentId"
+          "name" : "paymentId",
+          "in" : "path",
+          "description" : "Identification of payment instruction in ING (resource identification of the generated payment initiation resource).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/X-Request-ID"
+          "name" : "X-Request-ID",
+          "in" : "header",
+          "description" : "ID of the request, unique to the call, as determined by the initiating party (TPP).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
         }, {
-          "$ref" : "#/parameters/AuthorizationInHeader"
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Bearer Token. Represents TPP Application Access Token. The process to obtain the Application Access Token is described in Client Credentials \"Authentication Flow\": https://developer.ing.com/openbanking/get-started",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./_,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/SignatureInHeader"
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. For more details refer to: https://developer.ing.com/openbanking/get-started Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers required for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./\"_=,'+ -]+$"
         }, {
-          "$ref" : "#/parameters/DigestInHeader"
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,='+ -]+$"
         }, {
-          "$ref" : "#/parameters/DateInHeader"
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard HTTP header element for date and time. HTTP headers are represented as RFC 7231, chapter 7.1.1.1.  Date/Time Formats. Format: EEE, dd MMM yyyy HH:mm:ss 'GMT'",
+          "required" : true,
+          "type" : "string"
         }, {
-          "$ref" : "#/parameters/PSU-IP-Address_optional"
+          "name" : "PSU-IP-Address",
+          "in" : "header",
+          "description" : "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP.",
+          "required" : false,
+          "type" : "string",
+          "format" : "ipv4,ipv6"
         } ],
         "responses" : {
           "200" : {
@@ -1324,29 +2357,49 @@
             }
           },
           "400" : {
-            "$ref" : "#/responses/400BadRequest"
+            "description" : "Bad Request.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "401" : {
-            "$ref" : "#/responses/401Unauthorised"
+            "description" : "Unauthorised.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "403" : {
-            "$ref" : "#/responses/403Forbidden"
+            "description" : "Forbidden.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "404" : {
-            "$ref" : "#/responses/404NotFound"
+            "description" : "Not Found.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "422" : {
-            "$ref" : "#/responses/422UnProcessableEntity"
+            "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "500" : {
-            "$ref" : "#/responses/500TechnicalError"
+            "description" : "Internal Server Error.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           },
           "503" : {
-            "$ref" : "#/responses/500SERVICEUNAVAILABLE"
+            "description" : "SERVICE UNAVAILABLE.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
           }
         }
-      },
-      "parameters" : [ ]
+      }
     }
   },
   "securityDefinitions" : {
@@ -1407,10 +2460,12 @@
       "type" : "string"
     },
     "SinglePaymentStatusXML" : {
-      "type" : "string"
+      "type" : "string",
+      "example" : "?xml version=\"1.0\" encoding=\"UTF-8\"?\nDocument xmlns=\"urn:iso:std:iso:20022:tech:xsd:pain.002.001.03\"\n.CstmrPmtStsRpt\n...GrpHdr\n.....!-- other properties removed for brevity --\n.../GrpHdr\n...OrgnlGrpInfAndSts\n.....!-- other properties removed for brevity --\n.../OrgnlGrpInfAndSts\n...OrgnlPmtInfAndSts\n.....!-- other properties removed for brevity --\n.....PmtInfSts\n.......ACCP\n...../PmtInfSts\n.....StsRsnInf\n.......AddtlInf\n.........fundsAvailable: true  !-- can be true|false|unknown --\n......./AddtlInf\n.......AddtlInf\n.........fundsAvailableTimestamp: 1676041197  !-- epoch in seconds --\n......./AddtlInf\n...../StsRsnInf\n.../OrgnlPmtInfAndSts\n./CstmrPmtStsRpt\n/Document\n"
     },
     "SinglePaymentStatusXML_V2" : {
-      "type" : "string"
+      "type" : "string",
+      "example" : "?xml version=\"1.0\" encoding=\"UTF-8\"?\nDocument xmlns=\"urn:iso:std:iso:20022:tech:xsd:pain.002.001.11\"\n.CstmrPmtStsRpt\n...GrpHdr\n.....!-- other properties removed for brevity --\n.../GrpHdr\n...OrgnlGrpInfAndSts\n.....!-- other properties removed for brevity --\n.../OrgnlGrpInfAndSts\n...OrgnlPmtInfAndSts\n.....!-- other properties removed for brevity --\n.....PmtInfSts\n.......ACCP\n...../PmtInfSts\n.....StsRsnInf\n.......AddtlInf\n.........fundsAvailable: true  !-- can be true|false|unknown --\n......./AddtlInf\n.......AddtlInf\n.........fundsAvailableTimestamp: 1676041197  !-- epoch in seconds --\n......./AddtlInf\n...../StsRsnInf\n.../OrgnlPmtInfAndSts\n./CstmrPmtStsRpt\n/Document\n"
     },
     "PaymentInstruction" : {
       "type" : "object",
@@ -1684,7 +2739,7 @@
         },
         "bban" : {
           "type" : "string",
-          "example" : "1.23456789E8",
+          "example" : "0123456789",
           "description" : "This data elements is used for payment accounts which have no IBAN.",
           "minLength" : 1,
           "maxLength" : 34,
@@ -1968,7 +3023,8 @@
         },
         "addtlInf" : {
           "type" : "array",
-          "description" : "Additional Information - further details on the status reason",
+          "example" : [ "fundsAvailable: true", "fundsAvailableTimestamp: 1674550348" ],
+          "description" : "Additional Information - further details on the status reason.\n  - fundsAvailable - \n    - 'true'    - There was sufficient balance in the account to cover the amount in payment request at the time when it is checked.\n    - 'false'   - There was not enough balance in the account to cover the amount in payment request at the time when it is checked.\n    - 'unknown' - Either balance check did not happen or balance check failed.\n  - fundsAvailableTimestamp -\n      Date and time of funds availability check in epoch time (seconds)",
           "items" : {
             "type" : "string",
             "minLength" : 1,
@@ -2026,7 +3082,7 @@
           "type" : "string",
           "format" : "uri",
           "example" : "https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL",
-          "description" : "'ING is transmitting the link to which to redirect the PSU browser.'",
+          "description" : "'ING is transmitting the link to which to redirect the PSU browser.'  \nIf payment request is eligible for 1xSCA, link will contain externalSource and externalReference query parameters:  \n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL?externalSource=PIS&externalReference=7744b93c-f02d-4eb6-b467-afb78a962d4f  \notherwise:  \n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL\n",
           "x-ing-type" : "string"
         },
         "self" : {
@@ -2060,7 +3116,7 @@
           "type" : "string",
           "format" : "uri",
           "example" : "https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL",
-          "description" : "'ING is transmitting the link to which to redirect the PSU browser.'",
+          "description" : "'ING is transmitting the link to which to redirect the PSU browser.'  \nIf payment request is eligible for 1xSCA, link will contain externalSource and externalReference query parameters:  \n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL?externalSource=PIS&externalReference=7744b93c-f02d-4eb6-b467-afb78a962d4f  \notherwise:  \n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL\n",
           "x-ing-type" : "string"
         },
         "self" : {
@@ -2093,8 +3149,8 @@
         "scaRedirect" : {
           "type" : "string",
           "format" : "uri",
-          "example" : "https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL",
-          "description" : "'ING is transmitting the link to which to redirect the PSU browser.'",
+          "example" : "https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL?type=bulk",
+          "description" : "'ING is transmitting the link to which to redirect the PSU browser.'  \nIf payment request is eligible for 1xSCA, link will contain externalSource and externalReference query parameters:  \n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL?type=bulk&externalSource=PIS&externalReference=7744b93c-f02d-4eb6-b467-afb78a962d4f  \notherwise:  \n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL?type=bulk\n",
           "x-ing-type" : "string"
         },
         "self" : {

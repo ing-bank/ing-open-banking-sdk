@@ -17,7 +17,7 @@ public class Psd2AccountInfo {
     public static void getAccountInfo() throws ApiException {
         TokenResponse customerToken = Psd2CustomerToken.getCustomerToken();
 
-        String keyId = "SN=5E4299BE";
+        String keyId = "SN=546212FB";
         char[] keyStorePassword = "secret2".toCharArray();
         String keyStoreFileName = "keystore-psd2.jks";
 

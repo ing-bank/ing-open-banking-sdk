@@ -1196,6 +1196,10 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
     mandatoryHeaders.put("Digest", digest(body == null ? "" : body.toString()));
     mandatoryHeaders.put("Date", ZonedDateTime.now(ZoneId.of("GMT")).format(FORMATTER));
 
+    if (!queryParams.isEmpty()) {
+        path = target.getUri().getRawPath() + "?" + target.getUri().getRawQuery();
+    }
+
     String signature = sign(signer, method.toLowerCase(), path, mandatoryHeaders).toString();
 
     if (!headerParams.containsKey("Authorization")) mandatoryHeaders.put("Authorization", "Bearer " + applicationAccessToken);

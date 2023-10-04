@@ -19,7 +19,6 @@ import java.security.cert.Certificate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import static com.ing.developer.common.Utils.getTimeStamp;
 
@@ -54,7 +53,7 @@ public class OpenBankingOAuthApi {
         String signature = Signing.sign(getFeatSigner(clientId), "get", path, getMandatoryHeaders(digest, date)).toString().substring("Signature ".length());
         try {
             AuthorizationURLResponse response = client.authorizationServerUrlUsingGET("Bearer " + token.getAccessToken(), signature, date, digest, scope, redirectUri, countryCode);
-            return response.getLocation() + "?client_id=" + clientId + "&scope=" + scope.replace(" ", "%20") + "&redirect_uri=" + redirectUri + "&state=" + UUID.randomUUID();
+            return response.getLocation() + "?client_id=" + clientId + "&scope=" + scope.replace(" ", "%20") + "&redirect_uri=" + redirectUri;
         } catch (ApiException e) {
             return Utils.throwHttpExceptionBasedOnStatusCode(e.getCode(), "", e.getMessage());
         }

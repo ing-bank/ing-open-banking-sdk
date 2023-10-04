@@ -3,7 +3,7 @@ import com.ing.developer.common.Utils;
 import com.ing.developer.common.clients.Companion;
 import com.ing.developer.showcase.client.ApiClient;
 import com.ing.developer.showcase.client.ApiException;
-import com.ing.developer.showcase.client.api.GreetingsApi;
+import com.ing.developer.showcase.client.api.ShowcaseApiApi;
 
 import javax.ws.rs.client.ClientBuilder;
 
@@ -23,7 +23,7 @@ public class PremiumShowcaseAPI {
     public static void callShowcaseAPI() throws ApiException {
         Utils.Pair<PrivateKey, ClientBuilder> trustMaterial = Companion.Utils.createOpenBankingClient(keyStoreFileName, keyStorePassword, false, null, null, false, false);
         ApiClient clientAPI = new ApiClient(clientId, trustMaterial.getFirst(), trustMaterial.getSecond());
-        GreetingsApi greetingsApi = new GreetingsApi(clientAPI);
+        ShowcaseApiApi greetingsApi = new ShowcaseApiApi(clientAPI);
         String greeting = greetingsApi.greetingsSingleGet(null).getMessage();
         System.out.println(greeting);
     }
@@ -31,7 +31,7 @@ public class PremiumShowcaseAPI {
     public static void callShowcaseAPIMTLSPinning() throws ApiException {
         Utils.Pair<PrivateKey, ClientBuilder> trustMaterial = Companion.Utils.createOpenBankingClient(keyStoreFileName, keyStorePassword, false, null, null, false, false);
         ApiClient clientAPI = new ApiClient(clientId, trustMaterial.getFirst(), trustMaterial.getSecond()).setMTLSPinning(true);
-        GreetingsApi greetingsApi = new GreetingsApi(clientAPI);
+        ShowcaseApiApi greetingsApi = new ShowcaseApiApi(clientAPI);
         String greeting = greetingsApi.mtlsOnlyGreetingsGet(null).getMessage();
         System.out.println(greeting);
     }
@@ -40,7 +40,7 @@ public class PremiumShowcaseAPI {
         Utils.Pair<Certificate, PrivateKey> trustMaterial = Companion.Utils.getTrustMaterial(keyStoreFileName, keyStorePassword);
         Utils.Pair<PrivateKey, ClientBuilder> openBankingClient = Companion.Utils.createOpenBankingClient(keyStoreFileName, keyStorePassword, false, null, null, false, false);
         ApiClient clientAPI = new ApiClient(clientId, trustMaterial.getSecond(), openBankingClient.getSecond(), null, trustMaterial.getFirst()).setMTLSPinning(true).setJwsSigning(true);
-        GreetingsApi greetingsApi = new GreetingsApi(clientAPI);
+        ShowcaseApiApi greetingsApi = new ShowcaseApiApi(clientAPI);
         String greeting = greetingsApi.signedGreetingsGet(null,null).getMessage();
         System.out.println(greeting);
     }

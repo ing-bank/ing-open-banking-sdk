@@ -3,7 +3,7 @@ package com.ing.developer.app.configuration;
 import com.ing.developer.common.Utils;
 import com.ing.developer.common.clients.Companion;
 import com.ing.developer.showcase.client.ApiClient;
-import com.ing.developer.showcase.client.api.GreetingsApi;
+import com.ing.developer.showcase.client.api.ShowcaseApiApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
@@ -33,8 +33,8 @@ public class GreetingsConfiguration {
     }
 
     @Bean
-    public GreetingsApi greetingsApi() {
-        return new GreetingsApi(buildClient());
+    public ShowcaseApiApi greetingsApi() {
+        return new ShowcaseApiApi(buildClient());
     }
 
     private ApiClient buildClient() {

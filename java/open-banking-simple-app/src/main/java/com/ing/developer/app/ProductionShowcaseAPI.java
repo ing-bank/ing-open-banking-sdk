@@ -4,7 +4,7 @@ import com.ing.developer.common.Utils;
 import com.ing.developer.common.clients.Companion;
 import com.ing.developer.showcase.client.ApiClient;
 import com.ing.developer.showcase.client.ApiException;
-import com.ing.developer.showcase.client.api.GreetingsApi;
+import com.ing.developer.showcase.client.api.ShowcaseApiApi;
 
 import javax.ws.rs.client.ClientBuilder;
 import java.security.PrivateKey;
@@ -21,7 +21,7 @@ public class ProductionShowcaseAPI {
 
         Utils.Pair<PrivateKey, ClientBuilder> trustMaterial = Companion.Utils.createOpenBankingClient(keyStoreFileName, keyStorePassword, false, null, null, false, false);
         ApiClient clientAPI = new ApiClient(clientId, trustMaterial.getFirst(), trustMaterial.getSecond());
-        GreetingsApi greetingsApi = new GreetingsApi(clientAPI);
+        ShowcaseApiApi greetingsApi = new ShowcaseApiApi(clientAPI);
         String greeting = greetingsApi.greetingsSingleGet(null).getMessage();
         System.out.println(greeting);
     }

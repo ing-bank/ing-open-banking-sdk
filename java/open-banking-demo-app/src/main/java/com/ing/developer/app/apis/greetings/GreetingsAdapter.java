@@ -1,22 +1,17 @@
 package com.ing.developer.app.apis.greetings;
 
-import com.ing.developer.common.Utils;
-import com.ing.developer.common.clients.Companion;
 import com.ing.developer.showcase.client.ApiException;
-import com.ing.developer.showcase.client.api.GreetingsApi;
+import com.ing.developer.showcase.client.api.ShowcaseApiApi;
 import org.springframework.stereotype.Component;
-
-import java.security.PrivateKey;
-import java.security.cert.Certificate;
 
 import static com.ing.developer.app.common.GenericAdapterErrorHandler.throwInternalizedException;
 
 @Component
 public class GreetingsAdapter {
 
-    private final GreetingsApi greetingsApi;
+    private final ShowcaseApiApi greetingsApi;
 
-    public GreetingsAdapter(GreetingsApi greetingsApi) {
+    public GreetingsAdapter(ShowcaseApiApi greetingsApi) {
         this.greetingsApi = greetingsApi;
     }
 

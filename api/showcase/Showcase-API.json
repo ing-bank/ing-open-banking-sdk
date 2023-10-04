@@ -1,108 +1,559 @@
 {
-  "swagger" : "2.0",
+  "openapi" : "3.0.1",
   "info" : {
-    "description" : "The API shows the Open Banking Platform in operation through its endpoints. It is available on the marketplace to subscribe to, and it is accessible to internal and external applications. The endpoints corresponding to each flavour of interacting with Open Banking API's:\n- no signature (MTLS-only) `/mtls-only/greetings`\n- signature (JWS) `/signed/greetings`\n- Still in use but soon to be replaced by the JWS signature, HTTP signature `/greetings/single`",
-    "version" : "2.1.2",
     "title" : "Showcase API",
+    "description" : "The API shows the Open Banking Platform in operation through its endpoints. It is available on the marketplace to subscribe to, and it is accessible to internal and external applications. The endpoints corresponding to each flavour of interacting with Open Banking API's:\n- `/mtls-only/greetings`: no signature (MTLS-only)\n- `/signed/greetings`: signature (JWS)\n- `/greetings/single`: still in use but soon to be replaced by the JWS signature, HTTP signature",
     "contact" : {
       "name" : "ING Developer Portal",
       "url" : "https://developer.ing.com",
       "email" : "apis@ing.com"
-    }
+    },
+    "version" : "3.1.1"
   },
-  "host" : "api.ing.com",
-  "basePath" : "/",
-  "tags" : [ {
-    "name" : "greetings"
+  "servers" : [ {
+    "url" : "https://api.ing.com"
   } ],
-  "schemes" : [ "https" ],
+  "security" : [ {
+    "ING-Application-Security" : [ "greetings:view" ]
+  } ],
+  "tags" : [ {
+    "name" : "Showcase API",
+    "description" : "Returns a message generated with a unique id and a timestamp indicating when it was produced."
+  } ],
   "paths" : {
-    "/greetings/single" : {
+    "/signed/greetings" : {
       "get" : {
-        "tags" : [ "greetings" ],
+        "tags" : [ "Showcase API" ],
         "summary" : "Gives a greeting message from one of the available instances",
-        "description" : "Returns a message generated with a unique id and a timestamp indicating when it was produced.\n ## Deprecation note:\nWe are moving from HTTP signature. You still can use this endpoint in cases where you plan to consume endpoints that require HTTP signature. But over time, all endpoints will require either JWS-signature or no signature at all (MTLS-only). If you plan to consume such endpoints, please use `/signed/greetings` or `/mtls-only/greetings` respectively",
-        "operationId" : "greetingsSingleGet",
-        "consumes" : [ "application/json" ],
-        "produces" : [ "application/json" ],
+        "description" : "Returns a message generated with a unique id and a timestamp indicating when it was produced.",
+        "operationId" : "signedGreetingsGet",
         "parameters" : [ {
           "name" : "Authorization",
           "in" : "header",
-          "description" : "OAuth2 token",
+          "description" : "OAuth2 Token.",
           "required" : true,
-          "type" : "string"
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "x-ing-type" : "string"
+          }
         }, {
-          "name" : "Signature",
+          "name" : "X-JWS-Signature",
           "in" : "header",
-          "description" : "An HTTP signature of the request by the third party on application level. See \"Get Started\" for more information on how to generate.",
+          "description" : "A JWS signature of the request by the third party on application level. See \"Get Started\" for more information on how to generate",
           "required" : true,
-          "type" : "string"
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "x-ing-type" : "string"
+          }
         }, {
           "name" : "Digest",
           "in" : "header",
           "description" : "SHA256 of the body.",
           "required" : true,
-          "type" : "string"
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "x-ing-type" : "string"
+          }
         }, {
           "name" : "Date",
           "in" : "header",
-          "description" : "Standard http header element for date and time",
+          "description" : "Standard http header element for date and time.",
           "required" : true,
-          "type" : "string",
-          "format" : "date-time"
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time",
+            "x-ing-type" : "string"
+          }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "OK",
-            "headers" : {
-              "X-ING-ReqID" : {
-                "type" : "string",
-                "description" : "Request ID, can be a UUID",
-                "x-ing-type" : "string"
-              },
-              "X-ING-Response-ID" : {
-                "type" : "string",
-                "description" : "Response UUID, if X-ING-ReqID supplied in the request",
-                "x-ing-type" : "string"
-              },
-              "Signature" : {
-                "type" : "string",
-                "description" : "A signature of the response based on X-ING-ReqID and X-ING-Response-ID. This header is deprecated",
-                "x-ing-type" : "string"
+          "500" : {
+            "description" : "Internal Server Error - Something went wrong on the server, check status site and/or report the issue. There's no need to really specify this any further (other than 503 below) as the client is powerless in fixing the condition that caused the error.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "required" : [ "code", "innerErrors", "message", "severity" ],
+                  "type" : "object",
+                  "properties" : {
+                    "severity" : {
+                      "type" : "string",
+                      "example" : "CRITICAL",
+                      "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                      "x-ing-type" : "string"
+                    },
+                    "code" : {
+                      "type" : "string",
+                      "description" : "Service-specific error code/keyword",
+                      "example" : "errParseFailed",
+                      "x-ing-type" : "string"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "description" : "A descriptive error message for the consumer",
+                      "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                      "x-ing-type" : "string"
+                    },
+                    "source" : {
+                      "type" : "string",
+                      "description" : "Optional source descriptor for this error",
+                      "example" : "system76",
+                      "x-ing-type" : "string"
+                    },
+                    "target" : {
+                      "type" : "string",
+                      "description" : "Key/value pair indicating which input property caused the error",
+                      "x-ing-type" : "string"
+                    },
+                    "innerErrors" : {
+                      "minItems" : 0,
+                      "type" : "array",
+                      "items" : {
+                        "required" : [ "code", "message", "severity" ],
+                        "type" : "object",
+                        "properties" : {
+                          "severity" : {
+                            "type" : "string",
+                            "example" : "CRITICAL",
+                            "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                            "x-ing-type" : "string"
+                          },
+                          "code" : {
+                            "type" : "string",
+                            "description" : "Service-specific error code/keyword",
+                            "example" : "errParseFailed",
+                            "x-ing-type" : "string"
+                          },
+                          "message" : {
+                            "type" : "string",
+                            "description" : "A descriptive error message for the consumer",
+                            "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                            "x-ing-type" : "string"
+                          },
+                          "source" : {
+                            "type" : "string",
+                            "description" : "Optional source descriptor for this error",
+                            "example" : "system76",
+                            "x-ing-type" : "string"
+                          },
+                          "target" : {
+                            "type" : "string",
+                            "description" : "Key/value pair indicating which input property caused the error",
+                            "x-ing-type" : "string"
+                          }
+                        },
+                        "description" : "Upstream error messages and detailed information on error state",
+                        "x-ing-type" : "object"
+                      },
+                      "x-ing-type" : "array"
+                    }
+                  },
+                  "description" : "Error message.",
+                  "x-ing-type" : "object"
+                }
               }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/Greeting"
             }
           },
           "400" : {
             "description" : "Bad Request - The request was malformed, headers may be missing or invalid.",
-            "schema" : {
-              "$ref" : "#/definitions/Error"
-            }
-          },
-          "401" : {
-            "description" : "Unauthorized - The request did not contain authorisation evidence. A valid subscription to the scope(s) that contain this API endpoint is required to allow the request to succeed.",
-            "schema" : {
-              "$ref" : "#/definitions/Error"
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "required" : [ "code", "innerErrors", "message", "severity" ],
+                  "type" : "object",
+                  "properties" : {
+                    "severity" : {
+                      "type" : "string",
+                      "example" : "CRITICAL",
+                      "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                      "x-ing-type" : "string"
+                    },
+                    "code" : {
+                      "type" : "string",
+                      "description" : "Service-specific error code/keyword",
+                      "example" : "errParseFailed",
+                      "x-ing-type" : "string"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "description" : "A descriptive error message for the consumer",
+                      "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                      "x-ing-type" : "string"
+                    },
+                    "source" : {
+                      "type" : "string",
+                      "description" : "Optional source descriptor for this error",
+                      "example" : "system76",
+                      "x-ing-type" : "string"
+                    },
+                    "target" : {
+                      "type" : "string",
+                      "description" : "Key/value pair indicating which input property caused the error",
+                      "x-ing-type" : "string"
+                    },
+                    "innerErrors" : {
+                      "minItems" : 0,
+                      "type" : "array",
+                      "items" : {
+                        "required" : [ "code", "message", "severity" ],
+                        "type" : "object",
+                        "properties" : {
+                          "severity" : {
+                            "type" : "string",
+                            "example" : "CRITICAL",
+                            "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                            "x-ing-type" : "string"
+                          },
+                          "code" : {
+                            "type" : "string",
+                            "description" : "Service-specific error code/keyword",
+                            "example" : "errParseFailed",
+                            "x-ing-type" : "string"
+                          },
+                          "message" : {
+                            "type" : "string",
+                            "description" : "A descriptive error message for the consumer",
+                            "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                            "x-ing-type" : "string"
+                          },
+                          "source" : {
+                            "type" : "string",
+                            "description" : "Optional source descriptor for this error",
+                            "example" : "system76",
+                            "x-ing-type" : "string"
+                          },
+                          "target" : {
+                            "type" : "string",
+                            "description" : "Key/value pair indicating which input property caused the error",
+                            "x-ing-type" : "string"
+                          }
+                        },
+                        "description" : "Upstream error messages and detailed information on error state",
+                        "x-ing-type" : "object"
+                      },
+                      "x-ing-type" : "array"
+                    }
+                  },
+                  "description" : "Error message.",
+                  "x-ing-type" : "object"
+                }
+              }
             }
           },
           "404" : {
             "description" : "Not Found - The requested resource cannot be found. Check the request URL if it matches with the endpoint described.",
-            "schema" : {
-              "$ref" : "#/definitions/Error"
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "required" : [ "code", "innerErrors", "message", "severity" ],
+                  "type" : "object",
+                  "properties" : {
+                    "severity" : {
+                      "type" : "string",
+                      "example" : "CRITICAL",
+                      "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                      "x-ing-type" : "string"
+                    },
+                    "code" : {
+                      "type" : "string",
+                      "description" : "Service-specific error code/keyword",
+                      "example" : "errParseFailed",
+                      "x-ing-type" : "string"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "description" : "A descriptive error message for the consumer",
+                      "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                      "x-ing-type" : "string"
+                    },
+                    "source" : {
+                      "type" : "string",
+                      "description" : "Optional source descriptor for this error",
+                      "example" : "system76",
+                      "x-ing-type" : "string"
+                    },
+                    "target" : {
+                      "type" : "string",
+                      "description" : "Key/value pair indicating which input property caused the error",
+                      "x-ing-type" : "string"
+                    },
+                    "innerErrors" : {
+                      "minItems" : 0,
+                      "type" : "array",
+                      "items" : {
+                        "required" : [ "code", "message", "severity" ],
+                        "type" : "object",
+                        "properties" : {
+                          "severity" : {
+                            "type" : "string",
+                            "example" : "CRITICAL",
+                            "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                            "x-ing-type" : "string"
+                          },
+                          "code" : {
+                            "type" : "string",
+                            "description" : "Service-specific error code/keyword",
+                            "example" : "errParseFailed",
+                            "x-ing-type" : "string"
+                          },
+                          "message" : {
+                            "type" : "string",
+                            "description" : "A descriptive error message for the consumer",
+                            "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                            "x-ing-type" : "string"
+                          },
+                          "source" : {
+                            "type" : "string",
+                            "description" : "Optional source descriptor for this error",
+                            "example" : "system76",
+                            "x-ing-type" : "string"
+                          },
+                          "target" : {
+                            "type" : "string",
+                            "description" : "Key/value pair indicating which input property caused the error",
+                            "x-ing-type" : "string"
+                          }
+                        },
+                        "description" : "Upstream error messages and detailed information on error state",
+                        "x-ing-type" : "object"
+                      },
+                      "x-ing-type" : "array"
+                    }
+                  },
+                  "description" : "Error message.",
+                  "x-ing-type" : "object"
+                }
+              }
             }
           },
-          "500" : {
-            "description" : "Internal Server Error - Something went wrong on the server, check status site and/or report the issue. There's no need to really specify this any further (other than 503 below) as the client is powerless in fixing the condition that caused the error.",
-            "schema" : {
-              "$ref" : "#/definitions/Error"
+          "401" : {
+            "description" : "Unauthorized - The request did not contain authorisation evidence. A valid subscription to the scope(s) that contain this API endpoint is required to allow the request to succeed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "required" : [ "code", "innerErrors", "message", "severity" ],
+                  "type" : "object",
+                  "properties" : {
+                    "severity" : {
+                      "type" : "string",
+                      "example" : "CRITICAL",
+                      "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                      "x-ing-type" : "string"
+                    },
+                    "code" : {
+                      "type" : "string",
+                      "description" : "Service-specific error code/keyword",
+                      "example" : "errParseFailed",
+                      "x-ing-type" : "string"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "description" : "A descriptive error message for the consumer",
+                      "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                      "x-ing-type" : "string"
+                    },
+                    "source" : {
+                      "type" : "string",
+                      "description" : "Optional source descriptor for this error",
+                      "example" : "system76",
+                      "x-ing-type" : "string"
+                    },
+                    "target" : {
+                      "type" : "string",
+                      "description" : "Key/value pair indicating which input property caused the error",
+                      "x-ing-type" : "string"
+                    },
+                    "innerErrors" : {
+                      "minItems" : 0,
+                      "type" : "array",
+                      "items" : {
+                        "required" : [ "code", "message", "severity" ],
+                        "type" : "object",
+                        "properties" : {
+                          "severity" : {
+                            "type" : "string",
+                            "example" : "CRITICAL",
+                            "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                            "x-ing-type" : "string"
+                          },
+                          "code" : {
+                            "type" : "string",
+                            "description" : "Service-specific error code/keyword",
+                            "example" : "errParseFailed",
+                            "x-ing-type" : "string"
+                          },
+                          "message" : {
+                            "type" : "string",
+                            "description" : "A descriptive error message for the consumer",
+                            "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                            "x-ing-type" : "string"
+                          },
+                          "source" : {
+                            "type" : "string",
+                            "description" : "Optional source descriptor for this error",
+                            "example" : "system76",
+                            "x-ing-type" : "string"
+                          },
+                          "target" : {
+                            "type" : "string",
+                            "description" : "Key/value pair indicating which input property caused the error",
+                            "x-ing-type" : "string"
+                          }
+                        },
+                        "description" : "Upstream error messages and detailed information on error state",
+                        "x-ing-type" : "object"
+                      },
+                      "x-ing-type" : "array"
+                    }
+                  },
+                  "description" : "Error message.",
+                  "x-ing-type" : "object"
+                }
+              }
+            }
+          },
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-ING-Response-ID" : {
+                "description" : "Response UUID, if X-ING-ReqID supplied in the request",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string",
+                  "x-ing-type" : "string"
+                }
+              },
+              "X-ING-ReqID" : {
+                "description" : "Request ID, can be a UUID",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string",
+                  "x-ing-type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "required" : [ "id", "message", "messageTimestamp" ],
+                  "type" : "object",
+                  "properties" : {
+                    "message" : {
+                      "type" : "string",
+                      "description" : "A greeting message.",
+                      "example" : "Welcome to ING!",
+                      "x-ing-type" : "string"
+                    },
+                    "id" : {
+                      "type" : "string",
+                      "description" : "A generated UUID.",
+                      "example" : "aba4b176-8834-467d-9c2a-ee6acfc8fceb",
+                      "x-ing-type" : "string"
+                    },
+                    "messageTimestamp" : {
+                      "type" : "string",
+                      "description" : "The current time (GMT).",
+                      "example" : "2023-07-30 15:42:17 GMT",
+                      "x-ing-type" : "string"
+                    }
+                  },
+                  "x-ing-type" : "object"
+                }
+              }
             }
           },
           "503" : {
             "description" : "Service Unavailable - The API is temporarily unavailable. This is the only 500 code that allows for the client to try and remedy the condition (i.e. by retrying).",
-            "schema" : {
-              "$ref" : "#/definitions/Error"
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "required" : [ "code", "innerErrors", "message", "severity" ],
+                  "type" : "object",
+                  "properties" : {
+                    "severity" : {
+                      "type" : "string",
+                      "example" : "CRITICAL",
+                      "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                      "x-ing-type" : "string"
+                    },
+                    "code" : {
+                      "type" : "string",
+                      "description" : "Service-specific error code/keyword",
+                      "example" : "errParseFailed",
+                      "x-ing-type" : "string"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "description" : "A descriptive error message for the consumer",
+                      "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                      "x-ing-type" : "string"
+                    },
+                    "source" : {
+                      "type" : "string",
+                      "description" : "Optional source descriptor for this error",
+                      "example" : "system76",
+                      "x-ing-type" : "string"
+                    },
+                    "target" : {
+                      "type" : "string",
+                      "description" : "Key/value pair indicating which input property caused the error",
+                      "x-ing-type" : "string"
+                    },
+                    "innerErrors" : {
+                      "minItems" : 0,
+                      "type" : "array",
+                      "items" : {
+                        "required" : [ "code", "message", "severity" ],
+                        "type" : "object",
+                        "properties" : {
+                          "severity" : {
+                            "type" : "string",
+                            "example" : "CRITICAL",
+                            "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                            "x-ing-type" : "string"
+                          },
+                          "code" : {
+                            "type" : "string",
+                            "description" : "Service-specific error code/keyword",
+                            "example" : "errParseFailed",
+                            "x-ing-type" : "string"
+                          },
+                          "message" : {
+                            "type" : "string",
+                            "description" : "A descriptive error message for the consumer",
+                            "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                            "x-ing-type" : "string"
+                          },
+                          "source" : {
+                            "type" : "string",
+                            "description" : "Optional source descriptor for this error",
+                            "example" : "system76",
+                            "x-ing-type" : "string"
+                          },
+                          "target" : {
+                            "type" : "string",
+                            "description" : "Key/value pair indicating which input property caused the error",
+                            "x-ing-type" : "string"
+                          }
+                        },
+                        "description" : "Upstream error messages and detailed information on error state",
+                        "x-ing-type" : "object"
+                      },
+                      "x-ing-type" : "array"
+                    }
+                  },
+                  "description" : "Error message.",
+                  "x-ing-type" : "object"
+                }
+              }
             }
           }
         },
@@ -113,71 +564,503 @@
     },
     "/mtls-only/greetings" : {
       "get" : {
-        "tags" : [ "greetings" ],
+        "tags" : [ "Showcase API" ],
         "summary" : "Gives a greeting message from one of the available instances",
         "description" : "Returns a message generated with a unique id and a timestamp indicating when it was produced.",
         "operationId" : "mtlsOnlyGreetingsGet",
-        "consumes" : [ "application/json" ],
-        "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "Authorization",
           "in" : "header",
-          "description" : "OAuth2 token",
+          "description" : "OAuth2 Token",
           "required" : true,
-          "type" : "string"
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "x-ing-type" : "string"
+          }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "OK",
-            "headers" : {
-              "X-ING-ReqID" : {
-                "type" : "string",
-                "description" : "Request ID, can be a UUID",
-                "x-ing-type" : "string"
-              },
-              "X-ING-Response-ID" : {
-                "type" : "string",
-                "description" : "Response UUID, if X-ING-ReqID supplied in the request",
-                "x-ing-type" : "string"
-              },
-              "Signature" : {
-                "type" : "string",
-                "description" : "A signature of the response based on X-ING-ReqID and X-ING-Response-ID. This header is deprecated",
-                "x-ing-type" : "string"
+          "500" : {
+            "description" : "Internal Server Error - Something went wrong on the server, check status site and/or report the issue. There's no need to really specify this any further (other than 503 below) as the client is powerless in fixing the condition that caused the error.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "required" : [ "code", "innerErrors", "message", "severity" ],
+                  "type" : "object",
+                  "properties" : {
+                    "severity" : {
+                      "type" : "string",
+                      "example" : "CRITICAL",
+                      "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                      "x-ing-type" : "string"
+                    },
+                    "code" : {
+                      "type" : "string",
+                      "description" : "Service-specific error code/keyword",
+                      "example" : "errParseFailed",
+                      "x-ing-type" : "string"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "description" : "A descriptive error message for the consumer",
+                      "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                      "x-ing-type" : "string"
+                    },
+                    "source" : {
+                      "type" : "string",
+                      "description" : "Optional source descriptor for this error",
+                      "example" : "system76",
+                      "x-ing-type" : "string"
+                    },
+                    "target" : {
+                      "type" : "string",
+                      "description" : "Key/value pair indicating which input property caused the error",
+                      "x-ing-type" : "string"
+                    },
+                    "innerErrors" : {
+                      "minItems" : 0,
+                      "type" : "array",
+                      "items" : {
+                        "required" : [ "code", "message", "severity" ],
+                        "type" : "object",
+                        "properties" : {
+                          "severity" : {
+                            "type" : "string",
+                            "example" : "CRITICAL",
+                            "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                            "x-ing-type" : "string"
+                          },
+                          "code" : {
+                            "type" : "string",
+                            "description" : "Service-specific error code/keyword",
+                            "example" : "errParseFailed",
+                            "x-ing-type" : "string"
+                          },
+                          "message" : {
+                            "type" : "string",
+                            "description" : "A descriptive error message for the consumer",
+                            "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                            "x-ing-type" : "string"
+                          },
+                          "source" : {
+                            "type" : "string",
+                            "description" : "Optional source descriptor for this error",
+                            "example" : "system76",
+                            "x-ing-type" : "string"
+                          },
+                          "target" : {
+                            "type" : "string",
+                            "description" : "Key/value pair indicating which input property caused the error",
+                            "x-ing-type" : "string"
+                          }
+                        },
+                        "description" : "Upstream error messages and detailed information on error state",
+                        "x-ing-type" : "object"
+                      },
+                      "x-ing-type" : "array"
+                    }
+                  },
+                  "description" : "Error message.",
+                  "x-ing-type" : "object"
+                }
               }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/Greeting"
             }
           },
           "400" : {
             "description" : "Bad Request - The request was malformed, headers may be missing or invalid.",
-            "schema" : {
-              "$ref" : "#/definitions/Error"
-            }
-          },
-          "401" : {
-            "description" : "Unauthorized - The request did not contain authorisation evidence. A valid subscription to the scope(s) that contain this API endpoint is required to allow the request to succeed.",
-            "schema" : {
-              "$ref" : "#/definitions/Error"
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "required" : [ "code", "innerErrors", "message", "severity" ],
+                  "type" : "object",
+                  "properties" : {
+                    "severity" : {
+                      "type" : "string",
+                      "example" : "CRITICAL",
+                      "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                      "x-ing-type" : "string"
+                    },
+                    "code" : {
+                      "type" : "string",
+                      "description" : "Service-specific error code/keyword",
+                      "example" : "errParseFailed",
+                      "x-ing-type" : "string"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "description" : "A descriptive error message for the consumer",
+                      "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                      "x-ing-type" : "string"
+                    },
+                    "source" : {
+                      "type" : "string",
+                      "description" : "Optional source descriptor for this error",
+                      "example" : "system76",
+                      "x-ing-type" : "string"
+                    },
+                    "target" : {
+                      "type" : "string",
+                      "description" : "Key/value pair indicating which input property caused the error",
+                      "x-ing-type" : "string"
+                    },
+                    "innerErrors" : {
+                      "minItems" : 0,
+                      "type" : "array",
+                      "items" : {
+                        "required" : [ "code", "message", "severity" ],
+                        "type" : "object",
+                        "properties" : {
+                          "severity" : {
+                            "type" : "string",
+                            "example" : "CRITICAL",
+                            "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                            "x-ing-type" : "string"
+                          },
+                          "code" : {
+                            "type" : "string",
+                            "description" : "Service-specific error code/keyword",
+                            "example" : "errParseFailed",
+                            "x-ing-type" : "string"
+                          },
+                          "message" : {
+                            "type" : "string",
+                            "description" : "A descriptive error message for the consumer",
+                            "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                            "x-ing-type" : "string"
+                          },
+                          "source" : {
+                            "type" : "string",
+                            "description" : "Optional source descriptor for this error",
+                            "example" : "system76",
+                            "x-ing-type" : "string"
+                          },
+                          "target" : {
+                            "type" : "string",
+                            "description" : "Key/value pair indicating which input property caused the error",
+                            "x-ing-type" : "string"
+                          }
+                        },
+                        "description" : "Upstream error messages and detailed information on error state",
+                        "x-ing-type" : "object"
+                      },
+                      "x-ing-type" : "array"
+                    }
+                  },
+                  "description" : "Error message.",
+                  "x-ing-type" : "object"
+                }
+              }
             }
           },
           "404" : {
             "description" : "Not Found - The requested resource cannot be found. Check the request URL if it matches with the endpoint described.",
-            "schema" : {
-              "$ref" : "#/definitions/Error"
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "required" : [ "code", "innerErrors", "message", "severity" ],
+                  "type" : "object",
+                  "properties" : {
+                    "severity" : {
+                      "type" : "string",
+                      "example" : "CRITICAL",
+                      "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                      "x-ing-type" : "string"
+                    },
+                    "code" : {
+                      "type" : "string",
+                      "description" : "Service-specific error code/keyword",
+                      "example" : "errParseFailed",
+                      "x-ing-type" : "string"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "description" : "A descriptive error message for the consumer",
+                      "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                      "x-ing-type" : "string"
+                    },
+                    "source" : {
+                      "type" : "string",
+                      "description" : "Optional source descriptor for this error",
+                      "example" : "system76",
+                      "x-ing-type" : "string"
+                    },
+                    "target" : {
+                      "type" : "string",
+                      "description" : "Key/value pair indicating which input property caused the error",
+                      "x-ing-type" : "string"
+                    },
+                    "innerErrors" : {
+                      "minItems" : 0,
+                      "type" : "array",
+                      "items" : {
+                        "required" : [ "code", "message", "severity" ],
+                        "type" : "object",
+                        "properties" : {
+                          "severity" : {
+                            "type" : "string",
+                            "example" : "CRITICAL",
+                            "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                            "x-ing-type" : "string"
+                          },
+                          "code" : {
+                            "type" : "string",
+                            "description" : "Service-specific error code/keyword",
+                            "example" : "errParseFailed",
+                            "x-ing-type" : "string"
+                          },
+                          "message" : {
+                            "type" : "string",
+                            "description" : "A descriptive error message for the consumer",
+                            "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                            "x-ing-type" : "string"
+                          },
+                          "source" : {
+                            "type" : "string",
+                            "description" : "Optional source descriptor for this error",
+                            "example" : "system76",
+                            "x-ing-type" : "string"
+                          },
+                          "target" : {
+                            "type" : "string",
+                            "description" : "Key/value pair indicating which input property caused the error",
+                            "x-ing-type" : "string"
+                          }
+                        },
+                        "description" : "Upstream error messages and detailed information on error state",
+                        "x-ing-type" : "object"
+                      },
+                      "x-ing-type" : "array"
+                    }
+                  },
+                  "description" : "Error message.",
+                  "x-ing-type" : "object"
+                }
+              }
             }
           },
-          "500" : {
-            "description" : "Internal Server Error - Something went wrong on the server, check status site and/or report the issue. There's no need to really specify this any further (other than 503 below) as the client is powerless in fixing the condition that caused the error.",
-            "schema" : {
-              "$ref" : "#/definitions/Error"
+          "401" : {
+            "description" : "Unauthorized - The request did not contain authorisation evidence. A valid subscription to the scope(s) that contain this API endpoint is required to allow the request to succeed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "required" : [ "code", "innerErrors", "message", "severity" ],
+                  "type" : "object",
+                  "properties" : {
+                    "severity" : {
+                      "type" : "string",
+                      "example" : "CRITICAL",
+                      "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                      "x-ing-type" : "string"
+                    },
+                    "code" : {
+                      "type" : "string",
+                      "description" : "Service-specific error code/keyword",
+                      "example" : "errParseFailed",
+                      "x-ing-type" : "string"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "description" : "A descriptive error message for the consumer",
+                      "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                      "x-ing-type" : "string"
+                    },
+                    "source" : {
+                      "type" : "string",
+                      "description" : "Optional source descriptor for this error",
+                      "example" : "system76",
+                      "x-ing-type" : "string"
+                    },
+                    "target" : {
+                      "type" : "string",
+                      "description" : "Key/value pair indicating which input property caused the error",
+                      "x-ing-type" : "string"
+                    },
+                    "innerErrors" : {
+                      "minItems" : 0,
+                      "type" : "array",
+                      "items" : {
+                        "required" : [ "code", "message", "severity" ],
+                        "type" : "object",
+                        "properties" : {
+                          "severity" : {
+                            "type" : "string",
+                            "example" : "CRITICAL",
+                            "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                            "x-ing-type" : "string"
+                          },
+                          "code" : {
+                            "type" : "string",
+                            "description" : "Service-specific error code/keyword",
+                            "example" : "errParseFailed",
+                            "x-ing-type" : "string"
+                          },
+                          "message" : {
+                            "type" : "string",
+                            "description" : "A descriptive error message for the consumer",
+                            "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                            "x-ing-type" : "string"
+                          },
+                          "source" : {
+                            "type" : "string",
+                            "description" : "Optional source descriptor for this error",
+                            "example" : "system76",
+                            "x-ing-type" : "string"
+                          },
+                          "target" : {
+                            "type" : "string",
+                            "description" : "Key/value pair indicating which input property caused the error",
+                            "x-ing-type" : "string"
+                          }
+                        },
+                        "description" : "Upstream error messages and detailed information on error state",
+                        "x-ing-type" : "object"
+                      },
+                      "x-ing-type" : "array"
+                    }
+                  },
+                  "description" : "Error message.",
+                  "x-ing-type" : "object"
+                }
+              }
+            }
+          },
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-ING-Response-ID" : {
+                "description" : "Response UUID, if X-ING-ReqID supplied in the request",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string",
+                  "x-ing-type" : "string"
+                }
+              },
+              "X-ING-ReqID" : {
+                "description" : "Request ID, can be a UUID",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string",
+                  "x-ing-type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "required" : [ "id", "message", "messageTimestamp" ],
+                  "type" : "object",
+                  "properties" : {
+                    "message" : {
+                      "type" : "string",
+                      "description" : "A greeting message.",
+                      "example" : "Welcome to ING!",
+                      "x-ing-type" : "string"
+                    },
+                    "id" : {
+                      "type" : "string",
+                      "description" : "A generated UUID.",
+                      "example" : "aba4b176-8834-467d-9c2a-ee6acfc8fceb",
+                      "x-ing-type" : "string"
+                    },
+                    "messageTimestamp" : {
+                      "type" : "string",
+                      "description" : "The current time (GMT).",
+                      "example" : "2023-07-30 15:42:17 GMT",
+                      "x-ing-type" : "string"
+                    }
+                  },
+                  "x-ing-type" : "object"
+                }
+              }
             }
           },
           "503" : {
             "description" : "Service Unavailable - The API is temporarily unavailable. This is the only 500 code that allows for the client to try and remedy the condition (i.e. by retrying).",
-            "schema" : {
-              "$ref" : "#/definitions/Error"
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "required" : [ "code", "innerErrors", "message", "severity" ],
+                  "type" : "object",
+                  "properties" : {
+                    "severity" : {
+                      "type" : "string",
+                      "example" : "CRITICAL",
+                      "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                      "x-ing-type" : "string"
+                    },
+                    "code" : {
+                      "type" : "string",
+                      "description" : "Service-specific error code/keyword",
+                      "example" : "errParseFailed",
+                      "x-ing-type" : "string"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "description" : "A descriptive error message for the consumer",
+                      "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                      "x-ing-type" : "string"
+                    },
+                    "source" : {
+                      "type" : "string",
+                      "description" : "Optional source descriptor for this error",
+                      "example" : "system76",
+                      "x-ing-type" : "string"
+                    },
+                    "target" : {
+                      "type" : "string",
+                      "description" : "Key/value pair indicating which input property caused the error",
+                      "x-ing-type" : "string"
+                    },
+                    "innerErrors" : {
+                      "minItems" : 0,
+                      "type" : "array",
+                      "items" : {
+                        "required" : [ "code", "message", "severity" ],
+                        "type" : "object",
+                        "properties" : {
+                          "severity" : {
+                            "type" : "string",
+                            "example" : "CRITICAL",
+                            "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                            "x-ing-type" : "string"
+                          },
+                          "code" : {
+                            "type" : "string",
+                            "description" : "Service-specific error code/keyword",
+                            "example" : "errParseFailed",
+                            "x-ing-type" : "string"
+                          },
+                          "message" : {
+                            "type" : "string",
+                            "description" : "A descriptive error message for the consumer",
+                            "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                            "x-ing-type" : "string"
+                          },
+                          "source" : {
+                            "type" : "string",
+                            "description" : "Optional source descriptor for this error",
+                            "example" : "system76",
+                            "x-ing-type" : "string"
+                          },
+                          "target" : {
+                            "type" : "string",
+                            "description" : "Key/value pair indicating which input property caused the error",
+                            "x-ing-type" : "string"
+                          }
+                        },
+                        "description" : "Upstream error messages and detailed information on error state",
+                        "x-ing-type" : "object"
+                      },
+                      "x-ing-type" : "array"
+                    }
+                  },
+                  "description" : "Error message.",
+                  "x-ing-type" : "object"
+                }
+              }
             }
           }
         },
@@ -186,221 +1069,705 @@
         } ]
       }
     },
-    "/signed/greetings" : {
+    "/greetings/single" : {
       "get" : {
-        "tags" : [ "greetings" ],
+        "tags" : [ "Showcase API" ],
         "summary" : "Gives a greeting message from one of the available instances",
-        "description" : "Returns a message generated with a unique id and a timestamp indicating when it was produced.",
-        "operationId" : "signedGreetingsGet",
-        "consumes" : [ "application/json" ],
-        "produces" : [ "application/json" ],
+        "description" : "Returns a message generated with a unique id and a timestamp indicating when it was produced.\n ## Deprecation note:\nWe are moving from HTTP signature. You still can use this endpoint in cases where you plan to consume endpoints that \nrequire HTTP signature. But over time, all endpoints will require either JWS-signature or no signature \nat all (MTLS-only). If you plan to consume such endpoints, \nplease use `/signed/greetings` or `/mtls-only/greetings` respectively",
+        "operationId" : "greetingsSingleGet",
         "parameters" : [ {
           "name" : "Authorization",
           "in" : "header",
-          "description" : "OAuth2 token",
+          "description" : "OAuth2 Token",
           "required" : true,
-          "type" : "string"
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "x-ing-type" : "string"
+          }
         }, {
-          "name" : "X-JWS-Signature",
+          "name" : "Signature",
           "in" : "header",
-          "description" : "A JWS signature of the request by the third party on application level. See \"Get Started\" for more information on how to generate.",
+          "description" : "An HTTP signature of the request by the third party on application level. See \"Get Started\" for more information on how to generate.",
           "required" : true,
-          "type" : "string"
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "x-ing-type" : "string"
+          }
         }, {
           "name" : "Digest",
           "in" : "header",
           "description" : "SHA256 of the body.",
           "required" : true,
-          "type" : "string"
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "x-ing-type" : "string"
+          }
         }, {
           "name" : "Date",
           "in" : "header",
-          "description" : "Standard http header element for date and time",
+          "description" : "Standard http header element for date and time.",
           "required" : true,
-          "type" : "string",
-          "format" : "date-time"
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time",
+            "x-ing-type" : "string"
+          }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "OK",
-            "headers" : {
-              "X-ING-ReqID" : {
-                "type" : "string",
-                "description" : "Request ID, can be a UUID",
-                "x-ing-type" : "string"
-              },
-              "X-ING-Response-ID" : {
-                "type" : "string",
-                "description" : "Response UUID, if X-ING-ReqID supplied in the request",
-                "x-ing-type" : "string"
-              },
-              "Signature" : {
-                "type" : "string",
-                "description" : "A signature of the response based on X-ING-ReqID and X-ING-Response-ID. This header is deprecated",
-                "x-ing-type" : "string"
+          "500" : {
+            "description" : "Internal Server Error - Something went wrong on the server, check status site and/or report the issue. There's no need to really specify this any further (other than 503 below) as the client is powerless in fixing the condition that caused the error.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "required" : [ "code", "innerErrors", "message", "severity" ],
+                  "type" : "object",
+                  "properties" : {
+                    "severity" : {
+                      "type" : "string",
+                      "example" : "CRITICAL",
+                      "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                      "x-ing-type" : "string"
+                    },
+                    "code" : {
+                      "type" : "string",
+                      "description" : "Service-specific error code/keyword",
+                      "example" : "errParseFailed",
+                      "x-ing-type" : "string"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "description" : "A descriptive error message for the consumer",
+                      "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                      "x-ing-type" : "string"
+                    },
+                    "source" : {
+                      "type" : "string",
+                      "description" : "Optional source descriptor for this error",
+                      "example" : "system76",
+                      "x-ing-type" : "string"
+                    },
+                    "target" : {
+                      "type" : "string",
+                      "description" : "Key/value pair indicating which input property caused the error",
+                      "x-ing-type" : "string"
+                    },
+                    "innerErrors" : {
+                      "minItems" : 0,
+                      "type" : "array",
+                      "items" : {
+                        "required" : [ "code", "message", "severity" ],
+                        "type" : "object",
+                        "properties" : {
+                          "severity" : {
+                            "type" : "string",
+                            "example" : "CRITICAL",
+                            "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                            "x-ing-type" : "string"
+                          },
+                          "code" : {
+                            "type" : "string",
+                            "description" : "Service-specific error code/keyword",
+                            "example" : "errParseFailed",
+                            "x-ing-type" : "string"
+                          },
+                          "message" : {
+                            "type" : "string",
+                            "description" : "A descriptive error message for the consumer",
+                            "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                            "x-ing-type" : "string"
+                          },
+                          "source" : {
+                            "type" : "string",
+                            "description" : "Optional source descriptor for this error",
+                            "example" : "system76",
+                            "x-ing-type" : "string"
+                          },
+                          "target" : {
+                            "type" : "string",
+                            "description" : "Key/value pair indicating which input property caused the error",
+                            "x-ing-type" : "string"
+                          }
+                        },
+                        "description" : "Upstream error messages and detailed information on error state",
+                        "x-ing-type" : "object"
+                      },
+                      "x-ing-type" : "array"
+                    }
+                  },
+                  "description" : "Error message.",
+                  "x-ing-type" : "object"
+                }
               }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/Greeting"
             }
           },
           "400" : {
             "description" : "Bad Request - The request was malformed, headers may be missing or invalid.",
-            "schema" : {
-              "$ref" : "#/definitions/Error"
-            }
-          },
-          "401" : {
-            "description" : "Unauthorized - The request did not contain authorisation evidence. A valid subscription to the scope(s) that contain this API endpoint is required to allow the request to succeed.",
-            "schema" : {
-              "$ref" : "#/definitions/Error"
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "required" : [ "code", "innerErrors", "message", "severity" ],
+                  "type" : "object",
+                  "properties" : {
+                    "severity" : {
+                      "type" : "string",
+                      "example" : "CRITICAL",
+                      "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                      "x-ing-type" : "string"
+                    },
+                    "code" : {
+                      "type" : "string",
+                      "description" : "Service-specific error code/keyword",
+                      "example" : "errParseFailed",
+                      "x-ing-type" : "string"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "description" : "A descriptive error message for the consumer",
+                      "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                      "x-ing-type" : "string"
+                    },
+                    "source" : {
+                      "type" : "string",
+                      "description" : "Optional source descriptor for this error",
+                      "example" : "system76",
+                      "x-ing-type" : "string"
+                    },
+                    "target" : {
+                      "type" : "string",
+                      "description" : "Key/value pair indicating which input property caused the error",
+                      "x-ing-type" : "string"
+                    },
+                    "innerErrors" : {
+                      "minItems" : 0,
+                      "type" : "array",
+                      "items" : {
+                        "required" : [ "code", "message", "severity" ],
+                        "type" : "object",
+                        "properties" : {
+                          "severity" : {
+                            "type" : "string",
+                            "example" : "CRITICAL",
+                            "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                            "x-ing-type" : "string"
+                          },
+                          "code" : {
+                            "type" : "string",
+                            "description" : "Service-specific error code/keyword",
+                            "example" : "errParseFailed",
+                            "x-ing-type" : "string"
+                          },
+                          "message" : {
+                            "type" : "string",
+                            "description" : "A descriptive error message for the consumer",
+                            "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                            "x-ing-type" : "string"
+                          },
+                          "source" : {
+                            "type" : "string",
+                            "description" : "Optional source descriptor for this error",
+                            "example" : "system76",
+                            "x-ing-type" : "string"
+                          },
+                          "target" : {
+                            "type" : "string",
+                            "description" : "Key/value pair indicating which input property caused the error",
+                            "x-ing-type" : "string"
+                          }
+                        },
+                        "description" : "Upstream error messages and detailed information on error state",
+                        "x-ing-type" : "object"
+                      },
+                      "x-ing-type" : "array"
+                    }
+                  },
+                  "description" : "Error message.",
+                  "x-ing-type" : "object"
+                }
+              }
             }
           },
           "404" : {
             "description" : "Not Found - The requested resource cannot be found. Check the request URL if it matches with the endpoint described.",
-            "schema" : {
-              "$ref" : "#/definitions/Error"
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "required" : [ "code", "innerErrors", "message", "severity" ],
+                  "type" : "object",
+                  "properties" : {
+                    "severity" : {
+                      "type" : "string",
+                      "example" : "CRITICAL",
+                      "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                      "x-ing-type" : "string"
+                    },
+                    "code" : {
+                      "type" : "string",
+                      "description" : "Service-specific error code/keyword",
+                      "example" : "errParseFailed",
+                      "x-ing-type" : "string"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "description" : "A descriptive error message for the consumer",
+                      "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                      "x-ing-type" : "string"
+                    },
+                    "source" : {
+                      "type" : "string",
+                      "description" : "Optional source descriptor for this error",
+                      "example" : "system76",
+                      "x-ing-type" : "string"
+                    },
+                    "target" : {
+                      "type" : "string",
+                      "description" : "Key/value pair indicating which input property caused the error",
+                      "x-ing-type" : "string"
+                    },
+                    "innerErrors" : {
+                      "minItems" : 0,
+                      "type" : "array",
+                      "items" : {
+                        "required" : [ "code", "message", "severity" ],
+                        "type" : "object",
+                        "properties" : {
+                          "severity" : {
+                            "type" : "string",
+                            "example" : "CRITICAL",
+                            "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                            "x-ing-type" : "string"
+                          },
+                          "code" : {
+                            "type" : "string",
+                            "description" : "Service-specific error code/keyword",
+                            "example" : "errParseFailed",
+                            "x-ing-type" : "string"
+                          },
+                          "message" : {
+                            "type" : "string",
+                            "description" : "A descriptive error message for the consumer",
+                            "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                            "x-ing-type" : "string"
+                          },
+                          "source" : {
+                            "type" : "string",
+                            "description" : "Optional source descriptor for this error",
+                            "example" : "system76",
+                            "x-ing-type" : "string"
+                          },
+                          "target" : {
+                            "type" : "string",
+                            "description" : "Key/value pair indicating which input property caused the error",
+                            "x-ing-type" : "string"
+                          }
+                        },
+                        "description" : "Upstream error messages and detailed information on error state",
+                        "x-ing-type" : "object"
+                      },
+                      "x-ing-type" : "array"
+                    }
+                  },
+                  "description" : "Error message.",
+                  "x-ing-type" : "object"
+                }
+              }
             }
           },
-          "500" : {
-            "description" : "Internal Server Error - Something went wrong on the server, check status site and/or report the issue. There's no need to really specify this any further (other than 503 below) as the client is powerless in fixing the condition that caused the error.",
-            "schema" : {
-              "$ref" : "#/definitions/Error"
+          "401" : {
+            "description" : "Unauthorized - The request did not contain authorisation evidence. A valid subscription to the scope(s) that contain this API endpoint is required to allow the request to succeed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "required" : [ "code", "innerErrors", "message", "severity" ],
+                  "type" : "object",
+                  "properties" : {
+                    "severity" : {
+                      "type" : "string",
+                      "example" : "CRITICAL",
+                      "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                      "x-ing-type" : "string"
+                    },
+                    "code" : {
+                      "type" : "string",
+                      "description" : "Service-specific error code/keyword",
+                      "example" : "errParseFailed",
+                      "x-ing-type" : "string"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "description" : "A descriptive error message for the consumer",
+                      "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                      "x-ing-type" : "string"
+                    },
+                    "source" : {
+                      "type" : "string",
+                      "description" : "Optional source descriptor for this error",
+                      "example" : "system76",
+                      "x-ing-type" : "string"
+                    },
+                    "target" : {
+                      "type" : "string",
+                      "description" : "Key/value pair indicating which input property caused the error",
+                      "x-ing-type" : "string"
+                    },
+                    "innerErrors" : {
+                      "minItems" : 0,
+                      "type" : "array",
+                      "items" : {
+                        "required" : [ "code", "message", "severity" ],
+                        "type" : "object",
+                        "properties" : {
+                          "severity" : {
+                            "type" : "string",
+                            "example" : "CRITICAL",
+                            "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                            "x-ing-type" : "string"
+                          },
+                          "code" : {
+                            "type" : "string",
+                            "description" : "Service-specific error code/keyword",
+                            "example" : "errParseFailed",
+                            "x-ing-type" : "string"
+                          },
+                          "message" : {
+                            "type" : "string",
+                            "description" : "A descriptive error message for the consumer",
+                            "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                            "x-ing-type" : "string"
+                          },
+                          "source" : {
+                            "type" : "string",
+                            "description" : "Optional source descriptor for this error",
+                            "example" : "system76",
+                            "x-ing-type" : "string"
+                          },
+                          "target" : {
+                            "type" : "string",
+                            "description" : "Key/value pair indicating which input property caused the error",
+                            "x-ing-type" : "string"
+                          }
+                        },
+                        "description" : "Upstream error messages and detailed information on error state",
+                        "x-ing-type" : "object"
+                      },
+                      "x-ing-type" : "array"
+                    }
+                  },
+                  "description" : "Error message.",
+                  "x-ing-type" : "object"
+                }
+              }
+            }
+          },
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-ING-Response-ID" : {
+                "description" : "Response UUID, if X-ING-ReqID supplied in the request",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string",
+                  "x-ing-type" : "string"
+                }
+              },
+              "X-ING-ReqID" : {
+                "description" : "Request ID, can be a UUID",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string",
+                  "x-ing-type" : "string"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "required" : [ "id", "message", "messageTimestamp" ],
+                  "type" : "object",
+                  "properties" : {
+                    "message" : {
+                      "type" : "string",
+                      "description" : "A greeting message.",
+                      "example" : "Welcome to ING!",
+                      "x-ing-type" : "string"
+                    },
+                    "id" : {
+                      "type" : "string",
+                      "description" : "A generated UUID.",
+                      "example" : "aba4b176-8834-467d-9c2a-ee6acfc8fceb",
+                      "x-ing-type" : "string"
+                    },
+                    "messageTimestamp" : {
+                      "type" : "string",
+                      "description" : "The current time (GMT).",
+                      "example" : "2023-07-30 15:42:17 GMT",
+                      "x-ing-type" : "string"
+                    }
+                  },
+                  "x-ing-type" : "object"
+                }
+              }
             }
           },
           "503" : {
             "description" : "Service Unavailable - The API is temporarily unavailable. This is the only 500 code that allows for the client to try and remedy the condition (i.e. by retrying).",
-            "schema" : {
-              "$ref" : "#/definitions/Error"
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "required" : [ "code", "innerErrors", "message", "severity" ],
+                  "type" : "object",
+                  "properties" : {
+                    "severity" : {
+                      "type" : "string",
+                      "example" : "CRITICAL",
+                      "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                      "x-ing-type" : "string"
+                    },
+                    "code" : {
+                      "type" : "string",
+                      "description" : "Service-specific error code/keyword",
+                      "example" : "errParseFailed",
+                      "x-ing-type" : "string"
+                    },
+                    "message" : {
+                      "type" : "string",
+                      "description" : "A descriptive error message for the consumer",
+                      "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                      "x-ing-type" : "string"
+                    },
+                    "source" : {
+                      "type" : "string",
+                      "description" : "Optional source descriptor for this error",
+                      "example" : "system76",
+                      "x-ing-type" : "string"
+                    },
+                    "target" : {
+                      "type" : "string",
+                      "description" : "Key/value pair indicating which input property caused the error",
+                      "x-ing-type" : "string"
+                    },
+                    "innerErrors" : {
+                      "minItems" : 0,
+                      "type" : "array",
+                      "items" : {
+                        "required" : [ "code", "message", "severity" ],
+                        "type" : "object",
+                        "properties" : {
+                          "severity" : {
+                            "type" : "string",
+                            "example" : "CRITICAL",
+                            "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                            "x-ing-type" : "string"
+                          },
+                          "code" : {
+                            "type" : "string",
+                            "description" : "Service-specific error code/keyword",
+                            "example" : "errParseFailed",
+                            "x-ing-type" : "string"
+                          },
+                          "message" : {
+                            "type" : "string",
+                            "description" : "A descriptive error message for the consumer",
+                            "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                            "x-ing-type" : "string"
+                          },
+                          "source" : {
+                            "type" : "string",
+                            "description" : "Optional source descriptor for this error",
+                            "example" : "system76",
+                            "x-ing-type" : "string"
+                          },
+                          "target" : {
+                            "type" : "string",
+                            "description" : "Key/value pair indicating which input property caused the error",
+                            "x-ing-type" : "string"
+                          }
+                        },
+                        "description" : "Upstream error messages and detailed information on error state",
+                        "x-ing-type" : "object"
+                      },
+                      "x-ing-type" : "array"
+                    }
+                  },
+                  "description" : "Error message.",
+                  "x-ing-type" : "object"
+                }
+              }
             }
           }
         },
+        "deprecated" : true,
         "security" : [ {
           "ING-Application-Security" : [ "greetings:view" ]
         } ]
       }
     }
   },
-  "securityDefinitions" : {
-    "ING-Application-Security" : {
-      "type" : "oauth2",
-      "tokenUrl" : "https://api.ing.com/oauth2/token",
-      "flow" : "application",
-      "scopes" : {
-        "greetings:view" : "Get greetings messages."
-      }
-    }
-  },
-  "definitions" : {
-    "Greeting" : {
-      "type" : "object",
-      "required" : [ "id", "message", "messageTimestamp" ],
-      "properties" : {
-        "messageTimestamp" : {
-          "type" : "string",
-          "example" : "2018-07-30 15:42:17 GMT",
-          "description" : "The current time (GMT)",
-          "x-ing-type" : "string"
-        },
-        "message" : {
-          "type" : "string",
-          "example" : "Welcome to ING!",
-          "description" : "A greeting message",
-          "x-ing-type" : "string"
-        },
-        "id" : {
-          "type" : "string",
-          "example" : "aba4b176-8834-467d-9c2a-ee6acfc8fceb",
-          "description" : "A generated uuid",
-          "x-ing-type" : "string"
-        }
-      }
-    },
-    "Error" : {
-      "type" : "object",
-      "required" : [ "error" ],
-      "properties" : {
-        "error" : {
-          "$ref" : "#/definitions/ErrorModel"
-        }
-      }
-    },
-    "ErrorModel" : {
-      "type" : "object",
-      "required" : [ "code", "message", "severity" ],
-      "properties" : {
-        "innerErrors" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/InnerErrors"
+  "components" : {
+    "schemas" : {
+      "Error" : {
+        "required" : [ "code", "innerErrors", "message", "severity" ],
+        "type" : "object",
+        "properties" : {
+          "severity" : {
+            "type" : "string",
+            "example" : "CRITICAL",
+            "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+            "x-ing-type" : "string"
           },
-          "x-ing-type" : "array"
+          "code" : {
+            "type" : "string",
+            "description" : "Service-specific error code/keyword",
+            "example" : "errParseFailed",
+            "x-ing-type" : "string"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A descriptive error message for the consumer",
+            "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+            "x-ing-type" : "string"
+          },
+          "source" : {
+            "type" : "string",
+            "description" : "Optional source descriptor for this error",
+            "example" : "system76",
+            "x-ing-type" : "string"
+          },
+          "target" : {
+            "type" : "string",
+            "description" : "Key/value pair indicating which input property caused the error",
+            "x-ing-type" : "string"
+          },
+          "innerErrors" : {
+            "minItems" : 0,
+            "type" : "array",
+            "items" : {
+              "required" : [ "code", "message", "severity" ],
+              "type" : "object",
+              "properties" : {
+                "severity" : {
+                  "type" : "string",
+                  "example" : "CRITICAL",
+                  "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+                  "x-ing-type" : "string"
+                },
+                "code" : {
+                  "type" : "string",
+                  "description" : "Service-specific error code/keyword",
+                  "example" : "errParseFailed",
+                  "x-ing-type" : "string"
+                },
+                "message" : {
+                  "type" : "string",
+                  "description" : "A descriptive error message for the consumer",
+                  "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+                  "x-ing-type" : "string"
+                },
+                "source" : {
+                  "type" : "string",
+                  "description" : "Optional source descriptor for this error",
+                  "example" : "system76",
+                  "x-ing-type" : "string"
+                },
+                "target" : {
+                  "type" : "string",
+                  "description" : "Key/value pair indicating which input property caused the error",
+                  "x-ing-type" : "string"
+                }
+              },
+              "description" : "Upstream error messages and detailed information on error state",
+              "x-ing-type" : "object"
+            },
+            "x-ing-type" : "array"
+          }
         },
-        "message" : {
-          "type" : "string",
-          "example" : "Unexpected end of file (missing a terminator/close bracket?)",
-          "description" : "A descriptive error message for the consumer",
-          "x-ing-type" : "string"
-        },
-        "target" : {
-          "type" : "string",
-          "description" : "Key/value pair indicating which input property caused the error",
-          "x-ing-type" : "string"
-        },
-        "code" : {
-          "type" : "string",
-          "example" : "errParseFailed",
-          "description" : "Service-specific error code/keyword",
-          "x-ing-type" : "string"
-        },
-        "source" : {
-          "type" : "string",
-          "example" : "system76",
-          "description" : "Optional source descriptor for this error",
-          "x-ing-type" : "string"
-        },
-        "severity" : {
-          "type" : "string",
-          "enum" : [ "critical", "error", "warning", "info" ],
-          "x-ing-type" : "string"
-        }
+        "description" : "Error message.",
+        "x-ing-type" : "object"
       },
-      "description" : "Error message"
+      "InnerError" : {
+        "required" : [ "code", "message", "severity" ],
+        "type" : "object",
+        "properties" : {
+          "severity" : {
+            "type" : "string",
+            "example" : "CRITICAL",
+            "enum" : [ "CRITICAL", "ERROR", "WARNING", "INFO" ],
+            "x-ing-type" : "string"
+          },
+          "code" : {
+            "type" : "string",
+            "description" : "Service-specific error code/keyword",
+            "example" : "errParseFailed",
+            "x-ing-type" : "string"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A descriptive error message for the consumer",
+            "example" : "Unexpected end of file (missing a terminator/close bracket?)",
+            "x-ing-type" : "string"
+          },
+          "source" : {
+            "type" : "string",
+            "description" : "Optional source descriptor for this error",
+            "example" : "system76",
+            "x-ing-type" : "string"
+          },
+          "target" : {
+            "type" : "string",
+            "description" : "Key/value pair indicating which input property caused the error",
+            "x-ing-type" : "string"
+          }
+        },
+        "description" : "Upstream error messages and detailed information on error state",
+        "x-ing-type" : "object"
+      },
+      "Greeting" : {
+        "required" : [ "id", "message", "messageTimestamp" ],
+        "type" : "object",
+        "properties" : {
+          "message" : {
+            "type" : "string",
+            "description" : "A greeting message.",
+            "example" : "Welcome to ING!",
+            "x-ing-type" : "string"
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "A generated UUID.",
+            "example" : "aba4b176-8834-467d-9c2a-ee6acfc8fceb",
+            "x-ing-type" : "string"
+          },
+          "messageTimestamp" : {
+            "type" : "string",
+            "description" : "The current time (GMT).",
+            "example" : "2023-07-30 15:42:17 GMT",
+            "x-ing-type" : "string"
+          }
+        },
+        "x-ing-type" : "object"
+      }
     },
-    "InnerErrors" : {
-      "type" : "object",
-      "required" : [ "code", "message", "severity" ],
-      "properties" : {
-        "message" : {
-          "type" : "string",
-          "example" : "Unexpected end of file (missing a terminator/close bracket?)",
-          "description" : "A descriptive error message for the consumer",
-          "x-ing-type" : "string"
-        },
-        "target" : {
-          "type" : "string",
-          "description" : "Key/value pair indicating which input property caused the error",
-          "x-ing-type" : "string"
-        },
-        "code" : {
-          "type" : "string",
-          "example" : "errParseFailed",
-          "description" : "Service-specific error code/keyword",
-          "x-ing-type" : "string"
-        },
-        "source" : {
-          "type" : "string",
-          "example" : "system76",
-          "description" : "Optional source descriptor for this error",
-          "x-ing-type" : "string"
-        },
-        "severity" : {
-          "type" : "string",
-          "enum" : [ "critical", "error", "warning", "info" ],
-          "x-ing-type" : "string"
+    "securitySchemes" : {
+      "ING-Application-Security" : {
+        "type" : "oauth2",
+        "flows" : {
+          "clientCredentials" : {
+            "tokenUrl" : "https://api.ing.com/oauth2/token",
+            "scopes" : {
+              "greetings:view" : "Get greetings messages."
+            }
+          }
         }
-      },
-      "description" : "Upstream error messages and detailed information on error state"
+      }
     }
   }
 }

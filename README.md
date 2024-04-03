@@ -1,20 +1,20 @@
 # ING Open Banking SDK
-With this SDK we provide the means to generate drivers to interact with ING's Open Banking APIs. It includes a custom generator that creates drivers which encapsulate HTTP signature signing and OAuth application token flows. As shown by the demo-app these drivers significantly reduce complexity to interact with ING's Open Banking APIs. Since the drivers are generated from OpenAPI Specification files, updating is easy by regenerating the drivers based on updated files.
+The ING Open Banking SDK allows you to automatically generate drivers to interact with ING's Open Banking APIs. It includes a custom generator that creates drivers with few simple steps given the Open API spec (swagger documentation), and it encapsulates mTLS only, JWS signature signing, HTTP signature signing and OAuth application token flows. With the demo app within this SDK , you can test the generated drivers, test the Authorization flow, and check the account information of the test users available in the Sandbox environment. The demo app shows that these drivers significantly reduce complexity to interact with ING's Open Banking APIs. Since the drivers are generated from Open API specification files, updating is easy by regenerating the drivers based on updated Open API specification files.
+
+You can use this SDK to generate drivers for both Premium and PSD2 APIs. Read our [product page](https://developer.ing.com/api-marketplace/marketplace) for more information.
 
 ## Features:
-- [x] Open Banking Driver Generator (OpenApi Generator extension)
-- [x] Open Banking Driver Generator Java templates
+- [x] Open Banking Driver generator (OpenAPI Generator extension)
+- [x] Open Banking Driver generator Java templates
 - [x] Example of generated drivers based on Swagger API definition targeting the ING Sandbox
-- [x] Demo App for educational purposes
-- [x] Helper classes for client configuration and http signature signing
+- [x] Demo App to test the generated drivers
+- [x] Helper classes for client configuration, JWS signing and HTTP signature signing
 - [x] Wrapper class for OAuth 2.0 technical driver (using OpenAPI Generator)
-- [ ] Test generated drivers for feature completeness on Open Banking APIs (including PSD2)
-- [ ] Publicly available drivers
 
 ## Dependencies:
 * Java JDK 1.8+
 * Maven 3.6+
-* (curl)
+* CURL
 
 ## Quick Start (*nix)
 * Run `./download-certificates.sh`

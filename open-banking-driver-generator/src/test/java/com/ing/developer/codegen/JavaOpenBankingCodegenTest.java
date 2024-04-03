@@ -15,12 +15,12 @@ import org.openapitools.codegen.config.CodegenConfigurator;
  * 2) To launch this test in Eclipse: right-click | Debug As | JUnit Test
  *
  */
-public class JavaOpenBankingCodegenTest {
+class JavaOpenBankingCodegenTest {
 
   // use this test to launch you code generator in the debugger.
   // this allows you to easily set break points in MyclientcodegenGenerator.
   @Test
-  public void launchCodeGenerator() {
+  void launchCodeGenerator() {
     // to understand how the 'openapi-generator-cli' module is using 'CodegenConfigurator', have a look at the 'Generate' class:
     // https://github.com/OpenAPITools/openapi-generator/blob/master/modules/openapi-generator-cli/src/main/java/org/openapitools/codegen/cmd/Generate.java 
     final CodegenConfigurator configurator = new CodegenConfigurator()

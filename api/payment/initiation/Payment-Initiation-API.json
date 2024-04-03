@@ -2,12 +2,12 @@
   "swagger" : "2.0",
   "info" : {
     "description" : "Create payment initiation applications that offer great added value to your customers and users. INGs Payment Initiation Service will enable secure access to all European ING online accessible payments accounts.",
-    "version" : "1.5.3",
+    "version" : "2.0.2",
     "title" : "Payment Initiation API",
     "contact" : {
       "name" : "ING Developer Portal",
       "url" : "https://developer.ing.com",
-      "email" : "apis@ing.com"
+      "email" : "developerportal@ing.com"
     },
     "license" : {
       "name" : "Copyright (c) ING Bank N.V. All Rights Reserved.",
@@ -107,6 +107,9 @@
             "$ref" : "#/definitions/PaymentInstruction"
           }
         } ],
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-accounts:orders:create" ]
+        } ],
         "responses" : {
           "201" : {
             "description" : "Created.",
@@ -129,8 +132,8 @@
               "ASPSP-SCA-Approach" : {
                 "type" : "string",
                 "description" : "Defines the chosen SCA by ING i.e. REDIRECT. ING will start the authorization process implicitly as no additional data is needed from the TPP. Subsequently, the redirection of the PSU browser session should happen directly after the Payment Initiation Response.",
-                "enum" : [ "REDIRECT" ],
                 "default" : "REDIRECT",
+                "enum" : [ "REDIRECT" ],
                 "x-ing-type" : "string"
               }
             },
@@ -168,6 +171,12 @@
               "$ref" : "#/definitions/TPPMessages"
             }
           },
+          "429" : {
+            "description" : "Too Many Requests.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
           "500" : {
             "description" : "Internal Server Error.",
             "schema" : {
@@ -180,10 +189,7 @@
               "$ref" : "#/definitions/TPPMessages"
             }
           }
-        },
-        "security" : [ {
-          "ING-Application-Security" : [ "payment-accounts:orders:create" ]
-        } ]
+        }
       }
     },
     "/v1/payments/{payment-product}/{paymentId}" : {
@@ -293,6 +299,12 @@
           },
           "422" : {
             "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "429" : {
+            "description" : "Too Many Requests.",
             "schema" : {
               "$ref" : "#/definitions/TPPMessages"
             }
@@ -414,6 +426,12 @@
           },
           "422" : {
             "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "429" : {
+            "description" : "Too Many Requests.",
             "schema" : {
               "$ref" : "#/definitions/TPPMessages"
             }
@@ -544,6 +562,12 @@
               "$ref" : "#/definitions/TPPMessages"
             }
           },
+          "429" : {
+            "description" : "Too Many Requests.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
           "500" : {
             "description" : "Internal Server Error.",
             "schema" : {
@@ -630,6 +654,9 @@
             "$ref" : "#/definitions/SinglePaymentRequestXML"
           }
         } ],
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-accounts:orders:create" ]
+        } ],
         "responses" : {
           "201" : {
             "description" : "Created.",
@@ -652,8 +679,8 @@
               "ASPSP-SCA-Approach" : {
                 "type" : "string",
                 "description" : "Defines the chosen SCA by ING i.e. REDIRECT. ING will start the authorization process implicitly as no additional data is needed from the TPP. Subsequently, the redirection of the PSU browser session should happen directly after the Payment Initiation Response.",
-                "enum" : [ "REDIRECT" ],
                 "default" : "REDIRECT",
+                "enum" : [ "REDIRECT" ],
                 "x-ing-type" : "string"
               }
             },
@@ -691,6 +718,12 @@
               "$ref" : "#/definitions/TPPMessages"
             }
           },
+          "429" : {
+            "description" : "Too Many Requests.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
           "500" : {
             "description" : "Internal Server Error.",
             "schema" : {
@@ -703,10 +736,7 @@
               "$ref" : "#/definitions/TPPMessages"
             }
           }
-        },
-        "security" : [ {
-          "ING-Application-Security" : [ "payment-accounts:orders:create" ]
-        } ]
+        }
       }
     },
     "/v1/payments/pain.001-{payment-product}/{paymentId}" : {
@@ -816,6 +846,12 @@
           },
           "422" : {
             "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "429" : {
+            "description" : "Too Many Requests.",
             "schema" : {
               "$ref" : "#/definitions/TPPMessages"
             }
@@ -946,6 +982,12 @@
               "$ref" : "#/definitions/TPPMessages"
             }
           },
+          "429" : {
+            "description" : "Too Many Requests.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
           "500" : {
             "description" : "Internal Server Error.",
             "schema" : {
@@ -1072,6 +1114,12 @@
               "$ref" : "#/definitions/TPPMessages"
             }
           },
+          "429" : {
+            "description" : "Too Many Requests.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
           "500" : {
             "description" : "Internal Server Error.",
             "schema" : {
@@ -1159,6 +1207,9 @@
             "$ref" : "#/definitions/PeriodicPaymentInitiation_json"
           }
         } ],
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-accounts:orders:create" ]
+        } ],
         "responses" : {
           "201" : {
             "description" : "Created.",
@@ -1213,6 +1264,12 @@
               "$ref" : "#/definitions/TPPMessages"
             }
           },
+          "429" : {
+            "description" : "Too Many Requests.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
           "500" : {
             "description" : "Internal Server Error.",
             "schema" : {
@@ -1225,10 +1282,7 @@
               "$ref" : "#/definitions/TPPMessages"
             }
           }
-        },
-        "security" : [ {
-          "ING-Application-Security" : [ "payment-accounts:orders:create" ]
-        } ]
+        }
       }
     },
     "/v1/periodic-payments/{payment-product}/{paymentId}" : {
@@ -1338,6 +1392,12 @@
           },
           "422" : {
             "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "429" : {
+            "description" : "Too Many Requests.",
             "schema" : {
               "$ref" : "#/definitions/TPPMessages"
             }
@@ -1457,6 +1517,18 @@
               "$ref" : "#/definitions/TPPMessages"
             }
           },
+          "422" : {
+            "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "429" : {
+            "description" : "Too Many Requests.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
           "500" : {
             "description" : "Internal Server Error.",
             "schema" : {
@@ -1571,6 +1643,18 @@
               "$ref" : "#/definitions/TPPMessages"
             }
           },
+          "422" : {
+            "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "429" : {
+            "description" : "Too Many Requests.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
           "500" : {
             "description" : "Internal Server Error.",
             "schema" : {
@@ -1678,6 +1762,9 @@
           "type" : "string",
           "enum" : [ "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31" ]
         } ],
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-accounts:orders:create" ]
+        } ],
         "responses" : {
           "201" : {
             "description" : "Created.",
@@ -1732,6 +1819,12 @@
               "$ref" : "#/definitions/TPPMessages"
             }
           },
+          "429" : {
+            "description" : "Too Many Requests.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
           "500" : {
             "description" : "Internal Server Error.",
             "schema" : {
@@ -1744,10 +1837,7 @@
               "$ref" : "#/definitions/TPPMessages"
             }
           }
-        },
-        "security" : [ {
-          "ING-Application-Security" : [ "payment-accounts:orders:create" ]
-        } ]
+        }
       }
     },
     "/v1/periodic-payments/pain.001-{payment-product}/{paymentId}" : {
@@ -1862,6 +1952,12 @@
               "$ref" : "#/definitions/TPPMessages"
             }
           },
+          "429" : {
+            "description" : "Too Many Requests.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
           "500" : {
             "description" : "Internal Server Error.",
             "schema" : {
@@ -1949,6 +2045,9 @@
             "$ref" : "#/definitions/BulkPaymentInitiationSct_json"
           }
         } ],
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-accounts:orders:create" ]
+        } ],
         "responses" : {
           "201" : {
             "description" : "Created.",
@@ -1971,8 +2070,8 @@
               "ASPSP-SCA-Approach" : {
                 "type" : "string",
                 "description" : "Defines the chosen SCA by ING i.e. REDIRECT. ING will start the authorization process implicitly as no additional data is needed from the TPP. Subsequently, the redirection of the PSU browser session should happen directly after the Payment Initiation Response.",
-                "enum" : [ "REDIRECT" ],
                 "default" : "REDIRECT",
+                "enum" : [ "REDIRECT" ],
                 "x-ing-type" : "string"
               }
             },
@@ -2010,6 +2109,12 @@
               "$ref" : "#/definitions/TPPMessages"
             }
           },
+          "429" : {
+            "description" : "Too Many Requests.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
           "500" : {
             "description" : "Internal Server Error.",
             "schema" : {
@@ -2022,10 +2127,7 @@
               "$ref" : "#/definitions/TPPMessages"
             }
           }
-        },
-        "security" : [ {
-          "ING-Application-Security" : [ "payment-accounts:orders:create" ]
-        } ]
+        }
       }
     },
     "/v1/bulk-payments/{payment-product}/{paymentId}" : {
@@ -2135,6 +2237,12 @@
           },
           "422" : {
             "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "429" : {
+            "description" : "Too Many Requests.",
             "schema" : {
               "$ref" : "#/definitions/TPPMessages"
             }
@@ -2256,6 +2364,12 @@
           },
           "422" : {
             "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "429" : {
+            "description" : "Too Many Requests.",
             "schema" : {
               "$ref" : "#/definitions/TPPMessages"
             }
@@ -2382,6 +2496,301 @@
           },
           "422" : {
             "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "429" : {
+            "description" : "Too Many Requests.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "503" : {
+            "description" : "SERVICE UNAVAILABLE.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          }
+        }
+      }
+    },
+    "/v2/bulk-payments/{payment-product}" : {
+      "post" : {
+        "tags" : [ "Bulk payment initiation" ],
+        "summary" : "Bulk payment initiation request - JSON.",
+        "description" : "This operation will create a payment initiation request at ING as a resource addressable under {payment-product} with all data relevant for the corresponding payment product. One Payment request can support upto 5000 underlying transactions.",
+        "operationId" : "initiateBulkPaymentV2",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "payment-product",
+          "in" : "path",
+          "description" : "The addressed payment product endpoint. The list of products supported is - sepa-credit-transfers - cross-border-credit-transfers - domestic-credit-transfers In due course, ING can communicate additional supported payment products.",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "sepa-credit-transfers", "cross-border-credit-transfers", "domestic-credit-transfers" ]
+        }, {
+          "name" : "X-Request-ID",
+          "in" : "header",
+          "description" : "ID of the request, unique to the call, as determined by the initiating party (TPP).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
+        }, {
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Bearer Token. Represents TPP Application Access Token. The process to obtain the Application Access Token is described in Client Credentials \"Authentication Flow\": https://developer.ing.com/openbanking/get-started",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./_,'+ -]+$"
+        }, {
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. For more details refer to: https://developer.ing.com/openbanking/get-started Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers required for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./\"_=,'+ -]+$"
+        }, {
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,='+ -]+$"
+        }, {
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard HTTP header element for date and time. HTTP headers are represented as RFC 7231, chapter 7.1.1.1.  Date/Time Formats. Format: EEE, dd MMM yyyy HH:mm:ss 'GMT'",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "TPP-Redirect-URI",
+          "in" : "header",
+          "description" : "URI of the TPP, where the transaction flow shall be redirected to after a Redirect",
+          "required" : true,
+          "type" : "string",
+          "format" : "uri"
+        }, {
+          "name" : "PSU-IP-Address",
+          "in" : "header",
+          "description" : "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP.",
+          "required" : true,
+          "type" : "string",
+          "format" : "ipv4,ipv6"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "description" : "Payment initiation instruction. The payment data to be transported in the request body are dependent of the chosen API endpoint.",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/BulkPaymentInitiationSct_jsonV2"
+          }
+        } ],
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-accounts:orders:create" ]
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Created.",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "X-ING-Response-ID" : {
+                "type" : "string",
+                "description" : "ID for tracing the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "Location" : {
+                "type" : "string",
+                "description" : "Location of the created resource (if created) i.e. GET /v1/bulk-payments/{payment-product}/{paymentId} example GET /v1/bulk-payments/sepa-credit-transfers/0e62dac7-6c2a-4483-ae01-b8f6221673d2",
+                "x-ing-type" : "string"
+              },
+              "ASPSP-SCA-Approach" : {
+                "type" : "string",
+                "description" : "Defines the chosen SCA by ING i.e. REDIRECT. ING will start the authorization process implicitly as no additional data is needed from the TPP. Subsequently, the redirection of the PSU browser session should happen directly after the Payment Initiation Response.",
+                "default" : "REDIRECT",
+                "enum" : [ "REDIRECT" ],
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/BulkPaymentInitiationResponse"
+            }
+          },
+          "400" : {
+            "description" : "Bad Request.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "401" : {
+            "description" : "Unauthorised.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "403" : {
+            "description" : "Forbidden.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "404" : {
+            "description" : "Not Found.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "422" : {
+            "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "429" : {
+            "description" : "Too Many Requests.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "503" : {
+            "description" : "SERVICE UNAVAILABLE.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          }
+        }
+      }
+    },
+    "/v2/bulk-payments/{payment-product}/{paymentId}" : {
+      "get" : {
+        "tags" : [ "Bulk payment initiation" ],
+        "summary" : "Bulk payment details - JSON",
+        "description" : "This operation will return the bulk payment initiation details based on the unique identifier of the payment (paymentId), as provided by ING as part of the response of the bulk payment initiation request.",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "payment-product",
+          "in" : "path",
+          "description" : "The addressed payment product endpoint. The list of products supported is - sepa-credit-transfers - cross-border-credit-transfers - domestic-credit-transfers In due course, ING can communicate additional supported payment products.",
+          "required" : true,
+          "type" : "string",
+          "enum" : [ "sepa-credit-transfers", "cross-border-credit-transfers", "domestic-credit-transfers" ]
+        }, {
+          "name" : "paymentId",
+          "in" : "path",
+          "description" : "Identification of payment instruction in ING (resource identification of the generated payment initiation resource).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
+        }, {
+          "name" : "X-Request-ID",
+          "in" : "header",
+          "description" : "ID of the request, unique to the call, as determined by the initiating party (TPP).",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
+        }, {
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Bearer Token. Represents TPP Application Access Token. The process to obtain the Application Access Token is described in Client Credentials \"Authentication Flow\": https://developer.ing.com/openbanking/get-started",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./_,'+ -]+$"
+        }, {
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the TPP on application level. The process of signing a request is described in 'Signing HTTP Messages' RFC draft version 07 (https://tools.ietf.org/html/draft-cavage-http-signatures-07). The request signature needs to be sent in the 'Signature' HTTP header as described in the RFC. For more details refer to: https://developer.ing.com/openbanking/get-started Additional requirements from ING:\n  - The only allowed algorithm is RSA-SHA256\n  - The key size for the used RSA key pair has to be at least 2048 bit\n  - The keyId is the clientId of your application originating from the ING Developer Portal\n  - We require the following headers required for every request: \"(request-target) Date Digest X-Request-ID\". The request-target is a combination of the HTTP action verb and the request URI path.",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./\"_=,'+ -]+$"
+        }, {
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "The \"Digest\" Header header as defined in [RFC3230] contains a Hash of the message body. The only hash algorithms that may be used to calculate the Digest within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].",
+          "required" : true,
+          "type" : "string",
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,='+ -]+$"
+        }, {
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard HTTP header element for date and time. HTTP headers are represented as RFC 7231, chapter 7.1.1.1.  Date/Time Formats. Format: EEE, dd MMM yyyy HH:mm:ss 'GMT'",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "PSU-IP-Address",
+          "in" : "header",
+          "description" : "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP.",
+          "required" : false,
+          "type" : "string",
+          "format" : "ipv4,ipv6"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-Request-ID" : {
+                "type" : "string",
+                "description" : "ID of the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              },
+              "X-ING-Response-ID" : {
+                "type" : "string",
+                "description" : "ID for tracing the individual request determined by the initiating party",
+                "x-ing-type" : "string"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/BulkPaymentInitiationSct_jsonV2"
+            }
+          },
+          "400" : {
+            "description" : "Bad Request.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "401" : {
+            "description" : "Unauthorised.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "403" : {
+            "description" : "Forbidden.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "404" : {
+            "description" : "Not Found.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "422" : {
+            "description" : "UNPROCESSABLE ENTITY.",
+            "schema" : {
+              "$ref" : "#/definitions/TPPMessages"
+            }
+          },
+          "429" : {
+            "description" : "Too Many Requests.",
             "schema" : {
               "$ref" : "#/definitions/TPPMessages"
             }
@@ -2700,6 +3109,106 @@
       },
       "description" : "JSON Body for a bulk payment initiation.\n"
     },
+    "BulkPaymentInitiationSct_jsonV2" : {
+      "type" : "object",
+      "required" : [ "payments" ],
+      "properties" : {
+        "requestedExecutionDate" : {
+          "type" : "string",
+          "format" : "date",
+          "example" : "2019-01-30",
+          "description" : "Date at which the initiating party requests the clearing agent to process the payment. This is the date on which the debtor's account is to be debited. This Field mentions a particular point in the progression of time in a calendar year expressed in the YYYY-MM-DD format. Example Use Case: Future Dated Payment",
+          "x-ing-type" : "string"
+        },
+        "debtorAccount" : {
+          "$ref" : "#/definitions/debtorAccount"
+        },
+        "debtorName" : {
+          "$ref" : "#/definitions/debtorName"
+        },
+        "debtorAgent" : {
+          "$ref" : "#/definitions/debtorAgent"
+        },
+        "batchBookingPreferred" : {
+          "$ref" : "#/definitions/batchBookingPreferred"
+        },
+        "chargeBearer" : {
+          "$ref" : "#/definitions/chargeBearer"
+        },
+        "instructionPriority" : {
+          "$ref" : "#/definitions/instructionPriority"
+        },
+        "serviceLevelCode" : {
+          "$ref" : "#/definitions/serviceLevelCode"
+        },
+        "localInstrumentCode" : {
+          "$ref" : "#/definitions/localInstrumentCode"
+        },
+        "categoryPurposeCode" : {
+          "$ref" : "#/definitions/categoryPurposeCode"
+        },
+        "uetr" : {
+          "$ref" : "#/definitions/UETR"
+        },
+        "payments" : {
+          "type" : "array",
+          "description" : "A list of JSON bodies for single transactions.",
+          "items" : {
+            "type" : "object",
+            "properties" : {
+              "endToEndIdentification" : {
+                "$ref" : "#/definitions/endToEndIdentification"
+              },
+              "instructedAmount" : {
+                "$ref" : "#/definitions/Amount"
+              },
+              "creditorAccount" : {
+                "$ref" : "#/definitions/creditorAccount"
+              },
+              "creditorAgent" : {
+                "$ref" : "#/definitions/creditorAgent"
+              },
+              "creditorName" : {
+                "$ref" : "#/definitions/creditorName"
+              },
+              "creditorLEI" : {
+                "$ref" : "#/definitions/LEI"
+              },
+              "creditorAddress" : {
+                "$ref" : "#/definitions/AddressV2"
+              },
+              "remittanceInformationUnstructured" : {
+                "$ref" : "#/definitions/remittanceInformationUnstructured"
+              },
+              "remittanceInformationStructured" : {
+                "$ref" : "#/definitions/remittanceInformationStructured"
+              },
+              "chargeBearer" : {
+                "$ref" : "#/definitions/chargeBearer"
+              },
+              "instructionPriority" : {
+                "$ref" : "#/definitions/instructionPriority"
+              },
+              "serviceLevelCode" : {
+                "$ref" : "#/definitions/serviceLevelCode"
+              },
+              "localInstrumentCode" : {
+                "$ref" : "#/definitions/localInstrumentCode"
+              },
+              "categoryPurposeCode" : {
+                "$ref" : "#/definitions/categoryPurposeCode"
+              }
+            },
+            "required" : [ "creditorAccount", "creditorName", "instructedAmount" ],
+            "x-ing-type" : "object"
+          },
+          "maxItems" : 5000,
+          "minItems" : 1,
+          "x-ing-type" : "array"
+        }
+      },
+      "description" : "JSON Body for a bulk payment initiation.\n"
+    },
     "endToEndIdentification" : {
       "type" : "string",
       "maxLength" : 35,
@@ -2778,6 +3287,42 @@
       "maxLength" : 140,
       "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
       "description" : "'Information supplied to enable the matching of an entry with the items that the transfer is intended to settle, such as commercial invoices in an accounts' receivable system. Information supplied to enable the matching/reconciliation of an entry with the items that the payment is intended to settle, such as commercial invoices in an accounts' receivable system, in an unstructured form.'"
+    },
+    "remittanceInformationStructured" : {
+      "type" : "object",
+      "required" : [ "reference" ],
+      "properties" : {
+        "type" : {
+          "type" : "object",
+          "properties" : {
+            "codeOrProprietary" : {
+              "type" : "object",
+              "properties" : {
+                "code" : {
+                  "type" : "string",
+                  "enum" : [ "RADM", "RPIN", "FXDR", "DISP", "PUOR", "SCOR" ],
+                  "x-ing-type" : "string"
+                }
+              },
+              "x-ing-type" : "object"
+            },
+            "issuer" : {
+              "type" : "string",
+              "maxLength" : 35,
+              "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
+              "x-ing-type" : "string"
+            }
+          },
+          "x-ing-type" : "object"
+        },
+        "reference" : {
+          "type" : "string",
+          "maxLength" : 35,
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
+          "x-ing-type" : "string"
+        }
+      },
+      "description" : "Structured remittance information."
     },
     "clearingSystemMemberIdentification" : {
       "type" : "object",
@@ -2917,6 +3462,123 @@
         }
       }
     },
+    "AddressV2" : {
+      "type" : "object",
+      "required" : [ "country", "townName" ],
+      "properties" : {
+        "department" : {
+          "type" : "string",
+          "description" : "department",
+          "maxLength" : 70,
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
+          "x-ing-type" : "string"
+        },
+        "subDepartment" : {
+          "type" : "string",
+          "description" : "sub department",
+          "maxLength" : 70,
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
+          "x-ing-type" : "string"
+        },
+        "streetName" : {
+          "type" : "string",
+          "description" : "street name",
+          "maxLength" : 70,
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
+          "x-ing-type" : "string"
+        },
+        "buildingNumber" : {
+          "type" : "string",
+          "description" : "building number",
+          "maxLength" : 16,
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
+          "x-ing-type" : "string"
+        },
+        "buildingName" : {
+          "type" : "string",
+          "description" : "building name",
+          "maxLength" : 35,
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
+          "x-ing-type" : "string"
+        },
+        "floor" : {
+          "type" : "string",
+          "description" : "floor",
+          "maxLength" : 70,
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
+          "x-ing-type" : "string"
+        },
+        "postBox" : {
+          "type" : "string",
+          "description" : "post box",
+          "maxLength" : 16,
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
+          "x-ing-type" : "string"
+        },
+        "room" : {
+          "type" : "string",
+          "description" : "room",
+          "maxLength" : 70,
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
+          "x-ing-type" : "string"
+        },
+        "postCode" : {
+          "type" : "string",
+          "description" : "postal code",
+          "maxLength" : 16,
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
+          "x-ing-type" : "string"
+        },
+        "townName" : {
+          "type" : "string",
+          "description" : "town name",
+          "maxLength" : 35,
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
+          "x-ing-type" : "string"
+        },
+        "townLocationName" : {
+          "type" : "string",
+          "description" : "town location name",
+          "maxLength" : 35,
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
+          "x-ing-type" : "string"
+        },
+        "districtName" : {
+          "type" : "string",
+          "description" : "district name",
+          "maxLength" : 35,
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
+          "x-ing-type" : "string"
+        },
+        "countrySubDivision" : {
+          "type" : "string",
+          "description" : "country sub division",
+          "maxLength" : 35,
+          "pattern" : "^[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?:()./,'+ -]+$",
+          "x-ing-type" : "string"
+        },
+        "country" : {
+          "type" : "string",
+          "example" : "NL",
+          "description" : "ISO Country Code",
+          "pattern" : "[A-Z]{2,2}",
+          "x-ing-type" : "string"
+        }
+      }
+    },
+    "LEI" : {
+      "type" : "string",
+      "maxLength" : 20,
+      "pattern" : "^[A-Z0-9]{18,18}[0-9]{2,2}$",
+      "description" : "The Legal Entity Identifier (LEI), a unique global identifier for legal entities.",
+      "example" : "3TK20IVIUJ8J3ZU0QE75"
+    },
+    "UETR" : {
+      "type" : "string",
+      "format" : "uuid",
+      "description" : "A Unique End-to-end Transaction Reference, designed to act as a single source of truth for a payment and provide complete transparency for all parties in a payment chain.",
+      "example" : "123e4567-e89b-12d3-a456-426614174000"
+    },
     "PaymentInitiationResponse" : {
       "type" : "object",
       "required" : [ "_links", "paymentId", "transactionStatus" ],
@@ -3024,7 +3686,7 @@
         "addtlInf" : {
           "type" : "array",
           "example" : [ "fundsAvailable: true", "fundsAvailableTimestamp: 1674550348" ],
-          "description" : "Additional Information - further details on the status reason.\n  - fundsAvailable - \n    - 'true'    - There was sufficient balance in the account to cover the amount in payment request at the time when it is checked.\n    - 'false'   - There was not enough balance in the account to cover the amount in payment request at the time when it is checked.\n    - 'unknown' - Either balance check did not happen or balance check failed.\n  - fundsAvailableTimestamp -\n      Date and time of funds availability check in epoch time (seconds)",
+          "description" : "Additional Information - further details on the status reason.\n  - fundsAvailable -\n    - 'true'    - There was sufficient balance in the account to cover the amount in payment request at the time when it is checked.\n    - 'false'   - There was not enough balance in the account to cover the amount in payment request at the time when it is checked.\n    - 'unknown' - Either balance check did not happen or balance check failed.\n  - fundsAvailableTimestamp -\n      Date and time of funds availability check in epoch time (seconds)",
           "items" : {
             "type" : "string",
             "minLength" : 1,
@@ -3034,7 +3696,8 @@
           "x-ing-type" : "array"
         }
       },
-      "description" : "Status Reason Information - provides detailed information on the status reason."
+      "description" : "Status Reason Information - provides detailed information on the status reason.",
+      "additionalProperties" : false
     },
     "StatusReasonChoice" : {
       "type" : "object",
@@ -3053,7 +3716,8 @@
           "maxLength" : 35,
           "x-ing-type" : "string"
         }
-      }
+      },
+      "additionalProperties" : false
     },
     "PaymentAgreementStatusResponse" : {
       "type" : "object",
@@ -3082,7 +3746,7 @@
           "type" : "string",
           "format" : "uri",
           "example" : "https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL",
-          "description" : "'ING is transmitting the link to which to redirect the PSU browser.'  \nIf payment request is eligible for 1xSCA, link will contain externalSource and externalReference query parameters:  \n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL?externalSource=PIS&externalReference=7744b93c-f02d-4eb6-b467-afb78a962d4f  \notherwise:  \n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL\n",
+          "description" : "'ING is transmitting the link to which to redirect the PSU browser.'\nIf payment request is eligible for 1xSCA, link will contain externalSource and externalReference query parameters:\n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL?externalSource=PIS&externalReference=7744b93c-f02d-4eb6-b467-afb78a962d4f\notherwise:\n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL\n",
           "x-ing-type" : "string"
         },
         "self" : {
@@ -3116,7 +3780,7 @@
           "type" : "string",
           "format" : "uri",
           "example" : "https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL",
-          "description" : "'ING is transmitting the link to which to redirect the PSU browser.'  \nIf payment request is eligible for 1xSCA, link will contain externalSource and externalReference query parameters:  \n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL?externalSource=PIS&externalReference=7744b93c-f02d-4eb6-b467-afb78a962d4f  \notherwise:  \n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL\n",
+          "description" : "'ING is transmitting the link to which to redirect the PSU browser.'\nIf payment request is eligible for 1xSCA, link will contain externalSource and externalReference query parameters:\n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL?externalSource=PIS&externalReference=7744b93c-f02d-4eb6-b467-afb78a962d4f\notherwise:\n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL\n",
           "x-ing-type" : "string"
         },
         "self" : {
@@ -3150,7 +3814,7 @@
           "type" : "string",
           "format" : "uri",
           "example" : "https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL?type=bulk",
-          "description" : "'ING is transmitting the link to which to redirect the PSU browser.'  \nIf payment request is eligible for 1xSCA, link will contain externalSource and externalReference query parameters:  \n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL?type=bulk&externalSource=PIS&externalReference=7744b93c-f02d-4eb6-b467-afb78a962d4f  \notherwise:  \n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL?type=bulk\n",
+          "description" : "'ING is transmitting the link to which to redirect the PSU browser.'\nIf payment request is eligible for 1xSCA, link will contain externalSource and externalReference query parameters:\n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL?type=bulk&externalSource=PIS&externalReference=7744b93c-f02d-4eb6-b467-afb78a962d4f\notherwise:\n  https://myaccount.ing.com/payment-initiation/cc04ef71-085e-468e-87bd-2881d8a03a5d/NL?type=bulk\n",
           "x-ing-type" : "string"
         },
         "self" : {
@@ -3345,14 +4009,20 @@
         "$ref" : "#/definitions/TPPMessages"
       }
     },
-    "500SERVICEUNAVAILABLE" : {
-      "description" : "SERVICE UNAVAILABLE.",
+    "429TooManyRequests" : {
+      "description" : "Too Many Requests.",
       "schema" : {
         "$ref" : "#/definitions/TPPMessages"
       }
     },
     "500TechnicalError" : {
       "description" : "Internal Server Error.",
+      "schema" : {
+        "$ref" : "#/definitions/TPPMessages"
+      }
+    },
+    "500SERVICEUNAVAILABLE" : {
+      "description" : "SERVICE UNAVAILABLE.",
       "schema" : {
         "$ref" : "#/definitions/TPPMessages"
       }

@@ -7,7 +7,7 @@
     "contact" : {
       "name" : "ING Developer Portal",
       "url" : "https://developer.ing.com",
-      "email" : "apis@ing.com"
+      "email" : "developerportal@ing.com"
     }
   },
   "host" : "api.ing.com",
@@ -68,6 +68,9 @@
           "required" : true,
           "type" : "string"
         } ],
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-requests:view" ]
+        } ],
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -99,10 +102,7 @@
               "$ref" : "#/definitions/error_1.0"
             }
           }
-        },
-        "security" : [ {
-          "ING-Application-Security" : [ "payment-requests:view" ]
-        } ]
+        }
       }
     },
     "/payment-requests" : {
@@ -150,6 +150,9 @@
           "required" : true,
           "type" : "string"
         } ],
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-requests:create" ]
+        } ],
         "responses" : {
           "201" : {
             "description" : "Created",
@@ -189,10 +192,7 @@
               "$ref" : "#/definitions/error_1.0"
             }
           }
-        },
-        "security" : [ {
-          "ING-Application-Security" : [ "payment-requests:create" ]
-        } ]
+        }
       }
     },
     "/payment-requests/{id}/close" : {
@@ -238,6 +238,9 @@
           "required" : true,
           "type" : "string"
         } ],
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-requests:close" ]
+        } ],
         "responses" : {
           "204" : {
             "description" : "No Content"
@@ -272,10 +275,7 @@
               "$ref" : "#/definitions/error_1.0"
             }
           }
-        },
-        "security" : [ {
-          "ING-Application-Security" : [ "payment-requests:close" ]
-        } ]
+        }
       }
     },
     "/payment-requests/registrations" : {
@@ -315,6 +315,9 @@
           "required" : true,
           "type" : "string"
         } ],
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-requests:register" ]
+        } ],
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -346,10 +349,7 @@
               "$ref" : "#/definitions/error_1.0"
             }
           }
-        },
-        "security" : [ {
-          "ING-Application-Security" : [ "payment-requests:register" ]
-        } ]
+        }
       },
       "post" : {
         "tags" : [ "Registration" ],
@@ -396,6 +396,9 @@
           "required" : true,
           "type" : "string"
         } ],
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-requests:register" ]
+        } ],
         "responses" : {
           "202" : {
             "description" : "Accepted",
@@ -427,10 +430,7 @@
               "$ref" : "#/definitions/error_1.0"
             }
           }
-        },
-        "security" : [ {
-          "ING-Application-Security" : [ "payment-requests:register" ]
-        } ]
+        }
       },
       "patch" : {
         "tags" : [ "Registration" ],
@@ -476,6 +476,9 @@
           "required" : true,
           "type" : "string"
         } ],
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-requests:register" ]
+        } ],
         "responses" : {
           "204" : {
             "description" : "No Content"
@@ -504,10 +507,7 @@
               "$ref" : "#/definitions/error_1.0"
             }
           }
-        },
-        "security" : [ {
-          "ING-Application-Security" : [ "payment-requests:register" ]
-        } ]
+        }
       }
     },
     "/payment-requests/{id}/payments" : {
@@ -553,6 +553,9 @@
           "required" : true,
           "type" : "string"
         } ],
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-requests:view" ]
+        } ],
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -584,10 +587,7 @@
               "$ref" : "#/definitions/error_1.0"
             }
           }
-        },
-        "security" : [ {
-          "ING-Application-Security" : [ "payment-requests:view" ]
-        } ]
+        }
       }
     }
   },

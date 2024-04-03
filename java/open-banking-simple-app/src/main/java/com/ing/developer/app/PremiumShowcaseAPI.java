@@ -6,6 +6,7 @@ import com.ing.developer.showcase.client.ApiException;
 import com.ing.developer.showcase.client.api.ShowcaseApiApi;
 
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.MediaType;
 
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
@@ -41,7 +42,7 @@ public class PremiumShowcaseAPI {
         Utils.Pair<PrivateKey, ClientBuilder> openBankingClient = Companion.Utils.createOpenBankingClient(keyStoreFileName, keyStorePassword, false, null, null, false, false);
         ApiClient clientAPI = new ApiClient(clientId, trustMaterial.getSecond(), openBankingClient.getSecond(), null, trustMaterial.getFirst()).setMTLSPinning(true).setJwsSigning(true);
         ShowcaseApiApi greetingsApi = new ShowcaseApiApi(clientAPI);
-        String greeting = greetingsApi.signedGreetingsGet(null,null).getMessage();
+        String greeting = greetingsApi.signedGreetingsGet(MediaType.APPLICATION_FORM_URLENCODED,null, null).getMessage();
         System.out.println(greeting);
     }
 }

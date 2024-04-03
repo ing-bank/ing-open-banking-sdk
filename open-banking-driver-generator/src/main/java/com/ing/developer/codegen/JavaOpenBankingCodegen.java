@@ -16,14 +16,17 @@ public class JavaOpenBankingCodegen extends JavaClientCodegen {
 
   private final List<String> excludedParams = Arrays.asList("Signature", "Digest", "Date");
 
+  @Override
   public String getName() {
     return "Java";
   }
 
+  @Override
   public String getHelp() {
     return "Generates a Java client for ING Open Banking APIs";
   }
 
+  @Override
   public void preprocessOpenAPI(OpenAPI openAPI) {
     if (openAPI != null && openAPI.getPaths() != null) {
       for (Map.Entry<String, PathItem> entry : openAPI.getPaths().entrySet()) {

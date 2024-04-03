@@ -106,6 +106,8 @@ import {{invokerPackage}}.auth.ApiKeyAuth;
 import {{invokerPackage}}.auth.OAuth;
 {{/hasOAuthMethods}}
 
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+
 {{>generatedAnnotation}}
 public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
   public final static String BASE_URL = "BASE_URL";
@@ -1202,6 +1204,10 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
 
     String signature = sign(signer, method.toLowerCase(), path, mandatoryHeaders).toString();
 
+    if (headerParams.containsKey("Content-Type")) {
+        contentType = headerParams.get("Content-Type");
+    }
+
     if (!headerParams.containsKey("Authorization")) mandatoryHeaders.put("Authorization", "Bearer " + applicationAccessToken);
     if (!this.mTLSPinning) {
       mandatoryHeaders.put("Signature", signature.substring("Signature ".length()));
@@ -1224,14 +1230,14 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
                 .withoutPadding()
                 .encodeToString(jwsHeader.getBytes(StandardCharsets.UTF_8));
         String digest = digest("");
-        String signingString = "(request-target): get /signed/greetings\ncontent-type: application/json\ndigest: " + digest;
+        String signingString = "(request-target): get /signed/greetings\ncontent-type: " + contentType + "\ndigest: " + digest;
 
         String jwsSignatureValue = sign(signer, jwsHeaderBase64URL + "." + signingString).getSignature();
         String jwsSignature = jwsHeaderBase64URL + ".." + jwsSignatureValue;
         mandatoryHeaders.put("X-JWS-Signature",jwsSignature);
         mandatoryHeaders.put("Digest", digest);
         mandatoryHeaders.put("Date", ZonedDateTime.now(ZoneId.of("GMT")).format(FORMATTER));
-        mandatoryHeaders.put("Content-Type", "application/json");
+        mandatoryHeaders.put("Content-Type", (contentType != null && !contentType.isEmpty()) ? contentType : APPLICATION_JSON);
       }
       catch (CertificateEncodingException e) {
         throw new ApiException("Certificate Encoding Exception");

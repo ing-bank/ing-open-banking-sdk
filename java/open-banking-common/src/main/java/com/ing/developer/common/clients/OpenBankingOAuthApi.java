@@ -54,7 +54,9 @@ public class OpenBankingOAuthApi {
         String signature = Signing.sign(getFeatSigner(clientId), "get", path, getMandatoryHeaders(digest, date)).toString().substring("Signature ".length());
         try {
             AuthorizationURLResponse response = client.authorizationServerUrlUsingGET("Bearer " + token.getAccessToken(), signature, date, digest, scope, redirectUri, countryCode);
-            return response.getLocation() + "?client_id=" + clientId + "&scope=" + scope.replace(" ", "%20") + "&redirect_uri=" + redirectUri + "&state=" + UUID.randomUUID();
+            return response.getLocation() + "?client_id=" + clientId + "&scope=" + scope.replace(" ", "%20")
+                    + "&redirect_uri=" + redirectUri + "&state=" + UUID.randomUUID()
+                    + "&response_type=code";
         } catch (ApiException e) {
             return Utils.throwHttpExceptionBasedOnStatusCode(e.getCode(), "", e.getMessage());
         }
@@ -71,7 +73,7 @@ public class OpenBankingOAuthApi {
         String authorization = "Bearer " + token.getAccessToken();
 
         try {
-            return client.oauth2TokenPost(authorization, date, digest, grantType, signature.substring("Signature ".length()), tpPSignatureCertificate, null, authorizationCode, null, null);
+            return client.getAccessTokenUsingPOST(grantType, authorization, signature.substring("Signature ".length()), date, digest, tpPSignatureCertificate, null, null, authorizationCode, null, null);
         } catch (ApiException e) {
             return Utils.throwHttpExceptionBasedOnStatusCode(e.getCode(), "", e.getMessage());
         }
@@ -89,7 +91,7 @@ public class OpenBankingOAuthApi {
         String authorization = Signing.sign(signer, "post", "/oauth2/token", getMandatoryHeaders(digest, date)).toString();
 
         try {
-            TokenResponse tokenResponse = client.oauth2TokenPost(authorization, date, digest, grantType, null, tpPSignatureCertificate, null, null, null, null);
+            TokenResponse tokenResponse = client.getAccessTokenUsingPOST(grantType, authorization, null, date, digest, tpPSignatureCertificate, null, null, null, null, null);
             tokenTimeStampPair = new Utils.Pair<>(tokenResponse, getTimeStamp());
             return tokenTimeStampPair.getFirst();
         } catch (ApiException e) {

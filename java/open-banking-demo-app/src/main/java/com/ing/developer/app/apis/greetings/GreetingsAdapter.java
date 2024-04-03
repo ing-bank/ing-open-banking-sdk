@@ -4,7 +4,10 @@ import com.ing.developer.showcase.client.ApiException;
 import com.ing.developer.showcase.client.api.ShowcaseApiApi;
 import org.springframework.stereotype.Component;
 
+import javax.ws.rs.core.MediaType;
+
 import static com.ing.developer.app.common.GenericAdapterErrorHandler.throwInternalizedException;
+import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
 
 @Component
 public class GreetingsAdapter {
@@ -35,7 +38,7 @@ public class GreetingsAdapter {
     public String getGreetingJWS() {
         try {
             greetingsApi.getApiClient().setMTLSPinning(true).setJwsSigning(true);
-            return greetingsApi.signedGreetingsGet(null, null).getMessage();
+            return greetingsApi.signedGreetingsGet(APPLICATION_FORM_URLENCODED, null, null).getMessage();
         } catch (ApiException e) {
             return throwInternalizedException(e.getCode(), "greetings", e);
         }

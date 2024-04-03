@@ -90,7 +90,7 @@ class OpenBankingDemoApplicationTestIntegration {
 
     @Test
     void getGreetingJWS() {
-        String greetings = greetingsAdapter.getGreetingJWS();
+            String greetings = greetingsAdapter.getGreetingJWS();
         Assertions.assertEquals("Welcome to ING!", greetings);
     }
 }

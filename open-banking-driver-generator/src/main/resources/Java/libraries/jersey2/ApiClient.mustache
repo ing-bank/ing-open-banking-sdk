@@ -1,5 +1,8 @@
 package {{invokerPackage}};
 
+import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.MGF1ParameterSpec;
+import java.security.spec.PSSParameterSpec;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Locale;
@@ -1224,7 +1227,7 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         String sigT = sdf.format(date);
 
-        String jwsHeader="{\"b64\":false,\"x5t#S256\":\"" + encodedHexB64URL + "\",\"crit\":[ \"sigT\", \"sigD\", \"b64\"],\"sigT\":\"" + sigT + "\",\"sigD\":{ \"pars\":[ \"(request-target)\", \"content-type\", \"digest\" ], \"mId\":\"http://uri.etsi.org/19182/HttpHeaders\"},\"alg\":\"RS256\"}";
+        String jwsHeader="{\"b64\":false,\"x5t#S256\":\"" + encodedHexB64URL + "\",\"crit\":[ \"sigT\", \"sigD\", \"b64\"],\"sigT\":\"" + sigT + "\",\"sigD\":{ \"pars\":[ \"(request-target)\", \"content-type\", \"digest\" ], \"mId\":\"http://uri.etsi.org/19182/HttpHeaders\"},\"alg\":\"PS256\"}";
 
         String jwsHeaderBase64URL = Base64.getUrlEncoder()
                 .withoutPadding()
@@ -1232,7 +1235,7 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
         String digest = digest("");
         String signingString = "(request-target): get /signed/greetings\ncontent-type: " + contentType + "\ndigest: " + digest;
 
-        String jwsSignatureValue = sign(signer, jwsHeaderBase64URL + "." + signingString).getSignature();
+        String jwsSignatureValue = signJws(token.client_id, signatureKey, jwsHeaderBase64URL + "." + signingString).getSignature();
         String jwsSignature = jwsHeaderBase64URL + ".." + jwsSignatureValue;
         mandatoryHeaders.put("X-JWS-Signature",jwsSignature);
         mandatoryHeaders.put("Digest", digest);
@@ -1524,6 +1527,16 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
   private Signature getSignature(String keyId) {
       return new Signature(keyId, "rsa-sha256", null, "(request-target)", "date", "digest");
   }
+
+    private Signature signJws(String keyId, PrivateKey privateKey, String signingString) {
+        Signature signature = new Signature(keyId, "hs2019", "rsassa-pss", new PSSParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256, 32, 1), null, Arrays.asList("(request-target)", "date", "digest"));
+        OBSigner jwsSigner = new OBSigner(privateKey, signature);
+        try {
+            return jwsSigner.sign(signingString);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
   private OBSigner getFeatSigner(String keyId, PrivateKey privateKey) {
       if (featSigner == null) {

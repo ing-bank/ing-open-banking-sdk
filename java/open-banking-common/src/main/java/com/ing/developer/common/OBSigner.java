@@ -61,7 +61,7 @@ public class OBSigner {
 
         if (java.security.Signature.class.equals(algorithm.getType())) {
 
-            this.sign = new Asymmetric(PrivateKey.class.cast(key));
+            this.sign = new Asymmetric((PrivateKey) key);
 
         } else if (Mac.class.equals(algorithm.getType())) {
 
@@ -74,7 +74,6 @@ public class OBSigner {
 
         // check that the JVM really knows the algorithm we are going to use
         try {
-
             sign.sign("validation".getBytes());
 
         } catch (final RuntimeException e) {

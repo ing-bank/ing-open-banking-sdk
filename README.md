@@ -41,7 +41,7 @@ At `developer.ing.com/openbanking/get-started/premium` (renaming `.cer` to `.pem
 ./certs/example_client_signing.key
 ./certs/example_client_tls.pem
 ./certs/example_client_tls.key
-``` 
+```
 #### PSD2 APIs
 At `https://developer.ing.com/openbanking/get-started/psd2` (renaming `.cer` to `.pem`) (or [GitHub](https://github.com/ing-bank/ing-open-banking-cli/tree/master/apps/sandbox/certificates/psd2/)) download the certificates and keys and place them in the `./certs/psd2` directory:
 ```
@@ -64,7 +64,7 @@ Configure the `open-banking-demo-app` module for a test run. If you used `secret
 ##### Proxy settings
 In the application properties you can configure proxy settings as well.
 #### Start testing
-Run `mvn clean install` to test the SDK. Alternatively run `mvn clean install -Dproxy.use` to enable your proxy settings when the default setting in properties is `false`. 
+Run `mvn clean install` to test the SDK. Alternatively run `mvn clean install -Dproxy.use` to enable your proxy settings when the default setting in properties is `false`.
 
 
 ## Examples using the ING Open Banking Drivers
@@ -142,7 +142,7 @@ String scope = "payment-accounts%3Abalances%3Aview%20payment-accounts%3Atransact
 String consentUri = openBankingOAuthApi.getConsentUri(redirectUri, scope, countryCode);
 ```
 The getConsentUri command will request a token from the OAuth api.
-After a successful token response, the driver will request an authorization URL from the OAuth api. 
+After a successful token response, the driver will request an authorization URL from the OAuth api.
 A successful request will return an URL similar to the example below:
 ```
 https://myaccount.sandbox.ing.com/granting/cf29c75e-ffc7-42aa-8e0c-ce782aa129e8/NL?client_id=5ca1ab1e-c0ca-c01a-cafe-154deadbea75&scope=payment-accounts%3Abalances%3Aview%20payment-accounts%3Atransactions%3Aview&redirect_uri=https://www.example.com
@@ -184,7 +184,7 @@ public class psd2AuthUrl {
 The OpenBankingOAuthApi driver is used to request a customer token.
 The same configuration can be used when requesting the authorization URL.
 An authorization code is needed when calling the customer token. For the sandbox environment we use the code below.
-The getCustomerToken function will 
+The getCustomerToken function will
 
 The getCustomerToken function will request a token from the OAuth api.
 After a successful token response, the driver will request a customer token also from the OAuth api. and a successful request will return a customer token.
@@ -439,7 +439,7 @@ import com.ing.developer.showcase.client.api.GreetingsApi;
 
 The GreetingsApi requires an clientAPI, which in turn requires a clientId and trustMaterial.
 In the example below Production parameters needs to be used.
-Use your own clientId and certificates from the developer portal. Make sure your app is subscribed to the showcase API.  
+Use your own clientId and certificates from the developer portal. Make sure your app is subscribed to the showcase API.
 Make sure to set the BASE_URL to https://api.ing.com, and use your keystore password.
 The code below will initialize the GreetingsApi object that we will use to call the Showcase API.
 
@@ -489,7 +489,7 @@ public class ProductionShowcaseAPI {
 ```
 
 #### Call Showcase API using mTLS Pinning:
-The Greeting endpoint can be called using mTLS Pinning. This does not require the signature headers. 
+The Greeting endpoint can be called using mTLS Pinning. This does not require the signature headers.
 
 To set the request the use mTLS Pinning, call the setMTLSPinning as seen below. This will enable mTLS only connections.
 ```java
@@ -590,7 +590,7 @@ import com.ing.developer.showcase.client.api.GreetingsApi;
 
 The GreetingsApi requires an clientAPI, which in turn requires a clientId and trustMaterial.
 In the example below Production parameters needs to be used.
-Use your own clientId and certificates from the developer portal. Make sure your app is subscribed to the showcase API.  
+Use your own clientId and certificates from the developer portal. Make sure your app is subscribed to the showcase API.
 Make sure to set the BASE_URL to https://api.ing.com, and use your keystore password.
 The code below will initialize the GreetingsApi object that we will use to call the Showcase API.
 
@@ -641,4 +641,3 @@ public class ProductionShowcaseAPI {
 
 ## CLI
 To test your connection to ING Open Banking APIs we also provide a [Command Line Interface (CLI)](https://github.com/ing-bank/ing-open-banking-cli) using scripts.
-

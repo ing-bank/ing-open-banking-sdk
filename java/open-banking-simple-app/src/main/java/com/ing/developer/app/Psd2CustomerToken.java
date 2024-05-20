@@ -27,6 +27,3 @@ public class Psd2CustomerToken {
         return customerToken;
     }
 }
-
-
-

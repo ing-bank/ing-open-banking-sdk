@@ -1175,7 +1175,7 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
       }
     }
 
-    Invocation.Builder invocationBuilder = target.request().accept(accept);
+    Invocation.Builder invocationBuilder = target.request();
 
     for (Entry<String, String> entry : cookieParams.entrySet()) {
       String value = entry.getValue();
@@ -1196,7 +1196,11 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
     String applicationAccessToken = token.access_token;
 
     final Map<String, String> mandatoryHeaders = new HashMap<String, String>();
-    mandatoryHeaders.put("Accept", "application/json");
+    if (!accept.isEmpty()) {
+        mandatoryHeaders.put("Accept", accept);
+    } else {
+        mandatoryHeaders.put("Accept", "application/json");
+    }
     mandatoryHeaders.put("User-Agent", "openbanking-sdk/0.0.3-SNAPSHOT java");
     mandatoryHeaders.put("Digest", digest(body == null ? "" : body.toString()));
     mandatoryHeaders.put("Date", ZonedDateTime.now(ZoneId.of("GMT")).format(FORMATTER));
@@ -1220,7 +1224,7 @@ public class ApiClient{{#jsr310}} extends JavaTimeFormatter{{/jsr310}} {
       try {
         String fingerprint = DigestUtils.sha256Hex(this.certificate.getEncoded());
         byte[] decodedHex = Hex.decodeHex(fingerprint.toCharArray());
-        String encodedHexB64URL = Base64.getEncoder().encodeToString(decodedHex).replace("=", "").replace("\n", "").replace("+", "-").replace("\\/", "_");
+        String encodedHexB64URL = Base64.getUrlEncoder().withoutPadding().encodeToString(decodedHex);
 
         Date date = Calendar.getInstance().getTime();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");

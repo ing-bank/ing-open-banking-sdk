@@ -17,6 +17,10 @@ You can use this SDK to generate drivers for both Premium and PSD2 APIs. Read ou
 * CURL
 
 ## Quick Start (*nix)
+
+### Unix
+On *nix systems (Unix, Linux, macOS etc.):
+
 * Run `./download-certificates.sh`
 * Run `./keygen-premium.sh` and set `secret` as password.
 * Run `./keygen-psd2.sh` and set `secret2` as password.
@@ -27,6 +31,25 @@ You can use this SDK to generate drivers for both Premium and PSD2 APIs. Read ou
 * Select the top profile and click next.
 * You are redirected back to `localhost` and see the customer token displayed.
 * Click the link to view the test profile accounts.
+
+### Windows
+
+On Windows:
+
+* Ensure that *openssl* (e.g. Win64OpenSSL) is installed and in your PATH.
+* Run `./download-certificates.cmd`
+* Run `./keygen-premium.cmd` and set `secret` as password.
+* Run `./keygen-psd2.cmd` and set `secret2` as password.
+* Run  `mvn clean install`
+* Run `./run-java.cmd`
+* Go to `http://localhost:8080`
+* Click the link you get back and is displayed.
+* Select the top profile and click next.
+* You are redirected back to `localhost` and see the customer token displayed.
+* Click the link to view the test profile accounts.
+
+
+
 
 ## Slightly Slower Start
 ### Folder structure

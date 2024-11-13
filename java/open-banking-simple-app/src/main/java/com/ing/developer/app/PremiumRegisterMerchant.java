@@ -5,6 +5,7 @@ import com.ing.developer.common.clients.Companion;
 import com.ing.developer.payment.request.client.ApiClient;
 import com.ing.developer.payment.request.client.ApiException;
 import com.ing.developer.payment.request.client.api.RegistrationApi;
+import com.ing.developer.payment.request.client.model.CertificateResponse;
 import com.ing.developer.payment.request.client.model.DailyReceivableLimit;
 import com.ing.developer.payment.request.client.model.RegistrationRequest;
 
@@ -33,7 +34,7 @@ public class PremiumRegisterMerchant {
         request.dailyReceivableLimit(dailyReceivableLimit);
         request.allowIngAppPayments("Y");
 
-        String response = registrationApi.paymentRequestsRegistrationsPost(clientId, null, request);
+        CertificateResponse response = registrationApi.paymentRequestsRegistrationsPost(clientId, null, request);
         System.out.println("Premium registerMerchant response:" + response);
     }
 }

@@ -2,12 +2,12 @@
   "swagger" : "2.0",
   "info" : {
     "description" : "The Payment Request API allows you to generate payment request links that can be shared with your customers. The Payment Request API is based on ING’s successful consumer–to-consumer (C2C) payment request feature, which means your customers will already be familiar with this payment method. Consumers of this API will need to have an existing iDEAL contract with ING.",
-    "version" : "4.2.1",
+    "version" : "5.0.1",
     "title" : "Payment Request API",
     "contact" : {
       "name" : "ING Developer Portal",
       "url" : "https://developer.ing.com",
-      "email" : "developerportal@ing.com"
+      "email" : "apis@ing.com"
     }
   },
   "host" : "api.ing.com",
@@ -403,7 +403,7 @@
           "202" : {
             "description" : "Accepted",
             "schema" : {
-              "$ref" : "#/definitions/RegistrationResponse"
+              "$ref" : "#/definitions/CertificateResponse"
             }
           },
           "400" : {
@@ -443,6 +443,159 @@
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/UpdateRegistrationRequest"
+          }
+        }, {
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Contains Application Access Token with auth-scheme Bearer.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the third party on application level. See \"Get Started\" for more information on how to generate.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "SHA256 of the body.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard http header element for date and time",
+          "required" : true,
+          "type" : "string",
+          "format" : "date-time"
+        }, {
+          "name" : "X-ING-ReqID",
+          "in" : "header",
+          "description" : "Request ID, can be a UUID",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-requests:register" ]
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "schema" : {
+              "$ref" : "#/definitions/error_1.0"
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "schema" : {
+              "$ref" : "#/definitions/error_1.0"
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "schema" : {
+              "$ref" : "#/definitions/error_1.0"
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "schema" : {
+              "$ref" : "#/definitions/error_1.0"
+            }
+          }
+        }
+      }
+    },
+    "/payment-requests/registrations/generate-certificates" : {
+      "post" : {
+        "tags" : [ "Registration" ],
+        "summary" : "Get registration details",
+        "description" : "Get details of an existing merchant registration",
+        "parameters" : [ {
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "Contains Application Access Token with auth-scheme Bearer.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Signature",
+          "in" : "header",
+          "description" : "A signature of the request by the third party on application level. See \"Get Started\" for more information on how to generate.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Digest",
+          "in" : "header",
+          "description" : "SHA256 of the body.",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "Date",
+          "in" : "header",
+          "description" : "Standard http header element for date and time",
+          "required" : true,
+          "type" : "string",
+          "format" : "date-time"
+        }, {
+          "name" : "X-ING-ReqID",
+          "in" : "header",
+          "description" : "Request ID, can be a UUID",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "security" : [ {
+          "ING-Application-Security" : [ "payment-requests:register" ]
+        } ],
+        "responses" : {
+          "202" : {
+            "description" : "Accepted",
+            "schema" : {
+              "$ref" : "#/definitions/CertificateResponse"
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "schema" : {
+              "$ref" : "#/definitions/error_1.0"
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "schema" : {
+              "$ref" : "#/definitions/error_1.0"
+            }
+          },
+          "403" : {
+            "description" : "Forbidden",
+            "schema" : {
+              "$ref" : "#/definitions/error_1.0"
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "schema" : {
+              "$ref" : "#/definitions/error_1.0"
+            }
+          }
+        }
+      }
+    },
+    "/payment-requests/registrations/certificates" : {
+      "put" : {
+        "tags" : [ "Registration" ],
+        "summary" : "Upload merchant certificates for ideal 2.0",
+        "description" : "Upload merchant certificates for ideal 2.0",
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "uploadCertificatesRequest",
+          "description" : "Merchant certificates for ideal 2.0",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/UploadCertificatesRequest"
           }
         }, {
           "name" : "Authorization",
@@ -645,6 +798,7 @@
           "example" : "Your purchase reference abcdefg1234567890",
           "description" : "The description as shown on the payment request screen. Maximum length of 1024 characters.",
           "maxLength" : 1024,
+          "pattern" : "^[-A-Za-za-zÀ-ȕ0-9= %*+,.&@\"]\\':;?!#_^~()$]*$",
           "x-ing-type" : "string"
         },
         "returnUrl" : {
@@ -808,10 +962,75 @@
         }
       }
     },
-    "RegistrationResponse" : {
-      "type" : "string",
-      "description" : "Certificate the merchant should attach to their iDEAL contract, so that the PaymentRequest API can verify that the merchant has an iDEAL contract.",
-      "example" : "-----BEGIN CERTIFICATE-----\nMIIDUjCCAjqgAwIBAgIEZyvdCTANBgkqhkiG9w0BAQsFADBrMRQwEgYDVQQDDAth\ncGkuaW5nLmNvbTEaMBgGA1UECwwRUGF5bWVudFJlcXVlc3RBUEkxFjAUBgNVBAoM\nDUlORyBCQU5LIE4uVi4xEjAQBgNVBAcMCUFtc3RlcmRhbTELMAkGA1UEBhMCTkww\nHhcNMTkwODE4MDgwODAyWhcNMjkwOTE0MDgwODAyWjBrMRQwEgYDVQQDDAthcGku\naW5nLmNvbTEaMBgGA1UECwwRUGF5bWVudFJlcXVlc3RBUEkxFjAUBgNVBAoMDUlO\nRyBCQU5LIE4uVi4xEjAQBgNVBAcMCUFtc3RlcmRhbTELMAkGA1UEBhMCTkwwggEi\nMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCavZYCg5w+tYhm++JWAwP7PPW1\nNmuf4k3wCxvbYXmJkR2c8IxCZ2mzrxky2WHjucIACvjgoFKEIeU6HOwUilF5I3N+\nlJk4gmI0PmFRk6SLWR1AEVX+jad1xQj8oFNhUj8ecIB4GOsZPHdAgZzLZBDS8lLI\nvrWnoAZQMtO0TEmQBqo5wCeI1Mp6KCh1pAdbx1J82Xhd3h0weQ3hyeicKUFMcANl\nhxKBYtMDZG/Y3vOBZahW746E6JQo567iOELCIfoCvfio3c3WHms3TJfO6XcJDWNN\nGhd0q9HdqQR8+W5ed90n4G9h6obnTHi8U2LxDQr2iLwIPYgk37SmdgNGGA4HAgMB\nAAEwDQYJKoZIhvcNAQELBQADggEBAGi7+k7rNumkLGc8Q4vUMQ5UOgCQhLifFQSn\nM2CSy4ERRz4rqRPAYbHGVhPOReYzRWkNqXEX+oPu5U2N9/6jJDtOmWILlu4Sr/nr\nlztvDKGLpMkQyK7M65dIr1fuK/JfcmgMW6rLZ2uuZNxukm7wkrLu6S+MPyt6ag9o\nuhR7ZEvObb4Q5JEJSF2waNN+2rE1bPX7dOTUQW+ILMALpqc8ufHM10FL2O322O5s\nr/NMvzOgp+hw73FqAQ9rKS8sjgcOtzWw+JxvwFMv3TKylTGKFhIzfJ5MmmJCbRV5\nM6eEYMUuOo8idZ6ctKlOqXDySWNwvhdj8nW5Ck/I13Ae9FSrz3Y=\n-----END CERTIFICATE-----\n"
+    "CertificateResponse" : {
+      "type" : "object",
+      "properties" : {
+        "idealContractCertificate" : {
+          "type" : "string",
+          "example" : "-----BEGIN CERTIFICATE-----\nMIIDUjCCAjqgAwIBAgIEZyvdCTANBgkqhkiG9w0BAQsFADBrMRQwEgYDVQQDDAth\ncGkuaW5nLmNvbTEaMBgGA1UECwwRUGF5bWVudFJlcXVlc3RBUEkxFjAUBgNVBAoM\nDUlORyBCQU5LIE4uVi4xEjAQBgNVBAcMCUFtc3RlcmRhbTELMAkGA1UEBhMCTkww\nHhcNMTkwODE4MDgwODAyWhcNMjkwOTE0MDgwODAyWjBrMRQwEgYDVQQDDAthcGku\naW5nLmNvbTEaMBgGA1UECwwRUGF5bWVudFJlcXVlc3RBUEkxFjAUBgNVBAoMDUlO\nRyBCQU5LIE4uVi4xEjAQBgNVBAcMCUFtc3RlcmRhbTELMAkGA1UEBhMCTkwwggEi\nMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCavZYCg5w+tYhm++JWAwP7PPW1\nNmuf4k3wCxvbYXmJkR2c8IxCZ2mzrxky2WHjucIACvjgoFKEIeU6HOwUilF5I3N+\nlJk4gmI0PmFRk6SLWR1AEVX+jad1xQj8oFNhUj8ecIB4GOsZPHdAgZzLZBDS8lLI\nvrWnoAZQMtO0TEmQBqo5wCeI1Mp6KCh1pAdbx1J82Xhd3h0weQ3hyeicKUFMcANl\nhxKBYtMDZG/Y3vOBZahW746E6JQo567iOELCIfoCvfio3c3WHms3TJfO6XcJDWNN\nGhd0q9HdqQR8+W5ed90n4G9h6obnTHi8U2LxDQr2iLwIPYgk37SmdgNGGA4HAgMB\nAAEwDQYJKoZIhvcNAQELBQADggEBAGi7+k7rNumkLGc8Q4vUMQ5UOgCQhLifFQSn\nM2CSy4ERRz4rqRPAYbHGVhPOReYzRWkNqXEX+oPu5U2N9/6jJDtOmWILlu4Sr/nr\nlztvDKGLpMkQyK7M65dIr1fuK/JfcmgMW6rLZ2uuZNxukm7wkrLu6S+MPyt6ag9o\nuhR7ZEvObb4Q5JEJSF2waNN+2rE1bPX7dOTUQW+ILMALpqc8ufHM10FL2O322O5s\nr/NMvzOgp+hw73FqAQ9rKS8sjgcOtzWw+JxvwFMv3TKylTGKFhIzfJ5MmmJCbRV5\nM6eEYMUuOo8idZ6ctKlOqXDySWNwvhdj8nW5Ck/I13Ae9FSrz3Y=\n-----END CERTIFICATE-----\n",
+          "description" : "Certificate the merchant should attach to their iDEAL contract, so that the PaymentRequest API can verify that the merchant has an iDEAL contract.",
+          "x-ing-type" : "string"
+        },
+        "acquiringMtlsCertificate" : {
+          "type" : "string",
+          "example" : "-----BEGIN CERTIFICATE-----\nMIIDUjCCAjqgAwIBAgIEZyvdCTANBgkqhkiG9w0BAQsFADBrMRQwEgYDVQQDDAth\ncGkuaW5nLmNvbTEaMBgGA1UECwwRUGF5bWVudFJlcXVlc3RBUEkxFjAUBgNVBAoM\nDUlORyBCQU5LIE4uVi4xEjAQBgNVBAcMCUFtc3RlcmRhbTELMAkGA1UEBhMCTkww\nHhcNMTkwODE4MDgwODAyWhcNMjkwOTE0MDgwODAyWjBrMRQwEgYDVQQDDAthcGku\naW5nLmNvbTEaMBgGA1UECwwRUGF5bWVudFJlcXVlc3RBUEkxFjAUBgNVBAoMDUlO\nRyBCQU5LIE4uVi4xEjAQBgNVBAcMCUFtc3RlcmRhbTELMAkGA1UEBhMCTkwwggEi\nMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCavZYCg5w+tYhm++JWAwP7PPW1\nNmuf4k3wCxvbYXmJkR2c8IxCZ2mzrxky2WHjucIACvjgoFKEIeU6HOwUilF5I3N+\nlJk4gmI0PmFRk6SLWR1AEVX+jad1xQj8oFNhUj8ecIB4GOsZPHdAgZzLZBDS8lLI\nvrWnoAZQMtO0TEmQBqo5wCeI1Mp6KCh1pAdbx1J82Xhd3h0weQ3hyeicKUFMcANl\nhxKBYtMDZG/Y3vOBZahW746E6JQo567iOELCIfoCvfio3c3WHms3TJfO6XcJDWNN\nGhd0q9HdqQR8+W5ed90n4G9h6obnTHi8U2LxDQr2iLwIPYgk37SmdgNGGA4HAgMB\nAAEwDQYJKoZIhvcNAQELBQADggEBAGi7+k7rNumkLGc8Q4vUMQ5UOgCQhLifFQSn\nM2CSy4ERRz4rqRPAYbHGVhPOReYzRWkNqXEX+oPu5U2N9/6jJDtOmWILlu4Sr/nr\nlztvDKGLpMkQyK7M65dIr1fuK/JfcmgMW6rLZ2uuZNxukm7wkrLu6S+MPyt6ag9o\nuhR7ZEvObb4Q5JEJSF2waNN+2rE1bPX7dOTUQW+ILMALpqc8ufHM10FL2O322O5s\nr/NMvzOgp+hw73FqAQ9rKS8sjgcOtzWw+JxvwFMv3TKylTGKFhIzfJ5MmmJCbRV5\nM6eEYMUuOo8idZ6ctKlOqXDySWNwvhdj8nW5Ck/I13Ae9FSrz3Y=\n-----END CERTIFICATE-----\n",
+          "description" : "mTLS certificate for connecting to ING",
+          "x-ing-type" : "string"
+        },
+        "acquiringSigningCertificate" : {
+          "type" : "string",
+          "example" : "-----BEGIN CERTIFICATE-----\nMIIDUjCCAjqgAwIBAgIEZyvdCTANBgkqhkiG9w0BAQsFADBrMRQwEgYDVQQDDAth\ncGkuaW5nLmNvbTEaMBgGA1UECwwRUGF5bWVudFJlcXVlc3RBUEkxFjAUBgNVBAoM\nDUlORyBCQU5LIE4uVi4xEjAQBgNVBAcMCUFtc3RlcmRhbTELMAkGA1UEBhMCTkww\nHhcNMTkwODE4MDgwODAyWhcNMjkwOTE0MDgwODAyWjBrMRQwEgYDVQQDDAthcGku\naW5nLmNvbTEaMBgGA1UECwwRUGF5bWVudFJlcXVlc3RBUEkxFjAUBgNVBAoMDUlO\nRyBCQU5LIE4uVi4xEjAQBgNVBAcMCUFtc3RlcmRhbTELMAkGA1UEBhMCTkwwggEi\nMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCavZYCg5w+tYhm++JWAwP7PPW1\nNmuf4k3wCxvbYXmJkR2c8IxCZ2mzrxky2WHjucIACvjgoFKEIeU6HOwUilF5I3N+\nlJk4gmI0PmFRk6SLWR1AEVX+jad1xQj8oFNhUj8ecIB4GOsZPHdAgZzLZBDS8lLI\nvrWnoAZQMtO0TEmQBqo5wCeI1Mp6KCh1pAdbx1J82Xhd3h0weQ3hyeicKUFMcANl\nhxKBYtMDZG/Y3vOBZahW746E6JQo567iOELCIfoCvfio3c3WHms3TJfO6XcJDWNN\nGhd0q9HdqQR8+W5ed90n4G9h6obnTHi8U2LxDQr2iLwIPYgk37SmdgNGGA4HAgMB\nAAEwDQYJKoZIhvcNAQELBQADggEBAGi7+k7rNumkLGc8Q4vUMQ5UOgCQhLifFQSn\nM2CSy4ERRz4rqRPAYbHGVhPOReYzRWkNqXEX+oPu5U2N9/6jJDtOmWILlu4Sr/nr\nlztvDKGLpMkQyK7M65dIr1fuK/JfcmgMW6rLZ2uuZNxukm7wkrLu6S+MPyt6ag9o\nuhR7ZEvObb4Q5JEJSF2waNN+2rE1bPX7dOTUQW+ILMALpqc8ufHM10FL2O322O5s\nr/NMvzOgp+hw73FqAQ9rKS8sjgcOtzWw+JxvwFMv3TKylTGKFhIzfJ5MmmJCbRV5\nM6eEYMUuOo8idZ6ctKlOqXDySWNwvhdj8nW5Ck/I13Ae9FSrz3Y=\n-----END CERTIFICATE-----\n",
+          "description" : "Signing certificate for ING requests",
+          "x-ing-type" : "string"
+        },
+        "idealHubMtlsCsr" : {
+          "type" : "string",
+          "example" : "-----BEGIN CERTIFICATE-----\nMIIDUjCCAjqgAwIBAgIEZyvdCTANBgkqhkiG9w0BAQsFADBrMRQwEgYDVQQDDAth\ncGkuaW5nLmNvbTEaMBgGA1UECwwRUGF5bWVudFJlcXVlc3RBUEkxFjAUBgNVBAoM\nDUlORyBCQU5LIE4uVi4xEjAQBgNVBAcMCUFtc3RlcmRhbTELMAkGA1UEBhMCTkww\nHhcNMTkwODE4MDgwODAyWhcNMjkwOTE0MDgwODAyWjBrMRQwEgYDVQQDDAthcGku\naW5nLmNvbTEaMBgGA1UECwwRUGF5bWVudFJlcXVlc3RBUEkxFjAUBgNVBAoMDUlO\nRyBCQU5LIE4uVi4xEjAQBgNVBAcMCUFtc3RlcmRhbTELMAkGA1UEBhMCTkwwggEi\nMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCavZYCg5w+tYhm++JWAwP7PPW1\nNmuf4k3wCxvbYXmJkR2c8IxCZ2mzrxky2WHjucIACvjgoFKEIeU6HOwUilF5I3N+\nlJk4gmI0PmFRk6SLWR1AEVX+jad1xQj8oFNhUj8ecIB4GOsZPHdAgZzLZBDS8lLI\nvrWnoAZQMtO0TEmQBqo5wCeI1Mp6KCh1pAdbx1J82Xhd3h0weQ3hyeicKUFMcANl\nhxKBYtMDZG/Y3vOBZahW746E6JQo567iOELCIfoCvfio3c3WHms3TJfO6XcJDWNN\nGhd0q9HdqQR8+W5ed90n4G9h6obnTHi8U2LxDQr2iLwIPYgk37SmdgNGGA4HAgMB\nAAEwDQYJKoZIhvcNAQELBQADggEBAGi7+k7rNumkLGc8Q4vUMQ5UOgCQhLifFQSn\nM2CSy4ERRz4rqRPAYbHGVhPOReYzRWkNqXEX+oPu5U2N9/6jJDtOmWILlu4Sr/nr\nlztvDKGLpMkQyK7M65dIr1fuK/JfcmgMW6rLZ2uuZNxukm7wkrLu6S+MPyt6ag9o\nuhR7ZEvObb4Q5JEJSF2waNN+2rE1bPX7dOTUQW+ILMALpqc8ufHM10FL2O322O5s\nr/NMvzOgp+hw73FqAQ9rKS8sjgcOtzWw+JxvwFMv3TKylTGKFhIzfJ5MmmJCbRV5\nM6eEYMUuOo8idZ6ctKlOqXDySWNwvhdj8nW5Ck/I13Ae9FSrz3Y=\n-----END CERTIFICATE-----\n",
+          "description" : "CSR for mTLS certificate for connecting to Ideal",
+          "x-ing-type" : "string"
+        },
+        "idealHubSigningCsr" : {
+          "type" : "string",
+          "example" : "-----BEGIN CERTIFICATE-----\nMIIDUjCCAjqgAwIBAgIEZyvdCTANBgkqhkiG9w0BAQsFADBrMRQwEgYDVQQDDAth\ncGkuaW5nLmNvbTEaMBgGA1UECwwRUGF5bWVudFJlcXVlc3RBUEkxFjAUBgNVBAoM\nDUlORyBCQU5LIE4uVi4xEjAQBgNVBAcMCUFtc3RlcmRhbTELMAkGA1UEBhMCTkww\nHhcNMTkwODE4MDgwODAyWhcNMjkwOTE0MDgwODAyWjBrMRQwEgYDVQQDDAthcGku\naW5nLmNvbTEaMBgGA1UECwwRUGF5bWVudFJlcXVlc3RBUEkxFjAUBgNVBAoMDUlO\nRyBCQU5LIE4uVi4xEjAQBgNVBAcMCUFtc3RlcmRhbTELMAkGA1UEBhMCTkwwggEi\nMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCavZYCg5w+tYhm++JWAwP7PPW1\nNmuf4k3wCxvbYXmJkR2c8IxCZ2mzrxky2WHjucIACvjgoFKEIeU6HOwUilF5I3N+\nlJk4gmI0PmFRk6SLWR1AEVX+jad1xQj8oFNhUj8ecIB4GOsZPHdAgZzLZBDS8lLI\nvrWnoAZQMtO0TEmQBqo5wCeI1Mp6KCh1pAdbx1J82Xhd3h0weQ3hyeicKUFMcANl\nhxKBYtMDZG/Y3vOBZahW746E6JQo567iOELCIfoCvfio3c3WHms3TJfO6XcJDWNN\nGhd0q9HdqQR8+W5ed90n4G9h6obnTHi8U2LxDQr2iLwIPYgk37SmdgNGGA4HAgMB\nAAEwDQYJKoZIhvcNAQELBQADggEBAGi7+k7rNumkLGc8Q4vUMQ5UOgCQhLifFQSn\nM2CSy4ERRz4rqRPAYbHGVhPOReYzRWkNqXEX+oPu5U2N9/6jJDtOmWILlu4Sr/nr\nlztvDKGLpMkQyK7M65dIr1fuK/JfcmgMW6rLZ2uuZNxukm7wkrLu6S+MPyt6ag9o\nuhR7ZEvObb4Q5JEJSF2waNN+2rE1bPX7dOTUQW+ILMALpqc8ufHM10FL2O322O5s\nr/NMvzOgp+hw73FqAQ9rKS8sjgcOtzWw+JxvwFMv3TKylTGKFhIzfJ5MmmJCbRV5\nM6eEYMUuOo8idZ6ctKlOqXDySWNwvhdj8nW5Ck/I13Ae9FSrz3Y=\n-----END CERTIFICATE-----\n",
+          "description" : "CSR for signing certificate for Ideal requests",
+          "x-ing-type" : "string"
+        }
+      }
+    },
+    "UploadCertificatesRequest" : {
+      "type" : "object",
+      "required" : [ "cert1", "cert2", "cert3", "cert4" ],
+      "properties" : {
+        "cert1" : {
+          "type" : "string",
+          "example" : "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJvVENDQVVpZ0F3SUJBZ0lHQVl5Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0=",
+          "description" : "The 1st certificate as base64",
+          "pattern" : "^(?:[a-zA-Z0-9+\\/]{4})*(?:|(?:[a-zA-Z0-9+\\/]{3}=)|(?:[a-zA-Z0-9+\\/]{2}==)|(?:[a-zA-Z0-9+\\/]{1}===))$",
+          "x-ing-type" : "string"
+        },
+        "cert2" : {
+          "type" : "string",
+          "example" : "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJvVENDQVVpZ0F3SUJBZ0lHQVl5Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0=",
+          "description" : "The 2nd certificate as base64",
+          "pattern" : "^(?:[a-zA-Z0-9+\\/]{4})*(?:|(?:[a-zA-Z0-9+\\/]{3}=)|(?:[a-zA-Z0-9+\\/]{2}==)|(?:[a-zA-Z0-9+\\/]{1}===))$",
+          "x-ing-type" : "string"
+        },
+        "cert3" : {
+          "type" : "string",
+          "example" : "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJvVENDQVVpZ0F3SUJBZ0lHQVl5Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0=",
+          "description" : "The 3rd certificate as base64",
+          "pattern" : "^(?:[a-zA-Z0-9+\\/]{4})*(?:|(?:[a-zA-Z0-9+\\/]{3}=)|(?:[a-zA-Z0-9+\\/]{2}==)|(?:[a-zA-Z0-9+\\/]{1}===))$",
+          "x-ing-type" : "string"
+        },
+        "cert4" : {
+          "type" : "string",
+          "example" : "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJvVENDQVVpZ0F3SUJBZ0lHQVl5Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0=",
+          "description" : "The 4th certificate as base64",
+          "pattern" : "^(?:[a-zA-Z0-9+\\/]{4})*(?:|(?:[a-zA-Z0-9+\\/]{3}=)|(?:[a-zA-Z0-9+\\/]{2}==)|(?:[a-zA-Z0-9+\\/]{1}===))$",
+          "x-ing-type" : "string"
+        }
+      },
+      "description" : "Contains four certificates for Ideal 2.0 that needs to be uploaded"
     },
     "GetRegistrationResponse" : {
       "type" : "object",
@@ -977,6 +1196,12 @@
               "type" : "string",
               "example" : "NL99INGB0000000000",
               "description" : "IBAN of the debtor account of this payment.",
+              "x-ing-type" : "string"
+            },
+            "bic" : {
+              "type" : "string",
+              "example" : "INGBNL2A",
+              "description" : "BIC of the bank of the debtor",
               "x-ing-type" : "string"
             }
           },

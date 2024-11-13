@@ -2,6 +2,7 @@ package com.ing.developer.app.apis.payment.request;
 
 import com.ing.developer.payment.request.client.ApiException;
 import com.ing.developer.payment.request.client.api.RegistrationApi;
+import com.ing.developer.payment.request.client.model.CertificateResponse;
 import com.ing.developer.payment.request.client.model.RegistrationRequest;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,7 @@ public class PaymentRequestAdapter {
         this.registrationApi = registrationApi;
     }
 
-    public String registerMerchant(RegistrationRequest registrationRequest) {
+    public CertificateResponse registerMerchant(RegistrationRequest registrationRequest) {
         try {
             return registrationApi.paymentRequestsRegistrationsPost(clientId, null, registrationRequest);
         } catch (ApiException e) {
